@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/0xdraco/sui-go-sdk/keychain"
+	"github.com/open-move/sui-go-sdk/keychain"
 )
 
 const testMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
@@ -77,11 +77,11 @@ func TestDeriveFromMnemonicLegacyVectors(t *testing.T) {
 				t.Fatalf("derive keypair: %v", err)
 			}
 
-			if got := fmtBytes(kp.PrivateKeyBytes()); got != tc.wantPriv {
+			if got := fmtBytes(requirePrivateKeyBytes(t, kp)); got != tc.wantPriv {
 				t.Fatalf("private mismatch: got %s want %s", got, tc.wantPriv)
 			}
 
-			secret := fmtBytes(kp.SecretKeyBytes())
+			secret := fmtBytes(requireSecretBytes(t, kp))
 			expectedSecret := tc.wantPriv
 			if len(expectedSecret) > keychain.PrivateKeySize()*2 {
 				expectedSecret = expectedSecret[:keychain.PrivateKeySize()*2]
@@ -91,7 +91,7 @@ func TestDeriveFromMnemonicLegacyVectors(t *testing.T) {
 				t.Fatalf("secret mismatch: got %s want %s", secret, expectedSecret)
 			}
 
-			if got := fmtBytes(kp.PublicKeyBytes()); got != tc.wantPub {
+			if got := fmtBytes(requirePublicKeyBytes(t, kp)); got != tc.wantPub {
 				t.Fatalf("public mismatch: got %s want %s", got, tc.wantPub)
 			}
 
@@ -111,6 +111,47 @@ func fmtBytes(b []byte) string {
 	return fmt.Sprintf("%x", b)
 }
 
+type privateKeyer interface {
+	PrivateKeyBytes() []byte
+}
+
+func requirePrivateKeyBytes(t *testing.T, kp Keypair) []byte {
+	t.Helper()
+	priv, ok := kp.(privateKeyer)
+	if !ok {
+		t.Fatalf("keypair does not expose private key bytes")
+	}
+	return priv.PrivateKeyBytes()
+}
+
+func requirePublicKeyBytes(t *testing.T, kp Keypair) []byte {
+	t.Helper()
+	pub, ok := kp.(PublicKeyer)
+	if !ok {
+		t.Fatalf("keypair does not expose public key bytes")
+	}
+	return pub.PublicKeyBytes()
+}
+
+func requireSecretExporter(t *testing.T, kp Keypair) SecretExporter {
+	t.Helper()
+	exporter, ok := kp.(SecretExporter)
+	if !ok {
+		t.Fatalf("keypair does not export secret")
+	}
+	return exporter
+}
+
+func requireSecretBytes(t *testing.T, kp Keypair) []byte {
+	t.Helper()
+	exporter := requireSecretExporter(t, kp)
+	secret, err := exporter.ExportSecret()
+	if err != nil {
+		t.Fatalf("export secret: %v", err)
+	}
+	return secret
+}
+
 func TestGenerateAndBech32RoundTrip(t *testing.T) {
 	schemes := []keychain.Scheme{
 		keychain.SchemeEd25519,
@@ -124,7 +165,7 @@ func TestGenerateAndBech32RoundTrip(t *testing.T) {
 			if err != nil {
 				t.Fatalf("generate: %v", err)
 			}
-			encoded, err := ToBech32(kp)
+			encoded, err := ToBech32FromKeypair(requireSecretExporter(t, kp))
 			if err != nil {
 				t.Fatalf("to bech32: %v", err)
 			}
@@ -169,12 +210,12 @@ func TestFromSecretKeyValidation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("derive: %v", err)
 	}
-	secret := kp.SecretKeyBytes()
+	secret := requireSecretBytes(t, kp)
 	imported, err := FromSecretKey(keychain.SchemeSecp256k1, secret)
 	if err != nil {
 		t.Fatalf("import valid secret: %v", err)
 	}
-	if fmtBytes(imported.PublicKeyBytes()) != fmtBytes(kp.PublicKeyBytes()) {
+	if fmtBytes(requirePublicKeyBytes(t, imported)) != fmtBytes(requirePublicKeyBytes(t, kp)) {
 		t.Fatalf("public key mismatch after import")
 	}
 }
@@ -234,7 +275,7 @@ func TestDeriveFromMnemonicKeytoolVectors(t *testing.T) {
 				t.Fatalf("address: %v", err)
 			}
 
-			gotPub := kp.PublicKeyBase64()
+			gotPub := PublicKeyBase64(kp.Scheme(), requirePublicKeyBytes(t, kp))
 			if gotPub != tc.wantPub {
 				t.Fatalf("pubkey mismatch: got %s want %s", gotPub, tc.wantPub)
 			}
@@ -366,13 +407,14 @@ func TestDeriveFromMnemonicVectors(t *testing.T) {
 			if addr != tc.wantAddr {
 				t.Fatalf("addr mismatch: got %s want %s", addr, tc.wantAddr)
 			}
+			pubBytes := requirePublicKeyBytes(t, kp)
 			if tc.wantPubFlag != "" {
-				if got := kp.PublicKeyBase64(); got != tc.wantPubFlag {
+				if got := PublicKeyBase64(kp.Scheme(), pubBytes); got != tc.wantPubFlag {
 					t.Fatalf("flagged pub mismatch: got %s want %s", got, tc.wantPubFlag)
 				}
 			}
 			if tc.wantPubRaw != "" {
-				if got := base64.StdEncoding.EncodeToString(kp.PublicKeyBytes()); got != tc.wantPubRaw {
+				if got := base64.StdEncoding.EncodeToString(pubBytes); got != tc.wantPubRaw {
 					t.Fatalf("raw pub mismatch: got %s want %s", got, tc.wantPubRaw)
 				}
 			}
@@ -432,7 +474,7 @@ func TestDeriveFromMnemonicWithPassphrase(t *testing.T) {
 			if addr != tc.wantAddr {
 				t.Fatalf("addr mismatch: got %s want %s", addr, tc.wantAddr)
 			}
-			if got := kp.PublicKeyBase64(); got != tc.wantPub {
+			if got := PublicKeyBase64(kp.Scheme(), requirePublicKeyBytes(t, kp)); got != tc.wantPub {
 				t.Fatalf("pub mismatch: got %s want %s", got, tc.wantPub)
 			}
 		})

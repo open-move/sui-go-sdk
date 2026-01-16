@@ -4,12 +4,11 @@ import (
 	"bytes"
 	cryptoed25519 "crypto/ed25519"
 	"crypto/rand"
-	"encoding/base64"
 	"encoding/binary"
 	"fmt"
 
-	"github.com/0xdraco/sui-go-sdk/cryptography/personalmsg"
-	"github.com/0xdraco/sui-go-sdk/keychain"
+	"github.com/open-move/sui-go-sdk/cryptography/personalmsg"
+	"github.com/open-move/sui-go-sdk/keychain"
 )
 
 const seedSize = 32
@@ -40,12 +39,6 @@ func (k Keypair) SuiAddress() (string, error) {
 	return keychain.AddressFromPublicKey(keychain.SchemeEd25519, k.PublicKey)
 }
 
-func (k Keypair) PublicKeyBase64() string {
-	pub := k.PublicKeyBytes()
-	payload := append([]byte{keychain.SchemeEd25519.AddressFlag()}, pub...)
-	return base64.StdEncoding.EncodeToString(payload)
-}
-
 // Extracts the 32-byte seed component from the expanded
 // Ed25519 private key.
 func (k Keypair) SecretKeyBytes() []byte {
@@ -54,6 +47,10 @@ func (k Keypair) SecretKeyBytes() []byte {
 
 	copy(out, seed)
 	return out
+}
+
+func (k Keypair) ExportSecret() ([]byte, error) {
+	return k.SecretKeyBytes(), nil
 }
 
 func (k Keypair) signData(data []byte) ([]byte, error) {
@@ -65,24 +62,23 @@ func (k Keypair) signData(data []byte) ([]byte, error) {
 	return append([]byte(nil), signature...), nil
 }
 
-func (k Keypair) verifyDigest(digest [32]byte, signature []byte) error {
-	if len(k.PrivateKey) != cryptoed25519.PrivateKeySize {
-		return fmt.Errorf("ed25519: invalid private key length %d", len(k.PrivateKey))
+func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
+	if len(publicKey) != cryptoed25519.PublicKeySize {
+		return fmt.Errorf("ed25519: invalid public key length %d", len(publicKey))
 	}
 
-	pub := k.PublicKeyBytes()
-	expected := 1 + cryptoed25519.SignatureSize + len(pub)
+	expected := 1 + cryptoed25519.SignatureSize + len(publicKey)
 	if len(signature) != expected {
 		return fmt.Errorf("ed25519: invalid signature length %d", len(signature))
 	}
 	if signature[0] != keychain.SchemeEd25519.AddressFlag() {
 		return fmt.Errorf("ed25519: unexpected signature flag 0x%02x", signature[0])
 	}
-	if !bytes.Equal(signature[1+cryptoed25519.SignatureSize:], pub) {
+	if !bytes.Equal(signature[1+cryptoed25519.SignatureSize:], publicKey) {
 		return fmt.Errorf("ed25519: mismatched public key")
 	}
 	rawSig := signature[1 : 1+cryptoed25519.SignatureSize]
-	if !cryptoed25519.Verify(k.PublicKey, digest[:], rawSig) {
+	if !cryptoed25519.Verify(cryptoed25519.PublicKey(publicKey), digest[:], rawSig) {
 		return fmt.Errorf("ed25519: verification failed")
 	}
 
@@ -99,7 +95,13 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 }
 
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
-	return personalmsg.Verify(keychain.SchemeEd25519, message, signature, k.verifyDigest)
+	return VerifyPersonalMessage(k.PublicKeyBytes(), message, signature)
+}
+
+func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
+	return personalmsg.Verify(keychain.SchemeEd25519, message, signature, func(digest [32]byte, signature []byte) error {
+		return verifyDigest(publicKey, digest, signature)
+	})
 }
 
 func Generate() (*Keypair, error) {

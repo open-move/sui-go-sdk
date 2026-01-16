@@ -1,14 +1,22 @@
 package keypair
 
-import "github.com/0xdraco/sui-go-sdk/keychain"
+import "github.com/open-move/sui-go-sdk/keychain"
 
 type Keypair interface {
 	Scheme() keychain.Scheme
-	PublicKeyBytes() []byte
-	PrivateKeyBytes() []byte
-	SecretKeyBytes() []byte
 	SuiAddress() (string, error)
-	PublicKeyBase64() string
 	SignPersonalMessage(message []byte) ([]byte, error)
 	VerifyPersonalMessage(message []byte, signature []byte) error
+}
+
+// PublicKeyer exposes raw public key bytes for a keypair.
+// It is intentionally separate from the base Keypair interface.
+type PublicKeyer interface {
+	PublicKeyBytes() []byte
+}
+
+// SecretExporter opts into exporting the 32-byte secret material for encoding.
+type SecretExporter interface {
+	Scheme() keychain.Scheme
+	ExportSecret() ([]byte, error)
 }

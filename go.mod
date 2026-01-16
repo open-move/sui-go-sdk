@@ -1,4 +1,4 @@
-module github.com/0xdraco/sui-go-sdk
+module github.com/open-move/sui-go-sdk
 
 go 1.24.2
 

@@ -5,7 +5,7 @@ A Go client SDK for the public Sui gRPC (currently) endpoints. It wraps the gene
 ## Installation
 
 ```
-go get github.com/0xdraco/sui-go-sdk
+go get github.com/open-move/sui-go-sdk
 ```
 
 ## Features

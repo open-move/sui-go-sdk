@@ -8,13 +8,12 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"math/big"
 
-	"github.com/0xdraco/sui-go-sdk/cryptography/personalmsg"
-	"github.com/0xdraco/sui-go-sdk/keychain"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
+	"github.com/open-move/sui-go-sdk/cryptography/personalmsg"
+	"github.com/open-move/sui-go-sdk/keychain"
 )
 
 type Keypair struct {
@@ -51,9 +50,8 @@ func (k Keypair) SecretKeyBytes() []byte {
 	return k.PrivateKeyBytes()
 }
 
-func (k Keypair) PublicKeyBase64() string {
-	payload := append([]byte{keychain.SchemeSecp256r1.AddressFlag()}, k.PublicKeyBytes()...)
-	return base64.StdEncoding.EncodeToString(payload)
+func (k Keypair) ExportSecret() ([]byte, error) {
+	return k.SecretKeyBytes(), nil
 }
 
 func (k Keypair) signData(data []byte) ([]byte, error) {
@@ -68,27 +66,29 @@ func (k Keypair) signData(data []byte) ([]byte, error) {
 	return sig, nil
 }
 
-func (k Keypair) verifyDigest(digest [32]byte, signature []byte) error {
-	// if k.PrivateKey == nil {
-	// 	return fmt.Errorf("secp256r1: private key is nil")
-	// }
+func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
+	curve := elliptic.P256()
+	x, y := elliptic.UnmarshalCompressed(curve, publicKey)
+	if x == nil || y == nil {
+		return fmt.Errorf("secp256r1: invalid public key")
+	}
+	pubKey := &ecdsa.PublicKey{Curve: curve, X: x, Y: y}
 
-	pub := k.PublicKeyBytes()
-	expectedLen := 1 + 64 + len(pub)
+	expectedLen := 1 + 64 + len(publicKey)
 	if len(signature) != expectedLen {
 		return fmt.Errorf("secp256r1: invalid signature length %d", len(signature))
 	}
 	if signature[0] != keychain.SchemeSecp256r1.AddressFlag() {
 		return fmt.Errorf("secp256r1: unexpected signature flag 0x%02x", signature[0])
 	}
-	if !bytes.Equal(signature[65:], pub) {
+	if !bytes.Equal(signature[65:], publicKey) {
 		return fmt.Errorf("secp256r1: mismatched public key")
 	}
 
 	r := new(big.Int).SetBytes(signature[1:33])
 	s := new(big.Int).SetBytes(signature[33:65])
 	msgHash := sha256.Sum256(digest[:])
-	if !ecdsa.Verify(k.PublicKey, msgHash[:], r, s) {
+	if !ecdsa.Verify(pubKey, msgHash[:], r, s) {
 		return fmt.Errorf("secp256r1: verification failed")
 	}
 
@@ -105,7 +105,13 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 }
 
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
-	return personalmsg.Verify(keychain.SchemeSecp256r1, message, signature, k.verifyDigest)
+	return VerifyPersonalMessage(k.PublicKeyBytes(), message, signature)
+}
+
+func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
+	return personalmsg.Verify(keychain.SchemeSecp256r1, message, signature, func(digest [32]byte, signature []byte) error {
+		return verifyDigest(publicKey, digest, signature)
+	})
 }
 
 func Generate() (*Keypair, error) {
@@ -115,6 +121,7 @@ func Generate() (*Keypair, error) {
 	}
 	return &Keypair{
 		PrivateKey: priv,
+		PublicKey:  &priv.PublicKey,
 	}, nil
 }
 

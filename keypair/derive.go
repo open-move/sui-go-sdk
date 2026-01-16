@@ -1,12 +1,13 @@
 package keypair
 
 import (
+	"encoding/base64"
 	"fmt"
 
-	ed25519keys "github.com/0xdraco/sui-go-sdk/cryptography/ed25519"
-	secp256k1keys "github.com/0xdraco/sui-go-sdk/cryptography/secp256k1"
-	secp256r1keys "github.com/0xdraco/sui-go-sdk/cryptography/secp256r1"
-	"github.com/0xdraco/sui-go-sdk/keychain"
+	ed25519keys "github.com/open-move/sui-go-sdk/cryptography/ed25519"
+	secp256k1keys "github.com/open-move/sui-go-sdk/cryptography/secp256k1"
+	secp256r1keys "github.com/open-move/sui-go-sdk/cryptography/secp256r1"
+	"github.com/open-move/sui-go-sdk/keychain"
 )
 
 func DeriveFromMnemonic(s keychain.Scheme, mnemonic, passphrase, path string) (Keypair, error) {
@@ -68,15 +69,45 @@ func FromBech32(encoded string) (Keypair, error) {
 	return kp, err
 }
 
-func ToBech32(k Keypair) (string, error) {
-	secret := k.SecretKeyBytes()
+func ToBech32(s keychain.Scheme, secret []byte) (string, error) {
 	if len(secret) != keychain.PrivateKeySize() {
 		return "", fmt.Errorf("export: expected %d secret bytes, got %d", keychain.PrivateKeySize(), len(secret))
 	}
+	secretCopy := append([]byte(nil), secret...)
+	encoded, err := keychain.EncodePrivateKey(s, secretCopy)
+	zero(secretCopy)
+	return encoded, err
+}
 
-	encoded, err := keychain.EncodePrivateKey(k.Scheme(), secret)
+func ToBech32FromKeypair(k SecretExporter) (string, error) {
+	if k == nil {
+		return "", fmt.Errorf("export: nil keypair")
+	}
+	secret, err := k.ExportSecret()
+	if err != nil {
+		return "", err
+	}
+	encoded, err := ToBech32(k.Scheme(), secret)
 	zero(secret)
 	return encoded, err
+}
+
+func PublicKeyBase64(s keychain.Scheme, publicKey []byte) string {
+	payload := append([]byte{s.AddressFlag()}, publicKey...)
+	return base64.StdEncoding.EncodeToString(payload)
+}
+
+func VerifyPersonalMessage(s keychain.Scheme, publicKey []byte, message []byte, signature []byte) error {
+	switch s {
+	case keychain.SchemeEd25519:
+		return ed25519keys.VerifyPersonalMessage(publicKey, message, signature)
+	case keychain.SchemeSecp256k1:
+		return secp256k1keys.VerifyPersonalMessage(publicKey, message, signature)
+	case keychain.SchemeSecp256r1:
+		return secp256r1keys.VerifyPersonalMessage(publicKey, message, signature)
+	default:
+		return fmt.Errorf("verify personal message: unsupported scheme %d", s)
+	}
 }
 
 func zero(b []byte) {
