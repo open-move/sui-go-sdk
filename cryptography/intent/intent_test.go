@@ -6,8 +6,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/0xdraco/sui-go-sdk/types"
 	"github.com/iotaledger/bcs-go"
+	"github.com/open-move/sui-go-sdk/types"
 	"golang.org/x/crypto/blake2b"
 )
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/0xdraco/sui-go-sdk/keychain"
-	"github.com/0xdraco/sui-go-sdk/keypair"
+	"github.com/open-move/sui-go-sdk/keychain"
+	"github.com/open-move/sui-go-sdk/keypair"
 )
 
 type personalSigner interface {

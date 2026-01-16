@@ -1,15 +1,13 @@
-package examples
+package grpc
 
 import (
 	"context"
 	"testing"
-
-	sui "github.com/0xdraco/sui-go-sdk/grpc"
 )
 
 func TestGetTransaction(t *testing.T) {
 	ctx := context.Background()
-	client, err := sui.NewMainnetClient(ctx)
+	client, err := NewMainnetClient(ctx)
 	requireNoError(t, err, "NewMainnetClient")
 	t.Cleanup(func() {
 		client.Close()

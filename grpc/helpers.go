@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	v2 "github.com/0xdraco/sui-go-sdk/proto/sui/rpc/v2"
+	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
 	"google.golang.org/grpc"
 	grpcstatus "google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"

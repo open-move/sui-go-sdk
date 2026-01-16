@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/0xdraco/sui-go-sdk/cryptography/intent"
-	"github.com/0xdraco/sui-go-sdk/keychain"
-	"github.com/0xdraco/sui-go-sdk/types"
+	"github.com/open-move/sui-go-sdk/cryptography/intent"
+	"github.com/open-move/sui-go-sdk/keychain"
+	"github.com/open-move/sui-go-sdk/types"
 )
 
 var ErrEmptyPersonalMessage = errors.New("personal message: empty message")

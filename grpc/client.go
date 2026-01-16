@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	v2 "github.com/0xdraco/sui-go-sdk/proto/sui/rpc/v2"
+	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
