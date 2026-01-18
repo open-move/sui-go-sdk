@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
+	"github.com/open-move/sui-go-sdk/utils"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
@@ -96,8 +97,8 @@ func (c *GRPCClient) SelectCoins(ctx context.Context, owner string, coinType str
 	}
 
 	req := &v2.ListOwnedObjectsRequest{
-		Owner:      stringPtr(owner),
-		ObjectType: stringPtr(coinType),
+		Owner:      utils.StringPtr(owner),
+		ObjectType: utils.StringPtr(coinType),
 	}
 	if cfg.pageSize > 0 {
 		size := cfg.pageSize
@@ -174,8 +175,8 @@ func (c *GRPCClient) SelectUpToNLargestCoins(ctx context.Context, owner string, 
 	}
 
 	req := &v2.ListOwnedObjectsRequest{
-		Owner:      stringPtr(owner),
-		ObjectType: stringPtr(coinType),
+		Owner:      utils.StringPtr(owner),
+		ObjectType: utils.StringPtr(coinType),
 	}
 	if cfg.pageSize > 0 {
 		size := cfg.pageSize
