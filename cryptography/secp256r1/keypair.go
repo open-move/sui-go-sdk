@@ -13,6 +13,7 @@ import (
 
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/open-move/sui-go-sdk/cryptography/personalmsg"
+	"github.com/open-move/sui-go-sdk/cryptography/transaction"
 	"github.com/open-move/sui-go-sdk/keychain"
 )
 
@@ -99,6 +100,15 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeSecp256r1,
 		message,
+		k.PublicKeyBytes(),
+		k.signData,
+	)
+}
+
+func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
+	return transaction.Sign(
+		keychain.SchemeSecp256r1,
+		txBytes,
 		k.PublicKeyBytes(),
 		k.signData,
 	)

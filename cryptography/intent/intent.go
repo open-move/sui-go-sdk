@@ -177,3 +177,18 @@ func HashIntentMessage[T any](message IntentMessage[T]) ([32]byte, error) {
 
 	return blake2b.Sum256(serialized), nil
 }
+
+// HashIntentBytes hashes a raw payload with an intent prefix without
+// re-encoding the payload as BCS.
+func HashIntentBytes(scope IntentScope, payload []byte) ([32]byte, error) {
+	intent := DefaultIntent().WithScope(scope)
+	if err := intent.Validate(); err != nil {
+		return [32]byte{}, err
+	}
+
+	intentBytes := intent.Bytes()
+	combined := make([]byte, 0, len(intentBytes)+len(payload))
+	combined = append(combined, intentBytes[:]...)
+	combined = append(combined, payload...)
+	return blake2b.Sum256(combined), nil
+}

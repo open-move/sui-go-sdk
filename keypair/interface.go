@@ -5,6 +5,7 @@ import "github.com/open-move/sui-go-sdk/keychain"
 type Keypair interface {
 	Scheme() keychain.Scheme
 	SuiAddress() (string, error)
+	SignTransaction(txBytes []byte) ([]byte, error)
 	SignPersonalMessage(message []byte) ([]byte, error)
 	VerifyPersonalMessage(message []byte, signature []byte) error
 }
