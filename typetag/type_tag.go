@@ -1,6 +1,9 @@
 package typetag
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/open-move/sui-go-sdk/types"
 )
 
@@ -77,5 +80,43 @@ func NewStructTag(address types.Address, module, name string, typeParams []TypeT
 		Module:     module,
 		Name:       name,
 		TypeParams: append([]TypeTag(nil), typeParams...),
+	}
+}
+
+func (t TypeTag) String() string {
+	switch {
+	case t.Bool != nil:
+		return "bool"
+	case t.U8 != nil:
+		return "u8"
+	case t.U16 != nil:
+		return "u16"
+	case t.U32 != nil:
+		return "u32"
+	case t.U64 != nil:
+		return "u64"
+	case t.U128 != nil:
+		return "u128"
+	case t.U256 != nil:
+		return "u256"
+	case t.Address != nil:
+		return "address"
+	case t.Signer != nil:
+		return "signer"
+	case t.Vector != nil:
+		return fmt.Sprintf("vector<%s>", t.Vector.String())
+	case t.Struct != nil:
+		structTag := t.Struct
+		params := make([]string, len(structTag.TypeParams))
+		for i, param := range structTag.TypeParams {
+			params[i] = param.String()
+		}
+		base := fmt.Sprintf("%s::%s::%s", structTag.Address.String(), structTag.Module, structTag.Name)
+		if len(params) == 0 {
+			return base
+		}
+		return fmt.Sprintf("%s<%s>", base, strings.Join(params, ", "))
+	default:
+		panic("invalid type tag")
 	}
 }

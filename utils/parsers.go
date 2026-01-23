@@ -137,52 +137,6 @@ func ParseTypeTag(input string) (typetag.TypeTag, error) {
 	return typetag.TypeTagStruct(typetag.NewStructTag(addr, module, name, typeParams)), nil
 }
 
-func TypeTagString(tag typetag.TypeTag) (string, error) {
-	switch {
-	case tag.Bool != nil:
-		return "bool", nil
-	case tag.U8 != nil:
-		return "u8", nil
-	case tag.U16 != nil:
-		return "u16", nil
-	case tag.U32 != nil:
-		return "u32", nil
-	case tag.U64 != nil:
-		return "u64", nil
-	case tag.U128 != nil:
-		return "u128", nil
-	case tag.U256 != nil:
-		return "u256", nil
-	case tag.Address != nil:
-		return "address", nil
-	case tag.Signer != nil:
-		return "signer", nil
-	case tag.Vector != nil:
-		inner, err := TypeTagString(*tag.Vector)
-		if err != nil {
-			return "", err
-		}
-		return fmt.Sprintf("vector<%s>", inner), nil
-	case tag.Struct != nil:
-		structTag := tag.Struct
-		params := make([]string, len(structTag.TypeParams))
-		for i, param := range structTag.TypeParams {
-			paramStr, err := TypeTagString(param)
-			if err != nil {
-				return "", err
-			}
-			params[i] = paramStr
-		}
-		base := fmt.Sprintf("%s::%s::%s", structTag.Address.String(), structTag.Module, structTag.Name)
-		if len(params) == 0 {
-			return base, nil
-		}
-		return fmt.Sprintf("%s<%s>", base, strings.Join(params, ", ")), nil
-	default:
-		return "", fmt.Errorf("invalid type tag")
-	}
-}
-
 func splitStructType(input string) (string, string, bool, error) {
 	openIdx := strings.Index(input, "<")
 	if openIdx == -1 {

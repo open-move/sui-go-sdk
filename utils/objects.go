@@ -47,15 +47,11 @@ func DeriveDynamicFieldID(parentID string, typeTag string, key []byte) (string, 
 }
 
 func DeriveObjectID(parentID string, typeTag string, key []byte) (string, error) {
-	parsedTag, err := ParseTypeTag(typeTag)
-	if err != nil {
-		return "", err
-	}
-	normalized, err := TypeTagString(parsedTag)
+	tag, err := ParseTypeTag(typeTag)
 	if err != nil {
 		return "", err
 	}
 
-	derivedType := fmt.Sprintf("0x2::derived_object::DerivedObjectKey<%s>", normalized)
+	derivedType := fmt.Sprintf("0x2::derived_object::DerivedObjectKey<%s>", tag.String())
 	return DeriveDynamicFieldID(parentID, derivedType, key)
 }
