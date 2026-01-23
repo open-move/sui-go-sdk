@@ -18,48 +18,37 @@ const seedSize = 32
 var slip10Key = []byte("ed25519 seed")
 
 type Keypair struct {
-	PrivateKey cryptoed25519.PrivateKey
-	PublicKey  cryptoed25519.PublicKey
-	ChainCode  []byte
-	Path       keychain.DerivationPath
+	privateKey cryptoed25519.PrivateKey
+	publicKey  cryptoed25519.PublicKey
+	chainCode  []byte
+	path       keychain.DerivationPath
 }
 
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeEd25519
 }
 
-func (k Keypair) PrivateKeyBytes() []byte {
-	return append(cryptoed25519.PrivateKey(nil), k.PrivateKey...)
-}
-
-func (k Keypair) PublicKeyBytes() []byte {
-	return append(cryptoed25519.PublicKey(nil), k.PublicKey...)
+func (k Keypair) PublicKey() []byte {
+	return append(cryptoed25519.PublicKey(nil), k.publicKey...)
 }
 
 func (k Keypair) SuiAddress() (string, error) {
-	return keychain.AddressFromPublicKey(keychain.SchemeEd25519, k.PublicKey)
-}
-
-// Extracts the 32-byte seed component from the expanded
-// Ed25519 private key.
-func (k Keypair) SecretKeyBytes() []byte {
-	seed := k.PrivateKey.Seed()
-	out := make([]byte, len(seed))
-
-	copy(out, seed)
-	return out
+	return keychain.AddressFromPublicKey(keychain.SchemeEd25519, k.publicKey)
 }
 
 func (k Keypair) ExportSecret() ([]byte, error) {
-	return k.SecretKeyBytes(), nil
+	seed := k.privateKey.Seed()
+	out := make([]byte, len(seed))
+	copy(out, seed)
+	return out, nil
 }
 
 func (k Keypair) signData(data []byte) ([]byte, error) {
-	if len(k.PrivateKey) != cryptoed25519.PrivateKeySize {
-		return nil, fmt.Errorf("ed25519: invalid private key length %d", len(k.PrivateKey))
+	if len(k.privateKey) != cryptoed25519.PrivateKeySize {
+		return nil, fmt.Errorf("ed25519: invalid private key length %d", len(k.privateKey))
 	}
 
-	signature := cryptoed25519.Sign(k.PrivateKey, data)
+	signature := cryptoed25519.Sign(k.privateKey, data)
 	return append([]byte(nil), signature...), nil
 }
 
@@ -90,7 +79,7 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeEd25519,
 		message,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
@@ -99,13 +88,13 @@ func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	return transaction.Sign(
 		keychain.SchemeEd25519,
 		txBytes,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
 
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
-	return VerifyPersonalMessage(k.PublicKeyBytes(), message, signature)
+	return VerifyPersonalMessage(k.PublicKey(), message, signature)
 }
 
 func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
@@ -121,8 +110,8 @@ func Generate() (*Keypair, error) {
 	}
 
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  pub,
+		privateKey: priv,
+		publicKey:  pub,
 	}, nil
 }
 
@@ -136,8 +125,8 @@ func FromSecretKey(seed []byte) (*Keypair, error) {
 	priv := cryptoed25519.NewKeyFromSeed(seed)
 	pub := cryptoed25519.PublicKey(priv[32:])
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  pub,
+		privateKey: priv,
+		publicKey:  pub,
 	}, nil
 }
 
@@ -171,10 +160,10 @@ func Derive(seed []byte, path keychain.DerivationPath) (*Keypair, error) {
 	privateKey := cryptoed25519.NewKeyFromSeed(key)
 	publicKey := cryptoed25519.PublicKey(privateKey[32:])
 	return &Keypair{
-		PrivateKey: privateKey,
-		PublicKey:  publicKey,
-		ChainCode:  append([]byte{}, chain...),
-		Path:       path,
+		privateKey: privateKey,
+		publicKey:  publicKey,
+		chainCode:  append([]byte{}, chain...),
+		path:       path,
 	}, nil
 }
 

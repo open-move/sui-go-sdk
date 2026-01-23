@@ -14,43 +14,41 @@ import (
 )
 
 type Keypair struct {
-	PrivateKey *secp256k1.PrivateKey
-	PublicKey  *secp256k1.PublicKey
-	ChainCode  []byte
-	Path       keychain.DerivationPath
+	privateKey *secp256k1.PrivateKey
+	publicKey  *secp256k1.PublicKey
+	chainCode  []byte
+	path       keychain.DerivationPath
 }
 
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeSecp256k1
 }
 
-func (k Keypair) PrivateKeyBytes() []byte {
-	return k.PrivateKey.Serialize()
-}
-
-func (k Keypair) PublicKeyBytes() []byte {
-	return k.PublicKey.SerializeCompressed()
+func (k Keypair) PublicKey() []byte {
+	if k.publicKey == nil {
+		return nil
+	}
+	return append([]byte(nil), k.publicKey.SerializeCompressed()...)
 }
 
 func (k Keypair) SuiAddress() (string, error) {
-	return keychain.AddressFromPublicKey(keychain.SchemeSecp256k1, k.PublicKeyBytes())
-}
-
-func (k Keypair) SecretKeyBytes() []byte {
-	return k.PrivateKey.Serialize()
+	return keychain.AddressFromPublicKey(keychain.SchemeSecp256k1, k.PublicKey())
 }
 
 func (k Keypair) ExportSecret() ([]byte, error) {
-	return k.SecretKeyBytes(), nil
+	if k.privateKey == nil {
+		return nil, fmt.Errorf("secp256k1: private key is nil")
+	}
+	return append([]byte(nil), k.privateKey.Serialize()...), nil
 }
 
 func (k Keypair) signData(data []byte) ([]byte, error) {
-	if k.PrivateKey == nil {
+	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256k1: private key is nil")
 	}
 
 	hash := sha256.Sum256(data)
-	sig := secp256k1ecdsa.Sign(k.PrivateKey, hash[:])
+	sig := secp256k1ecdsa.Sign(k.privateKey, hash[:])
 	if sig == nil {
 		return nil, fmt.Errorf("secp256k1: signing failed")
 	}
@@ -108,7 +106,7 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeSecp256k1,
 		message,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
@@ -117,13 +115,13 @@ func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	return transaction.Sign(
 		keychain.SchemeSecp256k1,
 		txBytes,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
 
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
-	return VerifyPersonalMessage(k.PublicKeyBytes(), message, signature)
+	return VerifyPersonalMessage(k.PublicKey(), message, signature)
 }
 
 func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
@@ -139,8 +137,8 @@ func Generate() (*Keypair, error) {
 	}
 
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  priv.PubKey(),
+		privateKey: priv,
+		publicKey:  priv.PubKey(),
 	}, nil
 }
 
@@ -161,8 +159,8 @@ func FromSecretKey(secret []byte) (*Keypair, error) {
 	}
 
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  priv.PubKey(),
+		privateKey: priv,
+		publicKey:  priv.PubKey(),
 	}, nil
 }
 
@@ -200,9 +198,9 @@ func Derive(seed []byte, path keychain.DerivationPath) (*Keypair, error) {
 
 	pubKey := privKey.PubKey()
 	return &Keypair{
-		PrivateKey: privKey,
-		PublicKey:  pubKey,
-		ChainCode:  append([]byte{}, chain...),
-		Path:       path,
+		privateKey: privKey,
+		publicKey:  pubKey,
+		chainCode:  append([]byte{}, chain...),
+		path:       path,
 	}, nil
 }

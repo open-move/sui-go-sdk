@@ -77,10 +77,6 @@ func TestDeriveFromMnemonicLegacyVectors(t *testing.T) {
 				t.Fatalf("derive keypair: %v", err)
 			}
 
-			if got := fmtBytes(requirePrivateKeyBytes(t, kp)); got != tc.wantPriv {
-				t.Fatalf("private mismatch: got %s want %s", got, tc.wantPriv)
-			}
-
 			secret := fmtBytes(requireSecretBytes(t, kp))
 			expectedSecret := tc.wantPriv
 			if len(expectedSecret) > keychain.PrivateKeySize()*2 {
@@ -91,7 +87,7 @@ func TestDeriveFromMnemonicLegacyVectors(t *testing.T) {
 				t.Fatalf("secret mismatch: got %s want %s", secret, expectedSecret)
 			}
 
-			if got := fmtBytes(requirePublicKeyBytes(t, kp)); got != tc.wantPub {
+			if got := fmtBytes(requirePublicKey(t, kp)); got != tc.wantPub {
 				t.Fatalf("public mismatch: got %s want %s", got, tc.wantPub)
 			}
 
@@ -111,26 +107,13 @@ func fmtBytes(b []byte) string {
 	return fmt.Sprintf("%x", b)
 }
 
-type privateKeyer interface {
-	PrivateKeyBytes() []byte
-}
-
-func requirePrivateKeyBytes(t *testing.T, kp Keypair) []byte {
-	t.Helper()
-	priv, ok := kp.(privateKeyer)
-	if !ok {
-		t.Fatalf("keypair does not expose private key bytes")
-	}
-	return priv.PrivateKeyBytes()
-}
-
-func requirePublicKeyBytes(t *testing.T, kp Keypair) []byte {
+func requirePublicKey(t *testing.T, kp Keypair) []byte {
 	t.Helper()
 	pub, ok := kp.(PublicKeyer)
 	if !ok {
-		t.Fatalf("keypair does not expose public key bytes")
+		t.Fatalf("keypair does not expose public key")
 	}
-	return pub.PublicKeyBytes()
+	return pub.PublicKey()
 }
 
 func requireSecretExporter(t *testing.T, kp Keypair) SecretExporter {
@@ -215,7 +198,7 @@ func TestFromSecretKeyValidation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("import valid secret: %v", err)
 	}
-	if fmtBytes(requirePublicKeyBytes(t, imported)) != fmtBytes(requirePublicKeyBytes(t, kp)) {
+	if fmtBytes(requirePublicKey(t, imported)) != fmtBytes(requirePublicKey(t, kp)) {
 		t.Fatalf("public key mismatch after import")
 	}
 }
@@ -275,7 +258,7 @@ func TestDeriveFromMnemonicKeytoolVectors(t *testing.T) {
 				t.Fatalf("address: %v", err)
 			}
 
-			gotPub := PublicKeyBase64(kp.Scheme(), requirePublicKeyBytes(t, kp))
+			gotPub := PublicKeyBase64(kp.Scheme(), requirePublicKey(t, kp))
 			if gotPub != tc.wantPub {
 				t.Fatalf("pubkey mismatch: got %s want %s", gotPub, tc.wantPub)
 			}
@@ -407,7 +390,7 @@ func TestDeriveFromMnemonicVectors(t *testing.T) {
 			if addr != tc.wantAddr {
 				t.Fatalf("addr mismatch: got %s want %s", addr, tc.wantAddr)
 			}
-			pubBytes := requirePublicKeyBytes(t, kp)
+			pubBytes := requirePublicKey(t, kp)
 			if tc.wantPubFlag != "" {
 				if got := PublicKeyBase64(kp.Scheme(), pubBytes); got != tc.wantPubFlag {
 					t.Fatalf("flagged pub mismatch: got %s want %s", got, tc.wantPubFlag)
@@ -474,7 +457,7 @@ func TestDeriveFromMnemonicWithPassphrase(t *testing.T) {
 			if addr != tc.wantAddr {
 				t.Fatalf("addr mismatch: got %s want %s", addr, tc.wantAddr)
 			}
-			if got := PublicKeyBase64(kp.Scheme(), requirePublicKeyBytes(t, kp)); got != tc.wantPub {
+			if got := PublicKeyBase64(kp.Scheme(), requirePublicKey(t, kp)); got != tc.wantPub {
 				t.Fatalf("pub mismatch: got %s want %s", got, tc.wantPub)
 			}
 		})

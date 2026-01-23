@@ -18,49 +18,50 @@ import (
 )
 
 type Keypair struct {
-	PrivateKey *ecdsa.PrivateKey
-	PublicKey  *ecdsa.PublicKey
-	ChainCode  []byte
-	Path       keychain.DerivationPath
+	privateKey *ecdsa.PrivateKey
+	publicKey  *ecdsa.PublicKey
+	chainCode  []byte
+	path       keychain.DerivationPath
 }
 
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeSecp256r1
 }
 
-func (k Keypair) PrivateKeyBytes() []byte {
-	b := k.PrivateKey.D.Bytes()
+func (k Keypair) PublicKey() []byte {
+	curve := elliptic.P256()
+	if k.publicKey != nil {
+		return append([]byte(nil), elliptic.MarshalCompressed(curve, k.publicKey.X, k.publicKey.Y)...)
+	}
+	if k.privateKey == nil {
+		return nil
+	}
+	return append([]byte(nil), elliptic.MarshalCompressed(curve, k.privateKey.X, k.privateKey.Y)...)
+}
+
+func (k Keypair) SuiAddress() (string, error) {
+	return keychain.AddressFromPublicKey(keychain.SchemeSecp256r1, k.PublicKey())
+}
+
+func (k Keypair) ExportSecret() ([]byte, error) {
+	if k.privateKey == nil {
+		return nil, fmt.Errorf("secp256r1: private key is nil")
+	}
+	b := k.privateKey.D.Bytes()
 	if len(b) < 32 {
 		padded := make([]byte, 32)
 		copy(padded[32-len(b):], b)
 		b = padded
 	}
-	return b
-}
-
-func (k Keypair) PublicKeyBytes() []byte {
-	curve := elliptic.P256()
-	return elliptic.MarshalCompressed(curve, k.PrivateKey.X, k.PrivateKey.Y)
-}
-
-func (k Keypair) SuiAddress() (string, error) {
-	return keychain.AddressFromPublicKey(keychain.SchemeSecp256r1, k.PublicKeyBytes())
-}
-
-func (k Keypair) SecretKeyBytes() []byte {
-	return k.PrivateKeyBytes()
-}
-
-func (k Keypair) ExportSecret() ([]byte, error) {
-	return k.SecretKeyBytes(), nil
+	return append([]byte(nil), b...), nil
 }
 
 func (k Keypair) signData(data []byte) ([]byte, error) {
-	if k.PrivateKey == nil {
+	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256r1: private key is nil")
 	}
 
-	sig, err := deterministicP256Signature(k.PrivateKey, data)
+	sig, err := deterministicP256Signature(k.privateKey, data)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeSecp256r1,
 		message,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
@@ -109,13 +110,13 @@ func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	return transaction.Sign(
 		keychain.SchemeSecp256r1,
 		txBytes,
-		k.PublicKeyBytes(),
+		k.PublicKey(),
 		k.signData,
 	)
 }
 
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
-	return VerifyPersonalMessage(k.PublicKeyBytes(), message, signature)
+	return VerifyPersonalMessage(k.PublicKey(), message, signature)
 }
 
 func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
@@ -130,8 +131,8 @@ func Generate() (*Keypair, error) {
 		return nil, fmt.Errorf("secp256r1: generate key: %w", err)
 	}
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  &priv.PublicKey,
+		privateKey: priv,
+		publicKey:  &priv.PublicKey,
 	}, nil
 }
 
@@ -141,7 +142,7 @@ func FromSecretKey(secret []byte) (*Keypair, error) {
 		return nil, err
 	}
 
-	return &Keypair{PrivateKey: priv, PublicKey: &priv.PublicKey}, nil
+	return &Keypair{privateKey: priv, publicKey: &priv.PublicKey}, nil
 }
 
 // Mirrors Mysten's tooling by running BIP-32 derivation with secp256k1 group
@@ -174,10 +175,10 @@ func Derive(seed []byte, path keychain.DerivationPath) (*Keypair, error) {
 	}
 
 	return &Keypair{
-		PrivateKey: priv,
-		PublicKey:  &priv.PublicKey,
-		ChainCode:  append([]byte{}, chain...),
-		Path:       path,
+		privateKey: priv,
+		publicKey:  &priv.PublicKey,
+		chainCode:  append([]byte{}, chain...),
+		path:       path,
 	}, nil
 }
 
