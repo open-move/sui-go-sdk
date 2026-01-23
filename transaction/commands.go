@@ -3,6 +3,7 @@ package transaction
 import (
 	bcs "github.com/iotaledger/bcs-go"
 	"github.com/open-move/sui-go-sdk/types"
+	"github.com/open-move/sui-go-sdk/typetag"
 	"github.com/open-move/sui-go-sdk/utils"
 )
 
@@ -11,12 +12,12 @@ type MoveCall struct {
 	Package       string
 	Module        string
 	Function      string
-	TypeArguments []TypeTag
+	TypeArguments []string
 	Arguments     []Argument
 }
 
 type MakeMoveVecInput struct {
-	Type     *TypeTag
+	Type     *string
 	Elements []Argument
 }
 
@@ -56,20 +57,37 @@ func (m MoveCall) toProgrammableMoveCall() (ProgrammableMoveCall, error) {
 		return ProgrammableMoveCall{}, err
 	}
 
+	parsedTypeArgs := make([]typetag.TypeTag, len(m.TypeArguments))
+	for i, arg := range m.TypeArguments {
+		parsed, err := utils.ParseTypeTag(arg)
+		if err != nil {
+			return ProgrammableMoveCall{}, err
+		}
+		parsedTypeArgs[i] = parsed
+	}
+
 	return ProgrammableMoveCall{
 		Package:       address,
 		Module:        mod,
 		Function:      fn,
-		TypeArguments: append([]TypeTag(nil), m.TypeArguments...),
+		TypeArguments: parsedTypeArgs,
 		Arguments:     append([]Argument(nil), m.Arguments...),
 	}, nil
 }
 
-func (m MakeMoveVecInput) toCommand() MakeMoveVec {
-	return MakeMoveVec{
-		Type:     optionTypeTag(m.Type),
-		Elements: append([]Argument(nil), m.Elements...),
+func (m MakeMoveVecInput) toCommand() (MakeMoveVec, error) {
+	var tag *typetag.TypeTag
+	if m.Type != nil {
+		parsed, err := utils.ParseTypeTag(*m.Type)
+		if err != nil {
+			return MakeMoveVec{}, err
+		}
+		tag = &parsed
 	}
+	return MakeMoveVec{
+		Type:     optionTypeTag(tag),
+		Elements: append([]Argument(nil), m.Elements...),
+	}, nil
 }
 
 func (p PublishInput) toCommand() (Publish, error) {
@@ -103,12 +121,12 @@ func (u UpgradeInput) toCommand() (Upgrade, error) {
 	}, nil
 }
 
-func optionTypeTag(tag *TypeTag) bcs.Option[TypeTag] {
+func optionTypeTag(tag *typetag.TypeTag) bcs.Option[typetag.TypeTag] {
 	if tag == nil {
-		return bcs.Option[TypeTag]{None: true}
+		return bcs.Option[typetag.TypeTag]{None: true}
 	}
 
-	return bcs.Option[TypeTag]{Some: *tag}
+	return bcs.Option[typetag.TypeTag]{Some: *tag}
 }
 
 func parseAddresses(addresses []string) ([]types.Address, error) {

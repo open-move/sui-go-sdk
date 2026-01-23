@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	bcs "github.com/iotaledger/bcs-go"
-	"github.com/open-move/sui-go-sdk/types"
 	"golang.org/x/crypto/blake2b"
 )
 
@@ -16,7 +15,7 @@ func DeriveDynamicFieldID(parentID string, typeTag string, key []byte) (string, 
 	if err != nil {
 		return "", err
 	}
-	parsedTag, err := types.ParseTypeTag(typeTag)
+	parsedTag, err := ParseTypeTag(typeTag)
 	if err != nil {
 		return "", err
 	}
@@ -48,11 +47,11 @@ func DeriveDynamicFieldID(parentID string, typeTag string, key []byte) (string, 
 }
 
 func DeriveObjectID(parentID string, typeTag string, key []byte) (string, error) {
-	parsedTag, err := types.ParseTypeTag(typeTag)
+	parsedTag, err := ParseTypeTag(typeTag)
 	if err != nil {
 		return "", err
 	}
-	normalized, err := types.TypeTagString(parsedTag)
+	normalized, err := TypeTagString(parsedTag)
 	if err != nil {
 		return "", err
 	}

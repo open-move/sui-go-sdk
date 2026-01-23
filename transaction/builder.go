@@ -300,12 +300,15 @@ func (b *Builder) MoveCall(args MoveCall) Result {
 }
 
 func (b *Builder) MakeMoveVec(args MakeMoveVecInput) Result {
-	command := args.toCommand()
+	command, err := args.toCommand()
+	if err != nil {
+		b.setErr(err)
+		return Result{}
+	}
 	idx := b.addCommand(Command{MakeMoveVec: &command})
 	if idx == nil {
 		return Result{}
 	}
-
 	return Result{Index: *idx}
 }
 

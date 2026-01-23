@@ -34,7 +34,7 @@ func (c *GRPCClient) ListDynamicFields(
 		return nil, err
 	}
 
-	req := &v2.ListDynamicFieldsRequest{Parent: stringPtr(normalized)}
+	req := &v2.ListDynamicFieldsRequest{Parent: utils.StringPtr(normalized)}
 	if options != nil {
 		if options.PageSize != 0 {
 			size := options.PageSize

@@ -1,7 +1,11 @@
-package types
+package typetag
+
+import (
+	"github.com/open-move/sui-go-sdk/types"
+)
 
 type StructTag struct {
-	Address    Address
+	Address    types.Address
 	Module     string
 	Name       string
 	TypeParams []TypeTag
@@ -60,16 +64,14 @@ func TypeTagSigner() TypeTag {
 }
 
 func TypeTagVector(inner TypeTag) TypeTag {
-	innerCopy := inner
-	return TypeTag{Vector: &innerCopy}
+	return TypeTag{Vector: &inner}
 }
 
 func TypeTagStruct(tag StructTag) TypeTag {
-	tagCopy := tag
-	return TypeTag{Struct: &tagCopy}
+	return TypeTag{Struct: &tag}
 }
 
-func NewStructTag(address Address, module, name string, typeParams []TypeTag) StructTag {
+func NewStructTag(address types.Address, module, name string, typeParams []TypeTag) StructTag {
 	return StructTag{
 		Address:    address,
 		Module:     module,
