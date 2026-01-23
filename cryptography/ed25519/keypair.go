@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/open-move/sui-go-sdk/cryptography/personalmsg"
+	"github.com/open-move/sui-go-sdk/cryptography/transaction"
 	"github.com/open-move/sui-go-sdk/keychain"
 )
 
@@ -89,6 +90,15 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeEd25519,
 		message,
+		k.PublicKeyBytes(),
+		k.signData,
+	)
+}
+
+func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
+	return transaction.Sign(
+		keychain.SchemeEd25519,
+		txBytes,
 		k.PublicKeyBytes(),
 		k.signData,
 	)

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
+	"github.com/open-move/sui-go-sdk/utils"
 	"google.golang.org/grpc"
 	grpcstatus "google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -31,7 +32,7 @@ func (c *GRPCClient) GetObject(ctx context.Context, objectID string, options *Ge
 		return nil, errors.New("object ID is empty")
 	}
 
-	req := &v2.GetObjectRequest{ObjectId: stringPtr(objectID)}
+	req := &v2.GetObjectRequest{ObjectId: utils.StringPtr(objectID)}
 	if options != nil {
 		if options.Version != nil {
 			version := *options.Version
@@ -70,7 +71,7 @@ func (c *GRPCClient) GetTransaction(ctx context.Context, digest string, options 
 		return nil, errors.New("transaction digest is empty")
 	}
 
-	req := &v2.GetTransactionRequest{Digest: stringPtr(digest)}
+	req := &v2.GetTransactionRequest{Digest: utils.StringPtr(digest)}
 	if options != nil && options.ReadMask != nil {
 		req.ReadMask = cloneFieldMask(options.ReadMask)
 	}
@@ -211,7 +212,7 @@ func (c *GRPCClient) BatchGetObjects(ctx context.Context, requests []ObjectReque
 		if strings.TrimSpace(req.ObjectID) == "" {
 			return nil, fmt.Errorf("request %d has empty object ID", i)
 		}
-		objReq := &v2.GetObjectRequest{ObjectId: stringPtr(req.ObjectID)}
+		objReq := &v2.GetObjectRequest{ObjectId: utils.StringPtr(req.ObjectID)}
 		if req.Version != nil {
 			version := *req.Version
 			objReq.Version = &version
@@ -247,10 +248,6 @@ func (c *GRPCClient) BatchGetObjects(ctx context.Context, requests []ObjectReque
 	}
 
 	return results, nil
-}
-
-func stringPtr(s string) *string {
-	return &s
 }
 
 func cloneFieldMask(mask *fieldmaskpb.FieldMask) *fieldmaskpb.FieldMask {
