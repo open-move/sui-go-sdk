@@ -244,8 +244,8 @@ func (emb *ExecuteMutationBuilder) Build() (string, map[string]any) {
 	effectsBlock := emb.buildEffectsBlock()
 
 	query := fmt.Sprintf(`
-		mutation ExecuteTransaction($txBytes: String!, $signatures: [String!]!) {
-			executeTransaction(txBytes: $txBytes, signatures: $signatures) {
+		mutation ExecuteTransaction($tx: String!, $sigs: [String!]!) {
+			executeTransaction(transactionDataBcs: $tx, signatures: $sigs) {
 				effects {
 					%s
 				}
@@ -255,8 +255,8 @@ func (emb *ExecuteMutationBuilder) Build() (string, map[string]any) {
 	`, effectsBlock)
 
 	vars := map[string]any{
-		"txBytes":    emb.txBytes,
-		"signatures": emb.signatures,
+		"tx":   emb.txBytes,
+		"sigs": emb.signatures,
 	}
 
 	return query, vars

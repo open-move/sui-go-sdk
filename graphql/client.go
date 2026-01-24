@@ -13,9 +13,9 @@ import (
 
 // Default endpoints for Sui networks
 const (
-	MainnetEndpoint = "https://mainnet.sui.io/graphql"
-	TestnetEndpoint = "https://testnet.sui.io/graphql"
-	DevnetEndpoint  = "https://devnet.sui.io/graphql"
+	MainnetEndpoint = "https://graphql.mainnet.sui.io/graphql"
+	TestnetEndpoint = "https://graphql.testnet.sui.io/graphql"
+	DevnetEndpoint  = "https://graphql.devnet.sui.io/graphql"
 )
 
 // Client is a GraphQL client for the Sui blockchain.

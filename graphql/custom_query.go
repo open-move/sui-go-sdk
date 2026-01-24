@@ -317,9 +317,9 @@ func extractOperationName(query string) string {
 var (
 	// GetBalanceQuery fetches the balance of a specific coin type for an address.
 	GetBalanceQuery = Query(`
-		query getBalance($address: SuiAddress!, $coinType: String) {
+		query getBalance($address: SuiAddress!, $coinType: String!) {
 			address(address: $address) {
-				balance(type: $coinType) {
+				balance(coinType: $coinType) {
 					coinType { repr }
 					totalBalance
 				}
@@ -350,7 +350,7 @@ var (
 	// GetTransactionQuery fetches a transaction by its digest.
 	GetTransactionQuery = Query(`
 		query getTransaction($digest: String!) {
-			transactionBlock(digest: $digest) {
+			transaction(digest: $digest) {
 				digest
 				sender { address }
 				effects {

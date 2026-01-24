@@ -572,14 +572,27 @@ func (c *Client) buildTransactionQuery(options *TransactionBlockOptions) string 
 					inputs {
 						nodes {
 							__typename
-							... on MoveValue {
-								type { repr }
-								bcs
+							... on Pure {
+								bytes
+							}
+							... on OwnedOrImmutable {
+								object {
+									address
+									version
+									digest
+								}
 							}
 							... on SharedInput {
 								address
 								initialSharedVersion
 								mutable
+							}
+							... on Receiving {
+								object {
+									address
+									version
+									digest
+								}
 							}
 						}
 					}
@@ -663,80 +676,18 @@ func (c *Client) buildTransactionQuery(options *TransactionBlockOptions) string 
 // GetMultipleTransactionBlocks returns details for multiple transactions.
 // Equivalent to Blockvision's SuiMultiGetTransactionBlocks.
 func (c *Client) GetMultipleTransactionBlocks(ctx context.Context, digests []string, options *TransactionBlockOptions) ([]Transaction, error) {
-	query := `
-		query MultiGetTransactions($keys: [String!]!) {
-			multiGetTransactions(keys: $keys) {
-				digest
-				kind {
-					__typename
-					... on ProgrammableTransaction {
-						inputs {
-							nodes {
-								__typename
-								... on MoveValue {
-									type { repr }
-									bcs
-								}
-								... on SharedInput {
-									address
-									initialSharedVersion
-									mutable
-								}
-							}
-						}
-						commands {
-							nodes {
-								__typename
-							}
-						}
-					}
-				}
-				signatures {
-					signatureBytes
-				}
-				expiration { epochId }
-				transactionBcs
-				sender { address }
-				gasInput {
-					gasSponsor { address }
-					gasPrice
-					gasBudget
-				}
-				effects {
-					digest
-					status
-					executionError { message }
-					lamportVersion
-					gasEffects {
-						gasSummary {
-							computationCost
-							storageCost
-							storageRebate
-							nonRefundableStorageFee
-						}
-					}
-					epoch { epochId }
-					checkpoint { sequenceNumber }
-					timestamp
-				}
-			}
+	// Query each transaction individually since there's no batch query by digest
+	transactions := make([]Transaction, 0, len(digests))
+	for _, digest := range digests {
+		tx, err := c.GetTransactionBlock(ctx, digest, options)
+		if err != nil {
+			return nil, err
 		}
-	`
-
-	var result struct {
-		MultiGetTransactions []Transaction `json:"multiGetTransactions"`
+		if tx != nil {
+			transactions = append(transactions, *tx)
+		}
 	}
-
-	err := c.Execute(ctx, query, map[string]any{"keys": digests}, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	if result.MultiGetTransactions == nil {
-		return []Transaction{}, nil
-	}
-
-	return result.MultiGetTransactions, nil
+	return transactions, nil
 }
 
 // QueryTransactionBlocks queries transactions with filters.
@@ -759,14 +710,27 @@ func (c *Client) QueryTransactionBlocks(ctx context.Context, filter *Transaction
 							inputs {
 								nodes {
 									__typename
-									... on MoveValue {
-										type { repr }
-										bcs
+									... on Pure {
+										bytes
+									}
+									... on OwnedOrImmutable {
+										object {
+											address
+											version
+											digest
+										}
 									}
 									... on SharedInput {
 										address
 										initialSharedVersion
 										mutable
+									}
+									... on Receiving {
+										object {
+											address
+											version
+											digest
+										}
 									}
 								}
 							}

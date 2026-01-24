@@ -1,0 +1,3697 @@
+Using sender address: 0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6
+
+========================================
+Running Query Examples
+========================================
+=== GetAllBalances ===
+GetAllBalances result:
+[]
+Found 0 balance(s):
+
+=== GetCoinMetadata ===
+GetCoinMetadata result:
+{
+  "address": "0xf256d3fb6a50eaa748d94335b34f2982fbc3b63ceec78cafaa29ebc9ebaf2bbc",
+  "version": 634711800,
+  "digest": "CVN9P6nwak2s8FM585gZtMS8hT1qVY51S9zCEzUXFX2M",
+  "decimals": 9,
+  "name": "Sui",
+  "symbol": "SUI",
+  "description": "",
+  "iconUrl": "",
+  "supply": "10000000000000000000"
+}
+Coin: Sui
+Symbol: SUI
+Decimals: 9
+Description: 
+
+=== GetTotalSupply ===
+GetTotalSupply result:
+"10000000000000000000"
+Total SUI Supply: 10000000000000000000
+
+=== QueryEvents (first 5) ===
+Retrieved 5 events
+
+Event 1:
+  Sender: 0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de
+  Timestamp: 2025-12-26T21:37:19.143Z
+  Module: borrow
+
+Event 2:
+  Sender: 0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de
+  Timestamp: 2025-12-26T21:37:19.143Z
+  Module: borrow
+
+Event 3:
+  Sender: 0x8eb866217fbf61df8c1b7ca514fbdaeb5d6689a91814d56507006bee887cb513
+  Timestamp: 2025-12-26T21:37:19.899Z
+  Module: system
+
+Event 4:
+  Sender: 0x2282f09c3b28bf1ef0d419bee4233a9c8f29c75897247028702e519398d47df8
+  Timestamp: 2025-12-26T21:37:19.899Z
+  Module: vram
+
+Event 5:
+  Sender: 0x752ebb7467cdcff228171359e127ef6342d6eaf08ed786d855185c54e36c501d
+  Timestamp: 2025-12-26T21:37:20.155Z
+  Module: system
+
+QueryEvents result:
+{
+  "pageInfo": {
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "startCursor": "eyJ0IjozMTQ5NjU3MzI2LCJlIjowfQ==",
+    "endCursor": "eyJ0IjozMTQ5NjU3MzQ1LCJlIjowfQ=="
+  },
+  "nodes": [
+    {
+      "transactionModule": {
+        "name": "borrow",
+        "package": {
+          "address": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a"
+        },
+        "fileFormatVersion": 0
+      },
+      "sender": {
+        "address": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de"
+      },
+      "timestamp": "2025-12-26T21:37:19.143Z",
+      "contents": {
+        "type": {
+          "repr": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a::market::MintEvent"
+        },
+        "bcs": "M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd4AlDV3AAAAAA==",
+        "json": {
+          "minter": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de",
+          "amount": "2000000000"
+        }
+      },
+      "eventBcs": "jO5Br6tj5Vm8I2M4v9fGsq8HyfKPKF/IJGZmp86a6XoGYm9ycm93M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd6M7kGvq2PlWbwjYzi/18ayrwfJ8o8oX8gkZmanzprpegZtYXJrZXQJTWludEV2ZW50ACgz35aNbgl8EsKRJX9D9WWjTo+C7uiJFNkYSVJjo+bJ3gCUNXcAAAAA"
+    },
+    {
+      "transactionModule": {
+        "name": "borrow",
+        "package": {
+          "address": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a"
+        },
+        "fileFormatVersion": 0
+      },
+      "sender": {
+        "address": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de"
+      },
+      "timestamp": "2025-12-26T21:37:19.143Z",
+      "contents": {
+        "type": {
+          "repr": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a::borrow::BorrowEvent"
+        },
+        "bcs": "M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd6+Z5782m9CyugkCqEclLZnh7OM8mMR9PvE4xFuCsRSBwCUNXcAAAAAf4QeAAAAAAAPAE9pAAAAAA==",
+        "json": {
+          "borrower": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de",
+          "obligation": "0xbe679efcda6f42cae8240aa11c94b66787b38cf26311f4fbc4e3116e0ac45207",
+          "amount": "2000000000",
+          "borrow_fee": "1999999",
+          "time": "1766785039"
+        }
+      },
+      "eventBcs": "jO5Br6tj5Vm8I2M4v9fGsq8HyfKPKF/IJGZmp86a6XoGYm9ycm93M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd6M7kGvq2PlWbwjYzi/18ayrwfJ8o8oX8gkZmanzprpegZib3Jyb3cLQm9ycm93RXZlbnQAWDPflo1uCXwSwpElf0P1ZaNOj4Lu6IkU2RhJUmOj5snevmee/NpvQsroJAqhHJS2Z4ezjPJjEfT7xOMRbgrEUgcAlDV3AAAAAH+EHgAAAAAADwBPaQAAAAA="
+    },
+    {
+      "transactionModule": {
+        "name": "system",
+        "package": {
+          "address": "0xe9336732c080180406335b6e720dcf032842baad0a8c7dc493c4b390003c7926"
+        },
+        "fileFormatVersion": 0
+      },
+      "sender": {
+        "address": "0x8eb866217fbf61df8c1b7ca514fbdaeb5d6689a91814d56507006bee887cb513"
+      },
+      "timestamp": "2025-12-26T21:37:19.899Z",
+      "contents": {
+        "type": {
+          "repr": "0xe9336732c080180406335b6e720dcf032842baad0a8c7dc493c4b390003c7926::events::BlobCertified"
+        },
+        "bcs": "pAsAACyLKLuU5WOyeQVdXqDD0r+93FPEZRWF24w1tHJ+eRYGqQsAAAEta/rzGA+1ZtJ0FfPcLJr8cnbFByRUd+sjK1xwPfhsIAA=",
+        "json": {
+          "epoch": 2980,
+          "blob_id": "2753586247265699511877844725883065266749589327040108749180847559125653556012",
+          "end_epoch": 2985,
+          "deletable": true,
+          "object_id": "0x2d6bfaf3180fb566d27415f3dc2c9afc7276c507245477eb232b5c703df86c20",
+          "is_extension": false
+        }
+      },
+      "eventBcs": "6TNnMsCAGAQGM1tucg3PAyhCuq0KjH3Ek8SzkAA8eSYGc3lzdGVtjrhmIX+/Yd+MG3ylFPva611miakYFNVlBwBr7oh8tRPpM2cywIAYBAYzW25yDc8DKEK6rQqMfcSTxLOQADx5JgZldmVudHMNQmxvYkNlcnRpZmllZABKpAsAACyLKLuU5WOyeQVdXqDD0r+93FPEZRWF24w1tHJ+eRYGqQsAAAEta/rzGA+1ZtJ0FfPcLJr8cnbFByRUd+sjK1xwPfhsIAA="
+    },
+    {
+      "transactionModule": {
+        "name": "vram",
+        "package": {
+          "address": "0x5f422eac8ed9d1c87b3d033915fdfde4355e945db190e85e07a480cf662bb13f"
+        },
+        "fileFormatVersion": 0
+      },
+      "sender": {
+        "address": "0x2282f09c3b28bf1ef0d419bee4233a9c8f29c75897247028702e519398d47df8"
+      },
+      "timestamp": "2025-12-26T21:37:19.899Z",
+      "contents": {
+        "type": {
+          "repr": "0xf5f1d129f771835af8a5ae47f45db31721000d776269fe33b43dda37e622a8bc::events::BondingCurveBuy\u003c0x533faf7115f428e5e7bd22194f81bccba19f7ea5ae4e65ac9e339bbabb7642eb::cr1pt0max::CR1PT0MAX\u003e"
+        },
+        "bcs": "48qBT2P/YpbZ0/1UzAlMe44lBZLEQZrMDpcD//Td3U3hhSQEAAAAAGcWcLMJAAAA3G0ZAAAAAADcbRkAAAAAACKC8Jw7KL8e8NQZvuQjOpyPKcdYlyRwKHAuUZOY1H34AACY9z5dAQAAAk0+4BIAAADH25vv214DAMdbp871qAIA",
+        "json": {
+          "curve_id": "0xe3ca814f63ff6296d9d3fd54cc094c7b8e250592c4419acc0e9703fff4dddd4d",
+          "sui_amount": "69502433",
+          "token_amount": "41665173095",
+          "pre_price": "1666524",
+          "post_price": "1666524",
+          "sender": "0x2282f09c3b28bf1ef0d419bee4233a9c8f29c75897247028702e519398d47df8",
+          "is_dev_buy": false,
+          "virtual_sui_amount": "1500000000000",
+          "post_sui_balance": "81071590658",
+          "post_token_balance": "948723640949703",
+          "available_token_reserves": "748723640949703"
+        }
+      },
+      "eventBcs": "X0IurI7Z0ch7PQM5Ff395DVelF2xkOheB6SAz2YrsT8EdnJhbSKC8Jw7KL8e8NQZvuQjOpyPKcdYlyRwKHAuUZOY1H349fHRKfdxg1r4pa5H9F2zFyEADXdiaf4ztD3aN+YiqLwGZXZlbnRzD0JvbmRpbmdDdXJ2ZUJ1eQEHUz+vcRX0KOXnvSIZT4G8y6GffqWuTmWsnjOburt2QusJY3IxcHQwbWF4CUNSMVBUME1BWACBAePKgU9j/2KW2dP9VMwJTHuOJQWSxEGazA6XA//03d1N4YUkBAAAAABnFnCzCQAAANxtGQAAAAAA3G0ZAAAAAAAigvCcOyi/HvDUGb7kIzqcjynHWJckcChwLlGTmNR9+AAAmPc+XQEAAAJNPuASAAAAx9ub79teAwDHW6fO9agCAA=="
+    },
+    {
+      "transactionModule": {
+        "name": "system",
+        "package": {
+          "address": "0xa998b8719ca1c0a6dc4e24a859bbb39f5477417f71885fbf2967a6510f699144"
+        },
+        "fileFormatVersion": 0
+      },
+      "sender": {
+        "address": "0x752ebb7467cdcff228171359e127ef6342d6eaf08ed786d855185c54e36c501d"
+      },
+      "timestamp": "2025-12-26T21:37:20.155Z",
+      "contents": {
+        "type": {
+          "repr": "0xd84704c17fc870b8764832c535aa6b11f21a95cd6f5bb38a9b07d2cf42220c66::events::BlobCertified"
+        },
+        "bcs": "CwEAAKGzmHBNJYAmfh8uGyy+rq6cHrgwAzKRbfK6eObhNw/GDAEAAAH+pxU0TblbMscMzC8Jj0dIas7UTRxcx29/hlIibTlTqwA=",
+        "json": {
+          "epoch": 267,
+          "blob_id": "89584832411766986885473416325365616014855623833058039779141267972138393449377",
+          "end_epoch": 268,
+          "deletable": true,
+          "object_id": "0xfea715344db95b32c70ccc2f098f47486aced44d1c5cc76f7f8652226d3953ab",
+          "is_extension": false
+        }
+      },
+      "eventBcs": "qZi4cZyhwKbcTiSoWbuzn1R3QX9xiF+/KWemUQ9pkUQGc3lzdGVtdS67dGfNz/IoFxNZ4SfvY0LW6vCO14bYVRhcVONsUB3YRwTBf8hwuHZIMsU1qmsR8hqVzW9bs4qbB9LPQiIMZgZldmVudHMNQmxvYkNlcnRpZmllZABKCwEAAKGzmHBNJYAmfh8uGyy+rq6cHrgwAzKRbfK6eObhNw/GDAEAAAH+pxU0TblbMscMzC8Jj0dIas7UTRxcx29/hlIibTlTqwA="
+    }
+  ]
+}
+First event:
+{
+  "transactionModule": {
+    "name": "borrow",
+    "package": {
+      "address": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a"
+    },
+    "fileFormatVersion": 0
+  },
+  "sender": {
+    "address": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de"
+  },
+  "timestamp": "2025-12-26T21:37:19.143Z",
+  "contents": {
+    "type": {
+      "repr": "0x8cee41afab63e559bc236338bfd7c6b2af07c9f28f285fc8246666a7ce9ae97a::market::MintEvent"
+    },
+    "bcs": "M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd4AlDV3AAAAAA==",
+    "json": {
+      "minter": "0x33df968d6e097c12c291257f43f565a34e8f82eee88914d918495263a3e6c9de",
+      "amount": "2000000000"
+    }
+  },
+  "eventBcs": "jO5Br6tj5Vm8I2M4v9fGsq8HyfKPKF/IJGZmp86a6XoGYm9ycm93M9+WjW4JfBLCkSV/Q/Vlo06Pgu7oiRTZGElSY6Pmyd6M7kGvq2PlWbwjYzi/18ayrwfJ8o8oX8gkZmanzprpegZtYXJrZXQJTWludEV2ZW50ACgz35aNbgl8EsKRJX9D9WWjTo+C7uiJFNkYSVJjo+bJ3gCUNXcAAAAA"
+}
+=== GetObject ===
+GetObject result:
+{
+  "address": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+  "version": 671793176,
+  "digest": "HPEqqyw6sNtQWzR4hnjv191DgdC1pi2U4oP39TLW2piR",
+  "storageRebate": "1717600",
+  "owner": {
+    "address": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "__typename": "AddressOwner"
+  },
+  "asMoveObject": {
+    "address": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+    "version": 671793176,
+    "digest": "HPEqqyw6sNtQWzR4hnjv191DgdC1pi2U4oP39TLW2piR",
+    "contents": {
+      "type": {
+        "repr": "0x6a87317ff2ec5bc3505e50f4fcc36734b9f7cd831464c3e726cacf530fbfd67a::poap::POAP_NFT"
+      },
+      "bcs": "9BVkzlI280S8eauwxsoiuzHtxOxkuZWCTphrgecesDHpAwAAAAAAAAdQT0FQIFRODFRlc3RuZXQgUE9BUBtodHRwczovL3BvYXAudGVzdC9pbWFnZS5wbmc=",
+      "json": {
+        "id": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+        "campaign_id": "1001",
+        "title": "POAP TN",
+        "description": "Testnet POAP",
+        "display_url": "https://poap.test/image.png"
+      }
+    },
+    "hasPublicTransfer": false
+  }
+}
+
+=== GetMultipleObjects ===
+GetMultipleObjects result:
+[
+  {
+    "address": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+    "version": 671793176,
+    "digest": "HPEqqyw6sNtQWzR4hnjv191DgdC1pi2U4oP39TLW2piR",
+    "storageRebate": "1717600",
+    "owner": {
+      "address": {
+        "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+      },
+      "__typename": "AddressOwner"
+    },
+    "asMoveObject": {
+      "address": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+      "version": 671793176,
+      "digest": "HPEqqyw6sNtQWzR4hnjv191DgdC1pi2U4oP39TLW2piR",
+      "contents": {
+        "type": {
+          "repr": "0x6a87317ff2ec5bc3505e50f4fcc36734b9f7cd831464c3e726cacf530fbfd67a::poap::POAP_NFT"
+        },
+        "bcs": "9BVkzlI280S8eauwxsoiuzHtxOxkuZWCTphrgecesDHpAwAAAAAAAAdQT0FQIFRODFRlc3RuZXQgUE9BUBtodHRwczovL3BvYXAudGVzdC9pbWFnZS5wbmc=",
+        "json": {
+          "id": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+          "campaign_id": "1001",
+          "title": "POAP TN",
+          "description": "Testnet POAP",
+          "display_url": "https://poap.test/image.png"
+        }
+      },
+      "hasPublicTransfer": false
+    }
+  },
+  {
+    "address": "0xf31065dcbc46e24bba4c7655eb5ce804067f33a73b30643caa35dc1c20adc2ef",
+    "version": 671813984,
+    "digest": "83NzAqPgwTmsh8ifHLuwQb5z1cMMD5FUQMt8dB1YbaAQ",
+    "storageRebate": "1558000",
+    "owner": {
+      "address": {
+        "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+      },
+      "__typename": "AddressOwner"
+    },
+    "asMoveObject": {
+      "address": "0xf31065dcbc46e24bba4c7655eb5ce804067f33a73b30643caa35dc1c20adc2ef",
+      "version": 671813984,
+      "digest": "83NzAqPgwTmsh8ifHLuwQb5z1cMMD5FUQMt8dB1YbaAQ",
+      "contents": {
+        "type": {
+          "repr": "0x521f016d87caa6e89f272156aa6f0192749ece7029292f3b0863288da4f79cd6::poap::POAP_NFT"
+        },
+        "bcs": "8xBl3LxG4ku6THZV61zoBAZ/M6c7MGQ8qjXcHCCtwu+JEwAAAAAAAApQT0FQVGl0bGUyCVBPQVBEZXNjMgZpbWFnZTI=",
+        "json": {
+          "id": "0xf31065dcbc46e24bba4c7655eb5ce804067f33a73b30643caa35dc1c20adc2ef",
+          "campaign_id": "5001",
+          "title": "POAPTitle2",
+          "description": "POAPDesc2",
+          "display_url": "image2"
+        }
+      },
+      "hasPublicTransfer": false
+    }
+  }
+]
+
+=== GetOwnedObjects ===
+GetOwnedObjects result:
+{
+  "pageInfo": {
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "startCursor": "BQhFEQAAAADMAQBVnvFQmvboN9QVOzsI2VNNPfPzNqXLZJj6JIzmyyFy5gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAARjb2luAAAAAAAAAARDb2luAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA3N1aQAAAAAAAAADU1VJAAAAAAAAAAAB/////8M/6ZmV2jn/lFTdAn6npUU8byS4wglEURDOHYJCdTZ+vzi4mA==",
+    "endCursor": "BQhFEQAAAADMAQBVnvFQmvboN9QVOzsI2VNNPfPzNqXLZJj6JIzmyyFy5gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAARjb2luAAAAAAAAAARDb2luAAAAAAAAAAEAAAAHgZCwQRIutJK/Y8tGRHa9aMa35XCkB5ZFqLKHMrYZeoIAAAAAAAAAA3dhbAAAAAAAAAADV0FMAAAAAAAAAAAB/////4jKa/+rIUiP/SNT/Pg7JN2KAsyp7H6zAl2CV1WobVzvMAFgNw=="
+  },
+  "nodes": [
+    {
+      "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+      "version": 741346150,
+      "digest": "4yy3J5mvfNDeWpb8uYGfCoUKiReGhTtiEdbgARKaDcoT",
+      "owner": {
+        "address": {
+          "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+        },
+        "__typename": "AddressOwner"
+      },
+      "hasPublicTransfer": true
+    },
+    {
+      "address": "0x1e93b13caa48ca1c6591266a3409e5bb6bf174aa31956385ae54ac069ebd17a7",
+      "version": 685996120,
+      "digest": "ES3kQugUdct4EniVxP4Uc5f6ANGoPvCysdGkRePgt8uB",
+      "owner": {
+        "address": {
+          "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+        },
+        "__typename": "AddressOwner"
+      },
+      "hasPublicTransfer": true
+    },
+    {
+      "address": "0x3a7f94ab5ddced8d7314408c06f5679c6a394f78bba4f046f4f8115c9eeb9a93",
+      "version": 349180365,
+      "digest": "GWBMwTxaCCMLjwPmYsqWY5FuCg5A18zZBbTFGGUC6kYA",
+      "owner": {
+        "address": {
+          "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+        },
+        "__typename": "AddressOwner"
+      },
+      "hasPublicTransfer": true
+    },
+    {
+      "address": "0x500a6c2b3827d1d235c6c16f8d21694b1f6d749c43bfbeff0b59c1741a814a2f",
+      "version": 685996078,
+      "digest": "7gqViWorSRcETmyWLhRbfLtvVVGYFQ87ydxWLzfbskdQ",
+      "owner": {
+        "address": {
+          "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+        },
+        "__typename": "AddressOwner"
+      },
+      "hasPublicTransfer": true
+    },
+    {
+      "address": "0xab21488ffd2353fcf83b24dd8a02cca9ec7eb3025d825755a86d5cef30016037",
+      "version": 621436462,
+      "digest": "6qhywVhw79NUkFqqRpYqFPPkvpyf2JDwBzByDNYqgd75",
+      "owner": {
+        "address": {
+          "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+        },
+        "__typename": "AddressOwner"
+      },
+      "hasPublicTransfer": true
+    }
+  ]
+}
+=== GetPackage ===
+GetPackage result:
+{
+  "address": "0x0000000000000000000000000000000000000000000000000000000000000002",
+  "version": 46,
+  "digest": "7agM2AUVhei8xEzB9xpGAbu97Y3AX11Q9phJ1cfmsAYN",
+  "modules": {
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "nodes": [
+      {
+        "name": "accumulator",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "accumulator_metadata",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "accumulator_settlement",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "address",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "address_alias",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "authenticator_state",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "bag",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "balance",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "bcs",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "bls12381",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "borrow",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "clock",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "coin",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "coin_registry",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 7
+      },
+      {
+        "name": "config",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "deny_list",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "derived_object",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 7
+      },
+      {
+        "name": "display",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "dynamic_field",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      },
+      {
+        "name": "dynamic_object_field",
+        "package": {
+          "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+        },
+        "fileFormatVersion": 6
+      }
+    ]
+  },
+  "linkage": [
+    {
+      "originalId": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "upgradedId": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "version": 0
+    }
+  ],
+  "typeOrigins": [
+    {
+      "module": "tx_context",
+      "struct": "TxContext",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "vec_map",
+      "struct": "VecMap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "vec_map",
+      "struct": "Entry",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "party",
+      "struct": "Party",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "party",
+      "struct": "Permissions",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "object",
+      "struct": "ID",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "object",
+      "struct": "UID",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer",
+      "struct": "Receiving",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "dynamic_field",
+      "struct": "Field",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator",
+      "struct": "AccumulatorRoot",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator",
+      "struct": "U128",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator",
+      "struct": "Key",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bag",
+      "struct": "Bag",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_metadata",
+      "struct": "OwnerKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_metadata",
+      "struct": "Owner",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_metadata",
+      "struct": "MetadataKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_metadata",
+      "struct": "Metadata",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_metadata",
+      "struct": "AccumulatorObjectCountKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bcs",
+      "struct": "BCS",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "accumulator_settlement",
+      "struct": "EventStreamHead",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "vec_set",
+      "struct": "VecSet",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "derived_object",
+      "struct": "Claimed",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "derived_object",
+      "struct": "DerivedObjectKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "derived_object",
+      "struct": "ClaimedStatus",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "address_alias",
+      "struct": "AddressAliasState",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "address_alias",
+      "struct": "AddressAliases",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "address_alias",
+      "struct": "AliasKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "authenticator_state",
+      "struct": "AuthenticatorState",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "authenticator_state",
+      "struct": "AuthenticatorStateInner",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "authenticator_state",
+      "struct": "JWK",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "authenticator_state",
+      "struct": "JwkId",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "authenticator_state",
+      "struct": "ActiveJwk",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "funds_accumulator",
+      "struct": "Withdrawal",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "balance",
+      "struct": "Supply",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "balance",
+      "struct": "Balance",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "group_ops",
+      "struct": "Element",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bls12381",
+      "struct": "Scalar",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bls12381",
+      "struct": "G1",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bls12381",
+      "struct": "G2",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bls12381",
+      "struct": "GT",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "bls12381",
+      "struct": "UncompressedG1",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "borrow",
+      "struct": "Referent",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "borrow",
+      "struct": "Borrow",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "clock",
+      "struct": "Clock",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "url",
+      "struct": "Url",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "table",
+      "struct": "Table",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "dynamic_object_field",
+      "struct": "Wrapper",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "config",
+      "struct": "Config",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "config",
+      "struct": "Setting",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "config",
+      "struct": "SettingData",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "DenyList",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "ConfigWriteCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "ConfigKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "AddressKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "GlobalPauseKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "PerTypeConfigCreated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "deny_list",
+      "struct": "PerTypeList",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "Coin",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "CoinMetadata",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "RegulatedCoinMetadata",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "TreasuryCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "DenyCapV2",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "CurrencyCreated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin",
+      "struct": "DenyCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "CoinRegistry",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "ExtraField",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "CurrencyKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "LegacyMetadataKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "MetadataCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "Borrow",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "Currency",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "CurrencyInitializer",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "SupplyState",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "RegulatedState",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "coin_registry",
+      "struct": "MetadataCapState",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "package",
+      "struct": "Publisher",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "package",
+      "struct": "UpgradeCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "package",
+      "struct": "UpgradeTicket",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "package",
+      "struct": "UpgradeReceipt",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "display",
+      "struct": "Display",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "display",
+      "struct": "DisplayCreated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "display",
+      "struct": "VersionUpdated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "groth16",
+      "struct": "Curve",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "groth16",
+      "struct": "PreparedVerifyingKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "groth16",
+      "struct": "PublicProofInputs",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "groth16",
+      "struct": "ProofPoints",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "sui",
+      "struct": "SUI",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "TransferRequest",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "TransferPolicy",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "TransferPolicyCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "TransferPolicyCreated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "TransferPolicyDestroyed",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "transfer_policy",
+      "struct": "RuleKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "Kiosk",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "KioskOwnerCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "PurchaseCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "Borrow",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "Item",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "Listing",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "Lock",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "ItemListed",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "ItemPurchased",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk",
+      "struct": "ItemDelisted",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk_extension",
+      "struct": "Extension",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "kiosk_extension",
+      "struct": "ExtensionKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "linked_table",
+      "struct": "LinkedTable",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "linked_table",
+      "struct": "Node",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "nitro_attestation",
+      "struct": "PCREntry",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "nitro_attestation",
+      "struct": "NitroAttestationDocument",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "object_bag",
+      "struct": "ObjectBag",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "object_table",
+      "struct": "ObjectTable",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "priority_queue",
+      "struct": "PriorityQueue",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "priority_queue",
+      "struct": "Entry",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "versioned",
+      "struct": "Versioned",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "versioned",
+      "struct": "VersionChangeCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "random",
+      "struct": "Random",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "random",
+      "struct": "RandomInner",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "random",
+      "struct": "RandomGenerator",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "table_vec",
+      "struct": "TableVec",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "Token",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "TokenPolicyCap",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "TokenPolicy",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "ActionRequest",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "RuleKey",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "token",
+      "struct": "TokenPolicyCreated",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "zklogin_verified_id",
+      "struct": "VerifiedID",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    },
+    {
+      "module": "zklogin_verified_issuer",
+      "struct": "VerifiedIssuer",
+      "definingId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+    }
+  ]
+}
+Package Address: 0x0000000000000000000000000000000000000000000000000000000000000002
+Version: 46
+Digest: 7agM2AUVhei8xEzB9xpGAbu97Y3AX11Q9phJ1cfmsAYN
+
+=== GetModule (coin) ===
+GetModule result:
+{
+  "name": "coin",
+  "package": {
+    "address": "0x0000000000000000000000000000000000000000000000000000000000000002"
+  },
+  "fileFormatVersion": 6,
+  "friends": {
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "nodes": [
+      {
+        "name": "coin_registry",
+        "fileFormatVersion": 0
+      }
+    ]
+  },
+  "structs": {
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "nodes": [
+      {
+        "name": "Coin",
+        "abilities": [
+          "STORE",
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "balance",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance\u003c$0\u003e",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "balance",
+                    "type": "Balance",
+                    "typeParameters": [
+                      {
+                        "typeParameter": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "CoinMetadata",
+        "abilities": [
+          "STORE",
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "decimals",
+            "type": {
+              "repr": "u8",
+              "signature": {
+                "body": "u8"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::string::String",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    "module": "string",
+                    "type": "String",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "symbol",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    "module": "ascii",
+                    "type": "String",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::string::String",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    "module": "string",
+                    "type": "String",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "icon_url",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option\u003c0x0000000000000000000000000000000000000000000000000000000000000002::url::Url\u003e",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    "module": "option",
+                    "type": "Option",
+                    "typeParameters": [
+                      {
+                        "datatype": {
+                          "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                          "module": "url",
+                          "type": "Url",
+                          "typeParameters": []
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "CurrencyCreated",
+        "abilities": [
+          "COPY",
+          "DROP"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "decimals",
+            "type": {
+              "repr": "u8",
+              "signature": {
+                "body": "u8"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "DenyCap",
+        "abilities": [
+          "STORE",
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "DenyCapV2",
+        "abilities": [
+          "STORE",
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "allow_global_pause",
+            "type": {
+              "repr": "bool",
+              "signature": {
+                "body": "bool"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "RegulatedCoinMetadata",
+        "abilities": [
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "coin_metadata_object",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::ID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "ID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "deny_cap_object",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::ID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "ID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "TreasuryCap",
+        "abilities": [
+          "STORE",
+          "KEY"
+        ],
+        "typeParameters": [
+          {
+            "constraints": [],
+            "isPhantom": true
+          }
+        ],
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "object",
+                    "type": "UID",
+                    "typeParameters": []
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "total_supply",
+            "type": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::balance::Supply\u003c$0\u003e",
+              "signature": {
+                "body": {
+                  "datatype": {
+                    "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                    "module": "balance",
+                    "type": "Supply",
+                    "typeParameters": [
+                      {
+                        "typeParameter": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "enums": {
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "nodes": []
+  },
+  "functions": {
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "nodes": [
+      {
+        "name": "allow_global_pause",
+        "visibility": "FRIEND",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "balance",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "Coin",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "balance",
+                  "type": "Balance",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "balance_mut",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "Coin",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "balance",
+                  "type": "Balance",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "burn",
+        "visibility": "PUBLIC",
+        "isEntry": true,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::TreasuryCap\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "TreasuryCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "Coin",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "u64",
+            "signature": {
+              "body": "u64"
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_currency",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": [
+              "DROP"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "$0",
+            "signature": {
+              "body": {
+                "typeParameter": 0
+              }
+            }
+          },
+          {
+            "repr": "u8",
+            "signature": {
+              "body": "u8"
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option\u003c0x0000000000000000000000000000000000000000000000000000000000000002::url::Url\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                  "module": "option",
+                  "type": "Option",
+                  "typeParameters": [
+                    {
+                      "datatype": {
+                        "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                        "module": "url",
+                        "type": "Url",
+                        "typeParameters": []
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::TreasuryCap\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "TreasuryCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::CoinMetadata\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "CoinMetadata",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_regulated_currency",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": [
+              "DROP"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "$0",
+            "signature": {
+              "body": {
+                "typeParameter": 0
+              }
+            }
+          },
+          {
+            "repr": "u8",
+            "signature": {
+              "body": "u8"
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option\u003c0x0000000000000000000000000000000000000000000000000000000000000002::url::Url\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                  "module": "option",
+                  "type": "Option",
+                  "typeParameters": [
+                    {
+                      "datatype": {
+                        "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                        "module": "url",
+                        "type": "Url",
+                        "typeParameters": []
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::TreasuryCap\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "TreasuryCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCap\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::CoinMetadata\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "CoinMetadata",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_regulated_currency_v2",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": [
+              "DROP"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "$0",
+            "signature": {
+              "body": {
+                "typeParameter": 0
+              }
+            }
+          },
+          {
+            "repr": "u8",
+            "signature": {
+              "body": "u8"
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "vector\u003cu8\u003e",
+            "signature": {
+              "body": {
+                "vector": "u8"
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option\u003c0x0000000000000000000000000000000000000000000000000000000000000002::url::Url\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                  "module": "option",
+                  "type": "Option",
+                  "typeParameters": [
+                    {
+                      "datatype": {
+                        "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                        "module": "url",
+                        "type": "Url",
+                        "typeParameters": []
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::TreasuryCap\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "TreasuryCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::CoinMetadata\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "CoinMetadata",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_cap_id",
+        "visibility": "FRIEND",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::coin::RegulatedCoinMetadata\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "RegulatedCoinMetadata",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::ID",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "object",
+                  "type": "ID",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_add",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCap\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "deny_list_contains",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_remove",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCap\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCap",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "deny_list_v2_add",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "deny_list_v2_contains_current_epoch",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          },
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_v2_contains_next_epoch",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_v2_disable_global_pause",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "deny_list_v2_enable_global_pause",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "deny_list_v2_is_global_pause_enabled_current_epoch",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_v2_is_global_pause_enabled_next_epoch",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": [
+          {
+            "repr": "bool",
+            "signature": {
+              "body": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "deny_list_v2_remove",
+        "visibility": "PUBLIC",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::deny_list::DenyList",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "deny_list",
+                  "type": "DenyList",
+                  "typeParameters": []
+                }
+              }
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::coin::DenyCapV2\u003c$0\u003e",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "DenyCapV2",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "repr": "address",
+            "signature": {
+              "body": "address"
+            }
+          },
+          {
+            "repr": "\u0026mut 0x0000000000000000000000000000000000000000000000000000000000000002::tx_context::TxContext",
+            "signature": {
+              "ref": "\u0026mut",
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "tx_context",
+                  "type": "TxContext",
+                  "typeParameters": []
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      },
+      {
+        "name": "destroy_metadata",
+        "visibility": "FRIEND",
+        "isEntry": false,
+        "typeParameters": [
+          {
+            "constraints": []
+          }
+        ],
+        "parameters": [
+          {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::CoinMetadata\u003c$0\u003e",
+            "signature": {
+              "body": {
+                "datatype": {
+                  "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+                  "module": "coin",
+                  "type": "CoinMetadata",
+                  "typeParameters": [
+                    {
+                      "typeParameter": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "return": []
+      }
+    ]
+  }
+}
+Module Name: coin
+File Format Version: 6
+Functions: 20
+Structs: 7
+
+=== GetNormalizedMoveFunction (coin::value) ===
+GetNormalizedMoveFunction result:
+{
+  "name": "value",
+  "visibility": "PUBLIC",
+  "isEntry": false,
+  "typeParameters": [
+    {
+      "constraints": []
+    }
+  ],
+  "parameters": [
+    {
+      "repr": "\u00260x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin\u003c$0\u003e",
+      "signature": {
+        "ref": "\u0026",
+        "body": {
+          "datatype": {
+            "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "module": "coin",
+            "type": "Coin",
+            "typeParameters": [
+              {
+                "typeParameter": 0
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "return": [
+    {
+      "repr": "u64",
+      "signature": {
+        "body": "u64"
+      }
+    }
+  ]
+}
+Function: value
+Visibility: PUBLIC
+Is Entry: false
+Type Parameters: 1
+Parameters: 1
+Return Types: 1
+
+=== GetNormalizedMoveStruct (coin::Coin) ===
+GetNormalizedMoveStruct result:
+{
+  "name": "Coin",
+  "abilities": [
+    "STORE",
+    "KEY"
+  ],
+  "typeParameters": [
+    {
+      "constraints": [],
+      "isPhantom": true
+    }
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
+        "signature": {
+          "body": {
+            "datatype": {
+              "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+              "module": "object",
+              "type": "UID",
+              "typeParameters": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "balance",
+      "type": {
+        "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance\u003c$0\u003e",
+        "signature": {
+          "body": {
+            "datatype": {
+              "package": "0x0000000000000000000000000000000000000000000000000000000000000002",
+              "module": "balance",
+              "type": "Balance",
+              "typeParameters": [
+                {
+                  "typeParameter": 0
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+Struct: Coin
+Abilities: [STORE KEY]
+Type Parameters: 1
+Fields:
+  - id: 0x0000000000000000000000000000000000000000000000000000000000000002::object::UID
+  - balance: 0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<$0>
+=== GetChainIdentifier ===
+GetChainIdentifier result:
+"4c78adac"
+Chain Identifier: 4c78adac
+
+=== GetReferenceGasPrice ===
+GetReferenceGasPrice result:
+"1000"
+Reference Gas Price: 1000 MIST
+
+=== GetServiceConfig ===
+GetServiceConfig result:
+{
+  "maxQueryDepth": 20,
+  "maxQueryNodes": 300,
+  "maxOutputNodes": 1000000,
+  "queryTimeoutMs": 40000,
+  "maxQueryPayloadSize": 5000,
+  "maxTypeArgumentDepth": 16,
+  "maxTypeNodes": 256,
+  "maxMoveValueDepth": 128
+}
+Max Query Depth: 20
+Max Query Nodes: 300
+Max Output Nodes: 1000000
+Query Timeout: 40000ms
+Max Payload Size: 5000 bytes
+
+=== Simple Query: Chain Identifier ===
+Chain ID: 4c78adac
+Simple query response:
+{
+  "chainIdentifier": "4c78adac"
+}
+
+=== Query with Fields: Current Epoch ===
+Epoch: 989
+Gas Price: 1000
+Started: 2026-01-23T21:23:29.591Z
+Current epoch query response:
+{
+  "epoch": {
+    "epochId": 989,
+    "referenceGasPrice": "1000",
+    "startTimestamp": "2026-01-23T21:23:29.591Z"
+  }
+}
+
+=== Nested Query: Epoch Checkpoints ===
+Epoch: 989
+Checkpoints: 3
+Nested query response:
+{
+  "epoch": {
+    "epochId": 989,
+    "checkpoints": {
+      "nodes": [
+        {
+          "sequenceNumber": 289403758,
+          "digest": "EK7CvafA8DbbECY6n8gxU3ZDnwFTAhBgS2JcS62LUvHE",
+          "timestamp": "2026-01-23T21:23:29.591Z"
+        },
+        {
+          "sequenceNumber": 289403759,
+          "digest": "8xABG1Rp6WaZzXQoEU4Eu1xRsoiQseQ71vwfgFUCuVxx",
+          "timestamp": "2026-01-23T21:23:33.856Z"
+        },
+        {
+          "sequenceNumber": 289403760,
+          "digest": "B5PFA3wcFkbRe56J7cmdudFZZVE328EiQGQHoPQKfHVU",
+          "timestamp": "2026-01-23T21:23:38.722Z"
+        }
+      ]
+    }
+  }
+}
+=== GetTransactionBlock ===
+GetTransactionBlock result:
+{
+  "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+  "sender": {
+    "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+  },
+  "gasInput": {
+    "gasSponsor": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "gasPrice": "1000",
+    "gasBudget": "100000000"
+  },
+  "kind": {
+    "__typename": "ProgrammableTransaction",
+    "inputs": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      },
+      "nodes": [
+        {
+          "__typename": "SharedInput",
+          "sharedInput": {
+            "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+            "initialSharedVersion": 685996107,
+            "mutable": true
+          }
+        },
+        {
+          "__typename": "MoveValue",
+          "moveValue": {
+            "type": {
+              "repr": ""
+            },
+            "bcs": ""
+          }
+        }
+      ]
+    },
+    "commands": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      },
+      "nodes": [
+        {
+          "__typename": "MoveCallCommand"
+        },
+        {
+          "__typename": "TransferObjectsCommand"
+        }
+      ]
+    }
+  },
+  "signatures": [
+    {
+      "signatureBytes": "ADjAUff3yQ1v+Lz++COHpOYVvVx5g1mdlphTkEvq89QPAAtB1BLWuR8+7+PTjZ+7DBByQs8fGtfyTxsclBKAcQ9RILFOPfipc79zhddicibbf8RhaNv9tiW3xLO4Y/Qccg=="
+    }
+  ],
+  "effects": {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "status": "SUCCESS",
+    "lamportVersion": 685996117,
+    "balanceChanges": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      },
+      "nodes": [
+        {
+          "owner": {
+            "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+          },
+          "coinType": {
+            "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+          },
+          "amount": "497939388"
+        }
+      ]
+    },
+    "objectChanges": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      },
+      "nodes": [
+        {
+          "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+          "idCreated": false,
+          "idDeleted": false,
+          "inputState": {
+            "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+            "version": 685996116,
+            "digest": "GZZerS8taRY5xeNxtANaZGVhgfzRwURj5Mp5tp2nfisf"
+          },
+          "outputState": {
+            "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+            "version": 685996117,
+            "digest": "BuNPzJDv6R8WttXXwbj4Sb2bqSP6XfXrJGPTYvkqUndM"
+          }
+        },
+        {
+          "address": "0x1e93b13caa48ca1c6591266a3409e5bb6bf174aa31956385ae54ac069ebd17a7",
+          "idCreated": true,
+          "idDeleted": false,
+          "outputState": {
+            "address": "0x1e93b13caa48ca1c6591266a3409e5bb6bf174aa31956385ae54ac069ebd17a7",
+            "version": 685996117,
+            "digest": "A1SYFrGzpF8LpNJVsLJXf8rMsQGmsiKSjtcgMSoiimC3"
+          }
+        },
+        {
+          "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+          "idCreated": false,
+          "idDeleted": false,
+          "inputState": {
+            "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+            "version": 685996116,
+            "digest": "91KhgxRcGdLrVwzTsTbozaipeu3ZyxT2ii6kgshTyLwS"
+          },
+          "outputState": {
+            "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+            "version": 685996117,
+            "digest": "6QWpps9j41dgnrvy9BraXJEzGESJLFVje2gG1xfCkTBv"
+          }
+        },
+        {
+          "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+          "idCreated": false,
+          "idDeleted": false,
+          "inputState": {
+            "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+            "version": 685996112,
+            "digest": "ECHKCTeaR9GioCAUKZpdeWsASZr5MVsRyCuxn9zEiNgy"
+          },
+          "outputState": {
+            "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+            "version": 685996117,
+            "digest": "AeQ3T3KYX7VApGvUK5ccHmaJ16McnxVJ5JU7VUgNBv9o"
+          }
+        }
+      ]
+    },
+    "gasEffects": {
+      "gasSummary": {
+        "computationCost": 1000000,
+        "storageCost": 9249200,
+        "storageRebate": 8178588,
+        "nonRefundableStorageFee": 82612
+      }
+    },
+    "epoch": {
+      "epochId": 983
+    },
+    "checkpoint": {
+      "sequenceNumber": 287371086,
+      "digest": ""
+    },
+    "timestamp": "2026-01-18T07:09:35.797Z"
+  },
+  "transactionBcs": "AAACAQEXYLW+DF6ORNkyAslHBzSVcsj4/5lLqGuWmrz4Y7R+vUt44ygAAAAAAQAgVZ7xUJr26DfUFTs7CNlTTT3z8zaly2SY+iSM5sshcuYCACmFyd4btzQfY5hs9qvnae+upFxCUJw3M3A84i5vayz5CHRlcm1pbmFsDmNsYWltX3dpbm5pbmdzAQcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgNzdWkDU1VJAAEBAAABAQIAAAEBAFWe8VCa9ug31BU7OwjZU0098/M2pctkmPokjObLIXLmAZXaOf+UVN0CfqelRTxvJLjCCURREM4dgkJ1Nn6/OLiYVHjjKAAAAAAgdvKkLE9joWc+R7q28klY7S4XnNQPq4l5NbfFDv3qTmFVnvFQmvboN9QVOzsI2VNNPfPzNqXLZJj6JIzmyyFy5ugDAAAAAAAAAOH1BQAAAAAA"
+}
+
+=== GetMultipleTransactionBlocks ===
+GetMultipleTransactionBlocks result:
+[
+  {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "sender": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "gasInput": {
+      "gasSponsor": {
+        "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+      },
+      "gasPrice": "1000",
+      "gasBudget": "100000000"
+    },
+    "kind": {
+      "__typename": "ProgrammableTransaction",
+      "inputs": {
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false
+        },
+        "nodes": [
+          {
+            "__typename": "SharedInput",
+            "sharedInput": {
+              "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+              "initialSharedVersion": 685996107,
+              "mutable": true
+            }
+          },
+          {
+            "__typename": "MoveValue",
+            "moveValue": {
+              "type": {
+                "repr": ""
+              },
+              "bcs": ""
+            }
+          }
+        ]
+      },
+      "commands": {
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false
+        },
+        "nodes": [
+          {
+            "__typename": "MoveCallCommand"
+          },
+          {
+            "__typename": "TransferObjectsCommand"
+          }
+        ]
+      }
+    },
+    "signatures": [
+      {
+        "signatureBytes": "ADjAUff3yQ1v+Lz++COHpOYVvVx5g1mdlphTkEvq89QPAAtB1BLWuR8+7+PTjZ+7DBByQs8fGtfyTxsclBKAcQ9RILFOPfipc79zhddicibbf8RhaNv9tiW3xLO4Y/Qccg=="
+      }
+    ],
+    "effects": {
+      "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+      "status": "SUCCESS",
+      "lamportVersion": 685996117,
+      "balanceChanges": {
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false
+        },
+        "nodes": [
+          {
+            "owner": {
+              "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+            },
+            "coinType": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+            },
+            "amount": "497939388"
+          }
+        ]
+      },
+      "objectChanges": {
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false
+        },
+        "nodes": [
+          {
+            "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+            "idCreated": false,
+            "idDeleted": false,
+            "inputState": {
+              "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+              "version": 685996116,
+              "digest": "GZZerS8taRY5xeNxtANaZGVhgfzRwURj5Mp5tp2nfisf"
+            },
+            "outputState": {
+              "address": "0x1760b5be0c5e8e44d93202c94707349572c8f8ff994ba86b969abcf863b47ebd",
+              "version": 685996117,
+              "digest": "BuNPzJDv6R8WttXXwbj4Sb2bqSP6XfXrJGPTYvkqUndM"
+            }
+          },
+          {
+            "address": "0x1e93b13caa48ca1c6591266a3409e5bb6bf174aa31956385ae54ac069ebd17a7",
+            "idCreated": true,
+            "idDeleted": false,
+            "outputState": {
+              "address": "0x1e93b13caa48ca1c6591266a3409e5bb6bf174aa31956385ae54ac069ebd17a7",
+              "version": 685996117,
+              "digest": "A1SYFrGzpF8LpNJVsLJXf8rMsQGmsiKSjtcgMSoiimC3"
+            }
+          },
+          {
+            "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+            "idCreated": false,
+            "idDeleted": false,
+            "inputState": {
+              "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+              "version": 685996116,
+              "digest": "91KhgxRcGdLrVwzTsTbozaipeu3ZyxT2ii6kgshTyLwS"
+            },
+            "outputState": {
+              "address": "0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898",
+              "version": 685996117,
+              "digest": "6QWpps9j41dgnrvy9BraXJEzGESJLFVje2gG1xfCkTBv"
+            }
+          },
+          {
+            "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+            "idCreated": false,
+            "idDeleted": false,
+            "inputState": {
+              "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+              "version": 685996112,
+              "digest": "ECHKCTeaR9GioCAUKZpdeWsASZr5MVsRyCuxn9zEiNgy"
+            },
+            "outputState": {
+              "address": "0xec4349c56a1b6c266506eba0c53c28e7476478e7f5ac827ab1e444279696bfd2",
+              "version": 685996117,
+              "digest": "AeQ3T3KYX7VApGvUK5ccHmaJ16McnxVJ5JU7VUgNBv9o"
+            }
+          }
+        ]
+      },
+      "gasEffects": {
+        "gasSummary": {
+          "computationCost": 1000000,
+          "storageCost": 9249200,
+          "storageRebate": 8178588,
+          "nonRefundableStorageFee": 82612
+        }
+      },
+      "epoch": {
+        "epochId": 983
+      },
+      "checkpoint": {
+        "sequenceNumber": 287371086,
+        "digest": ""
+      },
+      "timestamp": "2026-01-18T07:09:35.797Z"
+    }
+  }
+]
+
+=== QueryTransactionBlocks ===
+QueryTransactionBlocks result:
+{
+  "pageInfo": {
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  },
+  "nodes": []
+}
+=== Example 1: Basic Custom Query - Get Transaction ===
+Transaction Result:
+{
+  "transaction": {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "sender": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "effects": {
+      "status": "SUCCESS",
+      "timestamp": "2026-01-18T07:09:35.797Z",
+      "gasEffects": {
+        "gasSummary": {
+          "computationCost": 1000000,
+          "storageCost": 9249200,
+          "storageRebate": 8178588
+        }
+      }
+    }
+  }
+}
+
+Transaction Digest: 3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V
+Sender: 0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6
+Status: SUCCESS
+
+=== Example 2: Transaction with Sender's Assets ===
+Transaction with Sender Assets:
+{
+  "transaction": {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "sender": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6",
+      "balances": {
+        "nodes": [
+          {
+            "coinType": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+            },
+            "totalBalance": "1124633566"
+          },
+          {
+            "coinType": {
+              "repr": "0x13377716051b3195972419a757f424226e8a1e40b8ede9bafa78e76b46be3d8d::token::TOKEN"
+            },
+            "totalBalance": "30000000000"
+          },
+          {
+            "coinType": {
+              "repr": "0x21b249f226a817c79a6a2c4022ad4303c0ae0071ae2a701600a569976c352811::campus::CAMPUS"
+            },
+            "totalBalance": "1000000000"
+          },
+          {
+            "coinType": {
+              "repr": "0x8190b041122eb492bf63cb464476bd68c6b7e570a4079645a8b28732b6197a82::wal::WAL"
+            },
+            "totalBalance": "2000000000"
+          },
+          {
+            "coinType": {
+              "repr": "0x8270feb7375eee355e64fdb69c50abb6b5f9393a722883c1cf45f8e26048810a::wal::WAL"
+            },
+            "totalBalance": "500000000"
+          },
+          {
+            "coinType": {
+              "repr": "0xc37ad256a99bfd512bba1c304bf4a54f6f16708eaf92fa0d3eb0e71b6ad30e02::cake::CAKE"
+            },
+            "totalBalance": "30000000000"
+          },
+          {
+            "coinType": {
+              "repr": "0xce6eb5331daf488d027223155946861affdcf87ad2f13db885ec786828ec2f6c::stream::STREAM"
+            },
+            "totalBalance": "1000000000"
+          }
+        ]
+      }
+    },
+    "effects": {
+      "status": "SUCCESS",
+      "timestamp": "2026-01-18T07:09:35.797Z",
+      "balanceChanges": {
+        "nodes": [
+          {
+            "owner": {
+              "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+            },
+            "coinType": {
+              "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+            },
+            "amount": "497939388"
+          }
+        ]
+      }
+    }
+  }
+}
+
+--- Sender: 0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6 ---
+
+Current Balances:
+  0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI: 1124633566
+  0x13377716051b3195972419a757f424226e8a1e40b8ede9bafa78e76b46be3d8d::token::TOKEN: 30000000000
+  0x21b249f226a817c79a6a2c4022ad4303c0ae0071ae2a701600a569976c352811::campus::CAMPUS: 1000000000
+  0x8190b041122eb492bf63cb464476bd68c6b7e570a4079645a8b28732b6197a82::wal::WAL: 2000000000
+  0x8270feb7375eee355e64fdb69c50abb6b5f9393a722883c1cf45f8e26048810a::wal::WAL: 500000000
+  0xc37ad256a99bfd512bba1c304bf4a54f6f16708eaf92fa0d3eb0e71b6ad30e02::cake::CAKE: 30000000000
+  0xce6eb5331daf488d027223155946861affdcf87ad2f13db885ec786828ec2f6c::stream::STREAM: 1000000000
+
+Balance Changes from Transaction:
+  0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6: 497939388 (0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI)
+
+=== Example 3: TypedQuery - Get Address Assets ===
+Address Assets:
+{
+  "address": {
+    "address": "0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031",
+    "balances": {
+      "nodes": []
+    },
+    "objects": {
+      "nodes": []
+    }
+  }
+}
+
+--- Address: 0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031 ---
+
+Balances:
+
+Owned Objects (first 5):
+
+=== Example 4: QueryRequest Fluent API ===
+QueryRequest Result:
+{
+  "transaction": {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "sender": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "effects": {
+      "status": "SUCCESS",
+      "timestamp": "",
+      "gasEffects": null
+    }
+  }
+}
+
+=== Example 5: Using Pre-defined Queries ===
+Pre-defined GetTransactionQuery Result:
+{
+  "transaction": {
+    "digest": "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V",
+    "sender": {
+      "address": "0x559ef1509af6e837d4153b3b08d9534d3df3f336a5cb6498fa248ce6cb2172e6"
+    },
+    "effects": {
+      "status": "SUCCESS",
+      "timestamp": "2026-01-18T07:09:35.797Z"
+    }
+  }
+}
+Pre-defined GetBalanceQuery Result:
+{
+  "address": {
+    "balance": {
+      "coinType": {
+        "repr": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+      },
+      "totalBalance": "0"
+    }
+  }
+}
+
+=== Example 6: Query Multiple Transactions with Sender Assets ===
+Recent Transactions:
+{
+  "transactions": {
+    "nodes": [],
+    "pageInfo": {
+      "hasNextPage": false,
+      "endCursor": null
+    }
+  }
+}
+
+Found 0 transactions
+
+=== All Custom Query Examples Complete ===
+
+========================================
+Running Mutation Examples
+========================================
+Note: These will likely fail or return nil because the generated account has no SUI for gas.
+
+--- SendSui ---
+
+=== Example 1: Send SUI ===
+Using gas coin: 0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898 (version: 741346150)
+Transaction built successfully!
+  BCS size: 219 bytes
+  Amount: 1000000 MIST (0.001000 SUI)
+  Recipient: 0x0000000000000000000000000000000000000000000000000000000000000000
+  Signature: ACT2sIfAX1uWX2Q+Eifq...
+Executing transaction...
+✅ Transaction executed successfully!
+  Transaction digest: 4SnfZYJ1GqDbBYPW24EdUFe1ZczNATmMsPN1egjX6Vfm
+  Status: SUCCESS
+
+--- MakeMoveCall ---
+
+=== Example 2: Make a Move Call ===
+Using provided gas coin: 0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898 (version: 741346151)
+Move Call transaction built successfully!
+  BCS size: 259 bytes
+  Target: 0x2::clock::timestamp_ms
+  Clock object: 0x6 (shared)
+  Signature: AF7MXICkED//AJsqEn8e...
+Executing transaction...
+✅ Transaction executed successfully!
+  Transaction digest: BUE4xoSgVyb6MomAremxo2HhJQYTeuSCvREEBm52cvk8
+  Status: SUCCESS
+
+--- SendObjects ---
+
+=== Example 3: Send Objects ===
+Using provided gas coin: 0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898 (version: 741346968)
+Demonstrating coin split and transfer transaction...
+Split and Transfer transaction built successfully!
+  BCS size: 255 bytes
+  Creating and transferring 3 coins of 100000 MIST each
+  Recipient: 0x0000000000000000000000000000000000000000000000000000000000000000
+  Signature: AFtONGqX+OsiDamQ6eWw...
+Executing transaction...
+✅ Transaction executed successfully!
+  Transaction digest: 7XR11HLdtNYErS2ocGdHAWmoP3xDB3LAxHio7jELNZj5
+  Status: SUCCESS
+
+--- UseMutationBuilder ---
+
+=== Example 4: Use Mutation Builder ===
+Using provided gas coin: 0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898 (version: 741346969)
+Demonstrating ExecuteMutationBuilder for custom execution...
+Transaction BCS size: 219 bytes
+ExecuteMutationBuilder configured:
+  Query length: 774 characters
+  Variables: tx=292 chars, signatures=1
+  Amount: 500000 MIST (0.000500 SUI)
+Executing transaction...
+✅ Transaction executed successfully!
+  Transaction digest: 9cV4sCcbe6CsbFsuSqT6NeVRtL2ZdrCGSLukWC9Q9c87
+  Status: SUCCESS
+
+--- UseCustomMutationSender ---
+
+=== Example 5: Execute Custom GraphQL Mutation ===
+Using provided gas coin: 0x95da39ff9454dd027ea7a5453c6f24b8c209445110ce1d824275367ebf38b898 (version: 741346970)
+Executing custom mutation...
+  Mutation length: 285 characters
+✅ Custom mutation executed successfully!
+  Status: SUCCESS
+  Epoch start timestamp: 
+  Computation cost: 1000000
+
+All examples executed.
