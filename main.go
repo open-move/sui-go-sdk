@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/open-move/sui-go-sdk/examples/mutation"
-	"github.com/open-move/sui-go-sdk/examples/query"
 	"github.com/open-move/sui-go-sdk/graphql"
+	"github.com/open-move/sui-go-sdk/graphql/examples/mutation"
+	"github.com/open-move/sui-go-sdk/graphql/examples/query"
 	"github.com/open-move/sui-go-sdk/keypair"
 	"github.com/open-move/sui-go-sdk/types"
 )
