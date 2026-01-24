@@ -10,18 +10,20 @@ type Address [32]byte
 
 type Digest [32]byte
 
+type ObjectID = Address
+
 type PersonalMessage struct {
 	Message []byte
 }
 
 type ObjectRef struct {
-	ObjectID Address
+	ObjectID ObjectID
 	Version  uint64
 	Digest   Digest
 }
 
 type SharedObjectRef struct {
-	ObjectID             Address
+	ObjectID             ObjectID
 	InitialSharedVersion uint64
 	Mutable              bool
 }
