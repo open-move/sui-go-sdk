@@ -15,8 +15,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// GRPCClient aggregates strongly-typed gRPC clients for the Sui RPC services.
-type GRPCClient struct {
+// Client aggregates strongly-typed gRPC clients for the Sui RPC services.
+type Client struct {
 	endpoint string
 	conn     *grpc.ClientConn
 
@@ -29,9 +29,9 @@ type GRPCClient struct {
 	transactionExecutionClient  v2.TransactionExecutionServiceClient
 }
 
-// NewClient dials the provided endpoint and returns a GRPCClient that wraps the generated protobuf stubs.
+// NewClient dials the provided endpoint and returns a Client that wraps the generated protobuf stubs.
 // Callers are responsible for closing the client via Close when they are finished with it.
-func NewClient(ctx context.Context, endpoint string, opts ...Option) (*GRPCClient, error) {
+func NewClient(ctx context.Context, endpoint string, opts ...Option) (*Client, error) {
 	if ctx == nil {
 		return nil, errors.New("nil context")
 	}
@@ -59,7 +59,7 @@ func NewClient(ctx context.Context, endpoint string, opts ...Option) (*GRPCClien
 		return nil, fmt.Errorf("dial %q: %w", endpoint, err)
 	}
 
-	c := &GRPCClient{
+	c := &Client{
 		conn:                        conn,
 		endpoint:                    endpoint,
 		ledgerClient:                v2.NewLedgerServiceClient(conn),
@@ -74,23 +74,23 @@ func NewClient(ctx context.Context, endpoint string, opts ...Option) (*GRPCClien
 	return c, nil
 }
 
-// NewMainnetClient constructs a GRPCClient that targets the public Sui mainnet fullnode.
-func NewMainnetClient(ctx context.Context, opts ...Option) (*GRPCClient, error) {
+// NewMainnetClient constructs a Client that targets the public Sui mainnet fullnode.
+func NewMainnetClient(ctx context.Context, opts ...Option) (*Client, error) {
 	return NewClient(ctx, MainnetFullnodeURL, opts...)
 }
 
-// NewTestnetClient constructs a GRPCClient that targets the public Sui testnet fullnode.
-func NewTestnetClient(ctx context.Context, opts ...Option) (*GRPCClient, error) {
+// NewTestnetClient constructs a Client that targets the public Sui testnet fullnode.
+func NewTestnetClient(ctx context.Context, opts ...Option) (*Client, error) {
 	return NewClient(ctx, TestnetFullnodeURL, opts...)
 }
 
-// NewDevnetClient constructs a GRPCClient that targets the public Sui devnet fullnode.
-func NewDevnetClient(ctx context.Context, opts ...Option) (*GRPCClient, error) {
+// NewDevnetClient constructs a Client that targets the public Sui devnet fullnode.
+func NewDevnetClient(ctx context.Context, opts ...Option) (*Client, error) {
 	return NewClient(ctx, DevnetFullnodeURL, opts...)
 }
 
 // Endpoint reports the remote endpoint the client was created for.
-func (c *GRPCClient) Endpoint() string {
+func (c *Client) Endpoint() string {
 	if c == nil {
 		return ""
 	}
@@ -98,7 +98,7 @@ func (c *GRPCClient) Endpoint() string {
 }
 
 // Conn exposes the underlying grpc.ClientConn for advanced use cases.
-func (c *GRPCClient) Conn() *grpc.ClientConn {
+func (c *Client) Conn() *grpc.ClientConn {
 	if c == nil {
 		return nil
 	}
@@ -106,7 +106,7 @@ func (c *GRPCClient) Conn() *grpc.ClientConn {
 }
 
 // Close shuts down the underlying gRPC connection.
-func (c *GRPCClient) Close() error {
+func (c *Client) Close() error {
 	if c == nil || c.conn == nil {
 		return nil
 	}
@@ -114,37 +114,37 @@ func (c *GRPCClient) Close() error {
 }
 
 // LedgerClient returns the generated LedgerService client for advanced RPC access.
-func (c *GRPCClient) LedgerClient() v2.LedgerServiceClient {
+func (c *Client) LedgerClient() v2.LedgerServiceClient {
 	return c.ledgerClient
 }
 
 // MovePackageClient returns the generated MovePackageService client for advanced RPC access.
-func (c *GRPCClient) MovePackageClient() v2.MovePackageServiceClient {
+func (c *Client) MovePackageClient() v2.MovePackageServiceClient {
 	return c.movePackageClient
 }
 
 // NameServiceClient returns the generated NameService client for advanced RPC access.
-func (c *GRPCClient) NameServiceClient() v2.NameServiceClient {
+func (c *Client) NameServiceClient() v2.NameServiceClient {
 	return c.nameServiceClient
 }
 
 // SignatureVerificationClient returns the generated SignatureVerificationService client for advanced RPC access.
-func (c *GRPCClient) SignatureVerificationClient() v2.SignatureVerificationServiceClient {
+func (c *Client) SignatureVerificationClient() v2.SignatureVerificationServiceClient {
 	return c.signatureVerificationClient
 }
 
 // StateClient returns the generated StateService client for advanced RPC access.
-func (c *GRPCClient) StateClient() v2.StateServiceClient {
+func (c *Client) StateClient() v2.StateServiceClient {
 	return c.stateClient
 }
 
 // SubscriptionClient returns the generated SubscriptionService client for advanced RPC access.
-func (c *GRPCClient) SubscriptionClient() v2.SubscriptionServiceClient {
+func (c *Client) SubscriptionClient() v2.SubscriptionServiceClient {
 	return c.subscriptionClient
 }
 
 // TransactionExecutionClient returns the generated TransactionExecutionService client for advanced RPC access.
-func (c *GRPCClient) TransactionExecutionClient() v2.TransactionExecutionServiceClient {
+func (c *Client) TransactionExecutionClient() v2.TransactionExecutionServiceClient {
 	return c.transactionExecutionClient
 }
 

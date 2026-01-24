@@ -11,7 +11,7 @@ import (
 )
 
 type GRPCResolver struct {
-	client *suiGrpc.GRPCClient
+	client *suiGrpc.Client
 }
 
 type ObjectResolver interface {
@@ -24,7 +24,7 @@ func (f ObjectResolverFunc) ResolveObjects(ctx context.Context, objectIDs []stri
 	return f(ctx, objectIDs)
 }
 
-func ResolverFromGRPC(client *suiGrpc.GRPCClient) ObjectResolver {
+func ResolverFromGRPC(client *suiGrpc.Client) ObjectResolver {
 	return &GRPCResolver{client: client}
 }
 

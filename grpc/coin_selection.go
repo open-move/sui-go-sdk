@@ -75,7 +75,7 @@ func WithCoinReadMask(mask *fieldmaskpb.FieldMask) CoinSelectionOption {
 }
 
 // SelectCoins returns enough Coin<T> objects owned by owner to meet the requested amount.
-func (c *GRPCClient) SelectCoins(ctx context.Context, owner string, coinType string, amount uint64, opts ...CoinSelectionOption) ([]*v2.Object, error) {
+func (c *Client) SelectCoins(ctx context.Context, owner string, coinType string, amount uint64, opts ...CoinSelectionOption) ([]*v2.Object, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -150,7 +150,7 @@ func (c *GRPCClient) SelectCoins(ctx context.Context, owner string, coinType str
 }
 
 // SelectUpToNLargestCoins returns up to n Coin<T> objects owned by owner, preserving the iteration order provided by the RPC.
-func (c *GRPCClient) SelectUpToNLargestCoins(ctx context.Context, owner string, coinType string, n int, opts ...CoinSelectionOption) ([]*v2.Object, error) {
+func (c *Client) SelectUpToNLargestCoins(ctx context.Context, owner string, coinType string, n int, opts ...CoinSelectionOption) ([]*v2.Object, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}

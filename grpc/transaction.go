@@ -84,7 +84,7 @@ type checkpointResult struct {
 }
 
 // ExecuteSignedTransactionAndWait submits a signed transaction and resolves when it appears in a checkpoint.
-func (c *GRPCClient) ExecuteSignedTransactionAndWait(ctx context.Context, req *ExecuteAndWaitRequest, options *ExecuteAndWaitOptions) (*v2.ExecutedTransaction, error) {
+func (c *Client) ExecuteSignedTransactionAndWait(ctx context.Context, req *ExecuteAndWaitRequest, options *ExecuteAndWaitOptions) (*v2.ExecutedTransaction, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -105,7 +105,7 @@ func (c *GRPCClient) ExecuteSignedTransactionAndWait(ctx context.Context, req *E
 }
 
 // ExecuteTransactionAndWait submits an ExecuteTransactionRequest and blocks until the transaction is observed in a checkpoint or an error occurs.
-func (c *GRPCClient) ExecuteTransactionAndWait(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteAndWaitOptions) (*v2.ExecuteTransactionResponse, error) {
+func (c *Client) ExecuteTransactionAndWait(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteAndWaitOptions) (*v2.ExecuteTransactionResponse, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -224,7 +224,7 @@ type SimulateTransactionOptions struct {
 }
 
 // SimulateTransaction executes the SimulateTransaction RPC for the provided transaction.
-func (c *GRPCClient) SimulateTransaction(ctx context.Context, tx *v2.Transaction, options *SimulateTransactionOptions, opts ...grpc.CallOption) (*v2.SimulateTransactionResponse, error) {
+func (c *Client) SimulateTransaction(ctx context.Context, tx *v2.Transaction, options *SimulateTransactionOptions, opts ...grpc.CallOption) (*v2.SimulateTransactionResponse, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
