@@ -195,7 +195,7 @@ func (b *Transaction) PureU256(value *big.Int) Argument {
 		return Argument{}
 	}
 
-	bytes, err := encodeU256(value)
+	bytes, err := utils.EncodeU256(value)
 	if err != nil {
 		b.setErr(err)
 		return Argument{}
@@ -311,10 +311,12 @@ func (b *Transaction) MakeMoveVec(args MakeMoveVecInput) Result {
 		b.setErr(err)
 		return Result{}
 	}
+
 	idx := b.addCommand(Command{MakeMoveVec: &command})
 	if idx == nil {
 		return Result{}
 	}
+
 	return Result{Index: *idx}
 }
 
@@ -585,12 +587,14 @@ func isReceivingType(param MoveParameter) bool {
 	if param.TypeName == "" {
 		return false
 	}
+
 	return param.TypeName == "0x2::transfer::Receiving" || strings.HasPrefix(param.TypeName, "0x2::transfer::Receiving<")
 }
 
 func (b *Transaction) resolveInputs(ctx context.Context, resolver Resolver) ([]CallArg, error) {
-	resolved := make([]CallArg, len(b.inputs))
 	objectIDs := make([]string, 0)
+	resolved := make([]CallArg, len(b.inputs))
+
 	for _, in := range b.inputs {
 		if in.UnresolvedObject != nil {
 			objectIDs = append(objectIDs, in.UnresolvedObject.ObjectID)
@@ -617,7 +621,7 @@ func (b *Transaction) resolveInputs(ctx context.Context, resolver Resolver) ([]C
 
 	objectMap := map[string]ObjectMetadata{}
 	if hasUnresolved {
-		unique := uniqueStrings(objectIDs)
+		unique := utils.UniqueValues(objectIDs)
 		refs, err := resolver.ResolveObjects(ctx, unique)
 		if err != nil {
 			return nil, err
@@ -682,10 +686,12 @@ func (b *Transaction) resolveGas(ctx context.Context, resolver GasResolver, kind
 		if b.gas.Price == nil {
 			return fmt.Errorf("gas price required to resolve budget")
 		}
+
 		owner := b.gas.Owner
 		if owner == nil {
 			owner = b.sender
 		}
+
 		budget, err := resolver.ResolveGasBudget(ctx, GasBudgetInput{
 			Sender:     *b.sender,
 			GasOwner:   *owner,
@@ -693,9 +699,11 @@ func (b *Transaction) resolveGas(ctx context.Context, resolver GasResolver, kind
 			Kind:       kind,
 			Expiration: expiration,
 		})
+
 		if err != nil {
 			return err
 		}
+
 		b.gas.Budget = &budget
 	}
 
@@ -703,10 +711,12 @@ func (b *Transaction) resolveGas(ctx context.Context, resolver GasResolver, kind
 		if b.gas.Budget == nil {
 			return fmt.Errorf("gas budget required to resolve payment")
 		}
+
 		owner := b.gas.Owner
 		if owner == nil {
 			owner = b.sender
 		}
+
 		payment, err := resolver.ResolveGasPayment(ctx, *owner, *b.gas.Budget)
 		if err != nil {
 			return err
@@ -774,41 +784,4 @@ func nextIndex(length int) (uint16, error) {
 
 func nestedResultArg(index uint16, resultIndex uint16) Argument {
 	return Argument{NestedResult: &NestedResult{Index: index, ResultIndex: resultIndex}}
-}
-
-func encodeU256(value *big.Int) ([]byte, error) {
-	if value.Sign() < 0 {
-		return nil, fmt.Errorf("u256 value must be positive")
-	}
-
-	if value.BitLen() > 256 {
-		return nil, fmt.Errorf("u256 value out of range")
-	}
-
-	buf := make([]byte, 32)
-	bigBytes := value.Bytes()
-	copy(buf[32-len(bigBytes):], bigBytes)
-	for i, j := 0, len(buf)-1; i < j; i, j = i+1, j-1 {
-		buf[i], buf[j] = buf[j], buf[i]
-	}
-
-	return buf, nil
-}
-
-func uniqueStrings(values []string) []string {
-	if len(values) == 0 {
-		return nil
-	}
-
-	seen := make(map[string]struct{}, len(values))
-	unique := make([]string, 0, len(values))
-	for _, value := range values {
-		if _, ok := seen[value]; ok {
-			continue
-		}
-		seen[value] = struct{}{}
-		unique = append(unique, value)
-	}
-
-	return unique
 }
