@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 )
 
@@ -10,74 +9,8 @@ import (
 // Transaction Simulation
 // =============================================================================
 
-// SimulateTransaction simulates a transaction without executing it.
-// This is useful for estimating gas costs and verifying transaction validity.
-func SimulateTransaction(c *Client, ctx context.Context, txJSON json.RawMessage, opts *SimulationOptions) (*SimulationResult, error) {
-	query := `
-		query SimulateTransaction($transaction: JSON!, $checksEnabled: Boolean) {
-			simulateTransaction(transaction: $transaction, checksEnabled: $checksEnabled) {
-				effects {
-					digest
-					status
-					executionError { message }
-					lamportVersion
-					gasEffects {
-						gasSummary {
-							computationCost
-							storageCost
-							storageRebate
-							nonRefundableStorageFee
-						}
-					}
-					epoch { epochId }
-					timestamp
-					objectChanges {
-					nodes {
-						address
-						idCreated
-						idDeleted
-					}
-				}
-				balanceChanges {
-					nodes {
-						owner {
-							__typename
-							address
-						}
-						coinType { repr }
-						amount
-					}
-				}
-				}
-				error
-			}
-		}
-	`
-
-	checksEnabled := true
-	if opts != nil && opts.ChecksEnabled != nil {
-		checksEnabled = *opts.ChecksEnabled
-	}
-
-	vars := map[string]any{
-		"transaction":   txJSON,
-		"checksEnabled": checksEnabled,
-	}
-
-	var result struct {
-		SimulateTransaction *SimulationResult `json:"simulateTransaction"`
-	}
-
-	err := c.Execute(ctx, query, vars, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	return result.SimulateTransaction, nil
-}
-
-// SimulateTransactionBcs simulates a transaction from BCS-encoded bytes.
-func SimulateTransactionBcs(c *Client, ctx context.Context, txBcs Base64, opts *SimulationOptions) (*SimulationResult, error) {
+// SimulateTransaction simulates a transaction from BCS-encoded bytes.
+func SimulateTransaction(c *Client, ctx context.Context, txBcs Base64, opts *SimulationOptions) (*SimulationResult, error) {
 	query := `
 		mutation SimulateTransaction($txBytes: String!, $skipChecks: Boolean) {
 			simulateTransaction(txBytes: $txBytes, skipChecks: $skipChecks) {
@@ -331,102 +264,4 @@ func VerifyZkLoginSignature(c *Client, ctx context.Context, bytes Base64, signat
 	}
 
 	return result.VerifyZkloginSignature, nil
-}
-
-// =============================================================================
-// High-Level Transaction Execution Helpers
-// =============================================================================
-
-// TransferSuiResult contains the result of a SUI transfer.
-type TransferSuiResult struct {
-	Digest     string              `json:"digest"`
-	Status     ExecutionStatus     `json:"status"`
-	Error      *string             `json:"error"`
-	GasSummary *GasCostSummary     `json:"gasSummary"`
-	Effects    *TransactionEffects `json:"effects"`
-	Simulation *SimulationResult   `json:"simulation,omitempty"`
-}
-
-// SimulateTransferSui simulates a SUI transfer transaction.
-func SimulateTransferSui(c *Client, ctx context.Context, params TransferSuiParams) (*SimulationResult, error) {
-	tb := BuildTransferSui(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// SimulateTransferObject simulates an object transfer transaction.
-func SimulateTransferObject(c *Client, ctx context.Context, params TransferObjectParams) (*SimulationResult, error) {
-	tb := BuildTransferObject(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// SimulateMoveCall simulates a Move function call.
-func SimulateMoveCall(c *Client, ctx context.Context, params MoveCallParams) (*SimulationResult, error) {
-	tb := BuildMoveCall(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// SimulateSplitCoins simulates a coin split transaction.
-func SimulateSplitCoins(c *Client, ctx context.Context, params SplitCoinsParams) (*SimulationResult, error) {
-	tb := BuildSplitCoins(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// SimulateMergeCoins simulates a coin merge transaction.
-func SimulateMergeCoins(c *Client, ctx context.Context, params MergeCoinsParams) (*SimulationResult, error) {
-	tb := BuildMergeCoins(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// SimulatePublishPackage simulates a package publish transaction.
-func SimulatePublishPackage(c *Client, ctx context.Context, params PublishPackageParams) (*SimulationResult, error) {
-	tb := BuildPublishPackage(params)
-	return c.SimulateTransactionBuilder(ctx, tb, nil)
-}
-
-// =============================================================================
-// Gas Estimation
-// =============================================================================
-
-// EstimateGas estimates the gas cost for a transaction.
-func EstimateGas(c *Client, ctx context.Context, tb *TransactionBuilder) (*GasCostSummary, error) {
-	result, err := c.SimulateTransactionBuilder(ctx, tb, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if result == nil || result.Effects == nil {
-		return nil, fmt.Errorf("simulation returned no effects")
-	}
-
-	if result.Error != nil && *result.Error != "" {
-		return nil, fmt.Errorf("simulation error: %s", *result.Error)
-	}
-
-	if result.Effects.GasEffects == nil {
-		return nil, fmt.Errorf("simulation returned no gas effects")
-	}
-
-	return result.Effects.GasEffects.GasSummary, nil
-}
-
-// EstimateGasForTransferSui estimates gas for a SUI transfer.
-func EstimateGasForTransferSui(c *Client, ctx context.Context, params TransferSuiParams) (*GasCostSummary, error) {
-	tb := BuildTransferSui(params)
-	return EstimateGas(c, ctx, tb)
-}
-
-// EstimateGasForMoveCall estimates gas for a Move function call.
-func EstimateGasForMoveCall(c *Client, ctx context.Context, params MoveCallParams) (*GasCostSummary, error) {
-	tb := BuildMoveCall(params)
-	return EstimateGas(c, ctx, tb)
-}
-
-// =============================================================================
-// Dry Run (Deprecated - use Simulation)
-// =============================================================================
-
-// DryRunTransaction is deprecated. Use SimulateTransaction instead.
-// This method is kept for backwards compatibility.
-func DryRunTransaction(c *Client, ctx context.Context, txBcs Base64) (*SimulationResult, error) {
-	return SimulateTransactionBcs(c, ctx, txBcs, nil)
 }
