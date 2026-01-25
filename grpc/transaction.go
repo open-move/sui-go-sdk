@@ -8,6 +8,7 @@ import (
 	"time"
 
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
+	"github.com/open-move/sui-go-sdk/transaction"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -102,6 +103,57 @@ func (c *Client) ExecuteSignedTransactionAndWait(ctx context.Context, req *Execu
 	}
 
 	return tx, nil
+}
+
+// SignAndExecute resolves, signs, and submits the provided transaction builder.
+func (c *Client) SignAndExecute(ctx context.Context, tx *transaction.Builder, signer transaction.TransactionSigner, options *ExecuteAndWaitOptions) (*v2.ExecutedTransaction, error) {
+	if c == nil {
+		return nil, errors.New("nil client")
+	}
+	if ctx == nil {
+		return nil, errors.New("nil context")
+	}
+	if tx == nil {
+		return nil, errors.New("nil transaction builder")
+	}
+	if signer == nil {
+		return nil, errors.New("nil signer")
+	}
+
+	if !tx.HasSender() {
+		addr, err := signer.SuiAddress()
+		if err != nil {
+			return nil, err
+		}
+		tx.SetSender(addr)
+	}
+
+	if err := tx.Err(); err != nil {
+		return nil, err
+	}
+
+	resolver := NewResolver(c)
+	result, err := tx.Build(ctx, transaction.BuildOptions{Resolver: resolver, GasResolver: resolver})
+	if err != nil {
+		return nil, err
+	}
+	if result.Transaction == nil || len(result.TransactionBytes) == 0 {
+		return nil, errors.New("built transaction missing data")
+	}
+
+	signature, err := signer.SignTransaction(result.TransactionBytes)
+	if err != nil {
+		return nil, err
+	}
+	userSig, err := transaction.UserSignatureFromSerialized(signature)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.ExecuteSignedTransactionAndWait(ctx, &ExecuteAndWaitRequest{
+		Transaction: result.Transaction,
+		Signatures:  []*v2.UserSignature{userSig},
+	}, options)
 }
 
 // ExecuteTransactionAndWait submits an ExecuteTransactionRequest and blocks until the transaction is observed in a checkpoint or an error occurs.

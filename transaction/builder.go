@@ -63,6 +63,10 @@ func (b *Builder) Err() error {
 	return b.err
 }
 
+func (b *Builder) HasSender() bool {
+	return b != nil && b.sender != nil
+}
+
 func (b *Builder) SetSender(address string) *Builder {
 	if b == nil {
 		return b
