@@ -386,7 +386,7 @@ func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, er
 	}
 
 	if !b.hasFullTransaction() && opts.GasResolver != nil {
-		if err := b.resolveGas(ctx, opts.GasResolver, kind, *expiration); err != nil {
+		if err = b.resolveGas(ctx, opts.GasResolver, kind, *expiration); err != nil {
 			return BuildResult{}, err
 		}
 	}

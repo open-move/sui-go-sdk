@@ -3,9 +3,6 @@ package grpc
 import (
 	"context"
 	"errors"
-	"fmt"
-	"io"
-	"time"
 
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
 	"github.com/open-move/sui-go-sdk/transaction"
@@ -23,69 +20,29 @@ var (
 	ErrResponseMissingDigest = errors.New("execute transaction response missing digest")
 )
 
-// ExecuteAndWaitOptions configures ExecuteTransactionAndWait semantics.
-type ExecuteAndWaitOptions struct {
-	WaitTimeout             time.Duration
-	ExecuteCallOptions      []grpc.CallOption
-	SubscriptionCallOptions []grpc.CallOption
-	SubscriptionRequest     *v2.SubscribeCheckpointsRequest
+// ExecuteOptions configures ExecuteTransaction semantics.
+type ExecuteOptions struct {
+	ExecuteCallOptions []grpc.CallOption
 }
 
-// ExecuteAndWaitRequest describes a signed transaction to submit via ExecuteSignedTransactionAndWait.
-type ExecuteAndWaitRequest struct {
+// ExecuteRequest describes a signed transaction to submit via ExecuteSignedTransaction.
+type ExecuteRequest struct {
 	Transaction *v2.Transaction
 	Signatures  []*v2.UserSignature
 	ReadMask    *fieldmaskpb.FieldMask
 }
 
-// CheckpointWaitError wraps the original response alongside an error encountered while waiting for the checkpoint stream.
-type CheckpointWaitError struct {
-	Response *v2.ExecuteTransactionResponse
-	Err      error
-}
-
-func (e *CheckpointWaitError) Error() string {
-	if e == nil {
-		return "<nil>"
-	}
-	if e.Err == nil {
-		return "checkpoint wait error"
-	}
-	return fmt.Sprintf("checkpoint wait error: %v", e.Err)
-}
-
-func (e *CheckpointWaitError) Unwrap() error {
-	if e == nil {
-		return nil
-	}
-	return e.Err
-}
-
-func (o *ExecuteAndWaitOptions) clone() *ExecuteAndWaitOptions {
+func (o *ExecuteOptions) clone() *ExecuteOptions {
 	if o == nil {
-		return &ExecuteAndWaitOptions{}
+		return &ExecuteOptions{}
 	}
-	clone := &ExecuteAndWaitOptions{
-		WaitTimeout:             o.WaitTimeout,
-		ExecuteCallOptions:      append([]grpc.CallOption(nil), o.ExecuteCallOptions...),
-		SubscriptionCallOptions: append([]grpc.CallOption(nil), o.SubscriptionCallOptions...),
+	return &ExecuteOptions{
+		ExecuteCallOptions: append([]grpc.CallOption(nil), o.ExecuteCallOptions...),
 	}
-	if o.SubscriptionRequest != nil {
-		cloned := proto.Clone(o.SubscriptionRequest)
-		if cloned != nil {
-			clone.SubscriptionRequest = cloned.(*v2.SubscribeCheckpointsRequest)
-		}
-	}
-	return clone
 }
 
-type checkpointResult struct {
-	checkpoint *v2.Checkpoint
-	err        error
-}
-
-// ExecuteSignedTransactionAndWait submits a signed transaction and resolves when it appears in a checkpoint.
-func (c *Client) ExecuteSignedTransactionAndWait(ctx context.Context, req *ExecuteAndWaitRequest, options *ExecuteAndWaitOptions) (*v2.ExecutedTransaction, error) {
+// ExecuteSignedTransaction submits a signed transaction and returns its immediate response.
+func (c *Client) ExecuteSignedTransaction(ctx context.Context, req *ExecuteRequest, options *ExecuteOptions) (*v2.ExecutedTransaction, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -93,20 +50,23 @@ func (c *Client) ExecuteSignedTransactionAndWait(ctx context.Context, req *Execu
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.ExecuteTransactionAndWait(ctx, built, options)
+	resp, err := c.executeTransaction(ctx, built, options)
 	if err != nil {
 		return nil, err
 	}
 	tx := resp.GetTransaction()
 	if tx == nil {
-		return nil, &CheckpointWaitError{Response: resp, Err: ErrResponseMissingTransaction}
+		return nil, ErrResponseMissingTransaction
+	}
+	if tx.GetDigest() == "" {
+		return nil, ErrResponseMissingDigest
 	}
 
 	return tx, nil
 }
 
 // SignAndExecute resolves, signs, and submits the provided transaction builder.
-func (c *Client) SignAndExecute(ctx context.Context, tx *transaction.Builder, signer transaction.TransactionSigner, options *ExecuteAndWaitOptions) (*v2.ExecutedTransaction, error) {
+func (c *Client) SignAndExecuteTransaction(ctx context.Context, tx *transaction.Builder, signer transaction.TransactionSigner, options *ExecuteOptions) (*v2.ExecutedTransaction, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -150,14 +110,14 @@ func (c *Client) SignAndExecute(ctx context.Context, tx *transaction.Builder, si
 		return nil, err
 	}
 
-	return c.ExecuteSignedTransactionAndWait(ctx, &ExecuteAndWaitRequest{
+	return c.ExecuteSignedTransaction(ctx, &ExecuteRequest{
 		Transaction: result.Transaction,
 		Signatures:  []*v2.UserSignature{userSig},
 	}, options)
 }
 
-// ExecuteTransactionAndWait submits an ExecuteTransactionRequest and blocks until the transaction is observed in a checkpoint or an error occurs.
-func (c *Client) ExecuteTransactionAndWait(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteAndWaitOptions) (*v2.ExecuteTransactionResponse, error) {
+// ExecuteTransaction submits an ExecuteTransactionRequest and returns its immediate response.
+func (c *Client) executeTransaction(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteOptions) (*v2.ExecuteTransactionResponse, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -179,93 +139,7 @@ func (c *Client) ExecuteTransactionAndWait(ctx context.Context, request *v2.Exec
 	execReq.ReadMask = ensureFieldMaskPaths(execReq.GetReadMask(), "digest", "effects.status", "checkpoint")
 
 	cfg := options.clone()
-	subCtx := ctx
-	cancel := func() {}
-	if cfg.WaitTimeout > 0 {
-		subCtx, cancel = context.WithTimeout(ctx, cfg.WaitTimeout)
-	} else {
-		subCtx, cancel = context.WithCancel(ctx)
-	}
-	defer cancel()
-
-	subReq := cfg.SubscriptionRequest
-	if subReq == nil {
-		subReq = &v2.SubscribeCheckpointsRequest{}
-	} else {
-		subReq = proto.Clone(subReq).(*v2.SubscribeCheckpointsRequest)
-	}
-	subReq.ReadMask = ensureFieldMaskPaths(subReq.GetReadMask(), "checkpoint.transactions.digest", "checkpoint.sequence_number")
-
-	stream, err := c.SubscriptionClient().SubscribeCheckpoints(subCtx, subReq, cfg.SubscriptionCallOptions...)
-	if err != nil {
-		return nil, fmt.Errorf("subscribe checkpoints: %w", err)
-	}
-
-	results := make(chan checkpointResult, 1)
-	go func() {
-		defer close(results)
-		for {
-			msg, recvErr := stream.Recv()
-			if recvErr != nil {
-				if errors.Is(recvErr, context.Canceled) && subCtx.Err() != nil {
-					return
-				}
-				results <- checkpointResult{err: recvErr}
-				return
-			}
-			if msg == nil {
-				continue
-			}
-			results <- checkpointResult{checkpoint: msg.GetCheckpoint()}
-		}
-	}()
-
-	response, err := c.TransactionExecutionClient().ExecuteTransaction(ctx, execReq, cfg.ExecuteCallOptions...)
-	if err != nil {
-		cancel()
-		return nil, err
-	}
-
-	tx := response.GetTransaction()
-	if tx == nil {
-		cancel()
-		return response, &CheckpointWaitError{Response: response, Err: ErrResponseMissingTransaction}
-	}
-	digest := tx.GetDigest()
-	if digest == "" {
-		cancel()
-		return response, &CheckpointWaitError{Response: response, Err: ErrResponseMissingDigest}
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			cancel()
-			return response, &CheckpointWaitError{Response: response, Err: ctx.Err()}
-		case res, ok := <-results:
-			if !ok {
-				cancel()
-				return response, &CheckpointWaitError{Response: response, Err: io.EOF}
-			}
-			if res.err != nil {
-				cancel()
-				if errors.Is(res.err, io.EOF) {
-					return response, &CheckpointWaitError{Response: response, Err: io.EOF}
-				}
-				return response, &CheckpointWaitError{Response: response, Err: res.err}
-			}
-			cp := res.checkpoint
-			if cp == nil {
-				continue
-			}
-			for _, t := range cp.GetTransactions() {
-				if t.GetDigest() == digest {
-					cancel()
-					return response, nil
-				}
-			}
-		}
-	}
+	return c.TransactionExecutionClient().ExecuteTransaction(ctx, execReq, cfg.ExecuteCallOptions...)
 }
 
 // SimulateTransactionOptions customises behaviour of SimulateTransaction.
@@ -295,7 +169,7 @@ func (c *Client) SimulateTransaction(ctx context.Context, tx *v2.Transaction, op
 	return c.TransactionExecutionClient().SimulateTransaction(ctx, req, opts...)
 }
 
-func buildExecuteTransactionRequest(req *ExecuteAndWaitRequest) (*v2.ExecuteTransactionRequest, error) {
+func buildExecuteTransactionRequest(req *ExecuteRequest) (*v2.ExecuteTransactionRequest, error) {
 	if req == nil {
 		return nil, errors.New("nil execute request")
 	}
