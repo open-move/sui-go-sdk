@@ -13,6 +13,7 @@ import (
 	"github.com/open-move/sui-go-sdk/keychain"
 )
 
+// Keypair represents a Secp256k1 public/private key pair.
 type Keypair struct {
 	privateKey *secp256k1.PrivateKey
 	publicKey  *secp256k1.PublicKey
@@ -20,10 +21,12 @@ type Keypair struct {
 	path       keychain.DerivationPath
 }
 
+// Scheme returns the scheme type for this keypair.
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeSecp256k1
 }
 
+// PublicKey returns the public key bytes.
 func (k Keypair) PublicKey() []byte {
 	if k.publicKey == nil {
 		return nil
@@ -31,10 +34,12 @@ func (k Keypair) PublicKey() []byte {
 	return append([]byte(nil), k.publicKey.SerializeCompressed()...)
 }
 
+// SuiAddress returns the Sui address derived from the public key.
 func (k Keypair) SuiAddress() (string, error) {
 	return keychain.AddressFromPublicKey(keychain.SchemeSecp256k1, k.PublicKey())
 }
 
+// ExportSecret returns the private key bytes.
 func (k Keypair) ExportSecret() ([]byte, error) {
 	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256k1: private key is nil")
@@ -42,6 +47,7 @@ func (k Keypair) ExportSecret() ([]byte, error) {
 	return append([]byte(nil), k.privateKey.Serialize()...), nil
 }
 
+// signData signs the given data with the private key.
 func (k Keypair) signData(data []byte) ([]byte, error) {
 	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256k1: private key is nil")
@@ -69,6 +75,7 @@ func (k Keypair) signData(data []byte) ([]byte, error) {
 	return out, nil
 }
 
+// verifyDigest verifies the signature against the digest and public key.
 func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
 	pub, err := secp256k1.ParsePubKey(publicKey)
 	if err != nil {
@@ -102,6 +109,7 @@ func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
 	return nil
 }
 
+// SignPersonalMessage signs a personal message with the Secp256k1 keypair.
 func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeSecp256k1,
@@ -111,6 +119,7 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	)
 }
 
+// SignTransaction signs a transaction with the Secp256k1 keypair.
 func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	return transaction.Sign(
 		keychain.SchemeSecp256k1,
@@ -120,16 +129,19 @@ func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	)
 }
 
+// VerifyPersonalMessage verifies a personal message signature.
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
 	return VerifyPersonalMessage(k.PublicKey(), message, signature)
 }
 
+// VerifyPersonalMessage verifies a personal message signature against a public key.
 func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
 	return personalmsg.Verify(keychain.SchemeSecp256k1, message, signature, func(digest [32]byte, signature []byte) error {
 		return verifyDigest(publicKey, digest, signature)
 	})
 }
 
+// Generate creates a new Secp256k1 keypair.
 func Generate() (*Keypair, error) {
 	priv, err := secp256k1.GeneratePrivateKey()
 	if err != nil {
@@ -142,6 +154,7 @@ func Generate() (*Keypair, error) {
 	}, nil
 }
 
+// FromSecretKey creates a keypair from a private key seed.
 func FromSecretKey(secret []byte) (*Keypair, error) {
 	if len(secret) != keychain.PrivateKeySize() {
 		return nil, keychain.ErrInvalidSecretLength

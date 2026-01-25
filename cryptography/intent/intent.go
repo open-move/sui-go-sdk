@@ -32,6 +32,7 @@ const (
 	IntentVersionV0 IntentVersion = 0
 )
 
+// Validate checks if the intent version is supported.
 func (v IntentVersion) Validate() error {
 	if v != IntentVersionV0 {
 		return errInvalidIntentVers
@@ -50,6 +51,7 @@ const (
 	AppIDSui AppID = 0
 )
 
+// Validate checks if the application ID is supported.
 func (a AppID) Validate() error {
 	if a != AppIDSui {
 		return errInvalidIntentAppID
@@ -72,6 +74,7 @@ const (
 	IntentScopeProofOfPossession       IntentScope = 5
 )
 
+// Validate checks if the intent scope is valid.
 func (s IntentScope) Validate() error {
 	switch s {
 	case IntentScopeTransactionData,
@@ -94,20 +97,24 @@ type Intent struct {
 	AppID   AppID
 }
 
+// DefaultIntent returns the default intent (TransactionData, V0, Sui).
 func DefaultIntent() Intent {
 	return Intent{Scope: IntentScopeTransactionData, Version: IntentVersionV0, AppID: AppIDSui}
 }
 
+// WithAppID returns a new Intent with the specified application ID.
 func (i Intent) WithAppID(appID AppID) Intent {
 	i.AppID = appID
 	return i
 }
 
+// WithScope returns a new Intent with the specified scope.
 func (i Intent) WithScope(scope IntentScope) Intent {
 	i.Scope = scope
 	return i
 }
 
+// Validate checks if the intent fields are valid.
 func (i Intent) Validate() error {
 	if err := i.Scope.Validate(); err != nil {
 		return err
@@ -118,10 +125,12 @@ func (i Intent) Validate() error {
 	return i.AppID.Validate()
 }
 
+// Bytes returns the byte representation of the intent.
 func (i Intent) Bytes() [3]byte {
 	return [3]byte{byte(i.Scope), byte(i.Version), byte(i.AppID)}
 }
 
+// ParseIntent parses a hex-encoded intent string.
 func ParseIntent(hexEncoded string) (Intent, error) {
 	raw, err := hex.DecodeString(hexEncoded)
 	if err != nil {
@@ -131,6 +140,7 @@ func ParseIntent(hexEncoded string) (Intent, error) {
 	return IntentFromBytes(raw)
 }
 
+// IntentFromBytes creates an Intent from its byte representation.
 func IntentFromBytes(raw []byte) (Intent, error) {
 	if len(raw) != 3 {
 		return Intent{}, errInvalidIntentLength
@@ -148,10 +158,12 @@ type IntentMessage[T any] struct {
 	Value  T
 }
 
+// NewIntentMessage creates a new IntentMessage.
 func NewIntentMessage[T any](intent Intent, value T) IntentMessage[T] {
 	return IntentMessage[T]{Intent: intent, Value: value}
 }
 
+// MarshalBCS marshals the intent message to BCS format.
 func (m IntentMessage[T]) MarshalBCS() ([]byte, error) {
 	if err := m.Intent.Validate(); err != nil {
 		return nil, err
@@ -169,6 +181,7 @@ func (m IntentMessage[T]) MarshalBCS() ([]byte, error) {
 	return encoded, nil
 }
 
+// HashIntentMessage hashes the intent message.
 func HashIntentMessage[T any](message IntentMessage[T]) ([32]byte, error) {
 	serialized, err := message.MarshalBCS()
 	if err != nil {
