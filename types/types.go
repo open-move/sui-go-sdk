@@ -27,8 +27,14 @@ func init() {
 			return d.Err()
 		}
 		// Read the 32 bytes
-		_, err := d.Read(dig[:])
-		return err
+		buf := make([]byte, length)
+		_, err := d.Read(buf)
+		if err != nil {
+			return err
+		}
+		*dig = buf
+		return nil
+
 	})
 }
 
