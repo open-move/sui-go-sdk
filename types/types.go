@@ -8,7 +8,7 @@ import (
 
 type Address [32]byte
 
-type Digest [32]byte
+type Digest []byte
 
 type ObjectID = Address
 
@@ -33,5 +33,5 @@ func (a Address) String() string {
 }
 
 func (d Digest) String() string {
-	return base58.Encode(d[:])
+	return base58.Encode(d)
 }

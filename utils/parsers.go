@@ -12,15 +12,14 @@ import (
 
 var ErrInvalidDigest = errors.New("invalid object digest")
 
+const digestLength = 32
+
 func ParseDigest(input string) (types.Digest, error) {
 	decoded := base58.Decode(input)
-	if len(decoded) != len(types.Digest{}) {
-		return types.Digest{}, ErrInvalidDigest
+	if len(decoded) != digestLength {
+		return nil, ErrInvalidDigest
 	}
-
-	var digest types.Digest
-	copy(digest[:], decoded)
-	return digest, nil
+	return append(types.Digest(nil), decoded...), nil
 }
 
 func ParseMoveCallTarget(target string) (string, string, string, error) {

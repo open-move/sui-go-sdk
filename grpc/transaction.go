@@ -124,7 +124,7 @@ func (c *Client) ExecuteTransactionAndWait(ctx context.Context, request *v2.Exec
 	if execReq.GetTransaction() == nil {
 		return nil, ErrMissingTransaction
 	}
-	execReq.ReadMask = ensureFieldMaskPaths(execReq.GetReadMask(), "transaction.digest", "effects.status", "checkpoint")
+	execReq.ReadMask = ensureFieldMaskPaths(execReq.GetReadMask(), "digest", "effects.status", "checkpoint")
 
 	cfg := options.clone()
 	subCtx := ctx

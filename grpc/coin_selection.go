@@ -98,7 +98,7 @@ func (c *Client) SelectCoins(ctx context.Context, owner string, coinType string,
 
 	req := &v2.ListOwnedObjectsRequest{
 		Owner:      utils.StringPtr(owner),
-		ObjectType: utils.StringPtr(coinType),
+		ObjectType: utils.StringPtr("0x2::coin::Coin<" + coinType + ">"),
 	}
 	if cfg.pageSize > 0 {
 		size := cfg.pageSize

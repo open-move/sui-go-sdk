@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 
 	bcs "github.com/iotaledger/bcs-go"
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
@@ -12,7 +13,7 @@ import (
 )
 
 type BuildOptions struct {
-	Resolver ObjectResolver
+	Resolver Resolver
 }
 
 type BuildResult struct {
@@ -432,7 +433,150 @@ func (b *Builder) addCommand(cmd Command) *uint16 {
 	return &idx
 }
 
-func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([]CallArg, error) {
+type inputUsage struct {
+	mutable   bool
+	receiving bool
+}
+
+func (b *Builder) resolveInputUsage(ctx context.Context, resolver Resolver) ([]inputUsage, error) {
+	usage := make([]inputUsage, len(b.inputs))
+
+	markMutable := func(arg Argument) {
+		if arg.Input == nil {
+			return
+		}
+		idx := int(*arg.Input)
+		if idx < 0 || idx >= len(usage) {
+			return
+		}
+		if b.inputs[idx].UnresolvedObject == nil {
+			return
+		}
+		usage[idx].mutable = true
+	}
+
+	for _, cmd := range b.commands {
+		switch {
+		case cmd.SplitCoins != nil:
+			markMutable(cmd.SplitCoins.Coin)
+			for _, amount := range cmd.SplitCoins.Amounts {
+				markMutable(amount)
+			}
+		case cmd.MergeCoins != nil:
+			markMutable(cmd.MergeCoins.Destination)
+			for _, source := range cmd.MergeCoins.Sources {
+				markMutable(source)
+			}
+		case cmd.TransferObjects != nil:
+			for _, obj := range cmd.TransferObjects.Objects {
+				markMutable(obj)
+			}
+		case cmd.MakeMoveVec != nil:
+			for _, elem := range cmd.MakeMoveVec.Elements {
+				markMutable(elem)
+			}
+		}
+	}
+
+	for _, cmd := range b.commands {
+		if cmd.MoveCall == nil {
+			continue
+		}
+		moveCall := cmd.MoveCall
+		needsResolution := false
+		for _, arg := range moveCall.Arguments {
+			if arg.Input == nil {
+				continue
+			}
+			idx := int(*arg.Input)
+			if idx < 0 || idx >= len(b.inputs) {
+				continue
+			}
+			if b.inputs[idx].UnresolvedObject != nil {
+				needsResolution = true
+				break
+			}
+		}
+		if !needsResolution {
+			continue
+		}
+
+		sig, err := resolver.ResolveMoveFunction(ctx, moveCall.Package.String(), moveCall.Module, moveCall.Function)
+		if err != nil {
+			return nil, err
+		}
+		params := trimTxContext(sig.Parameters)
+		if len(params) < len(moveCall.Arguments) {
+			return nil, fmt.Errorf("move call %s::%s::%s expects %d args, got %d", moveCall.Package.String(), moveCall.Module, moveCall.Function, len(params), len(moveCall.Arguments))
+		}
+
+		for i, arg := range moveCall.Arguments {
+			if arg.Input == nil {
+				continue
+			}
+			idx := int(*arg.Input)
+			if idx < 0 || idx >= len(usage) {
+				continue
+			}
+			if b.inputs[idx].UnresolvedObject == nil {
+				continue
+			}
+			param := params[i]
+			if param.Reference != ReferenceImmutable {
+				usage[idx].mutable = true
+			}
+			if isReceivingType(param) {
+				usage[idx].receiving = true
+			}
+		}
+	}
+
+	return usage, nil
+}
+
+func buildObjectArg(meta ObjectMetadata, usage inputUsage) (*ObjectArg, error) {
+	switch meta.OwnerKind {
+	case OwnerShared, OwnerConsensusAddress:
+		if meta.OwnerVersion == nil {
+			return nil, fmt.Errorf("shared object missing initial shared version")
+		}
+		shared := types.SharedObjectRef{
+			ObjectID:             meta.ID,
+			InitialSharedVersion: *meta.OwnerVersion,
+			Mutable:              usage.mutable,
+		}
+		return &ObjectArg{SharedObject: &shared}, nil
+	case OwnerImmutable, OwnerAddress, OwnerObject, OwnerUnknown:
+		if usage.receiving {
+			ref := types.ObjectRef{ObjectID: meta.ID, Version: meta.Version, Digest: meta.Digest}
+			return &ObjectArg{Receiving: &ref}, nil
+		}
+		ref := types.ObjectRef{ObjectID: meta.ID, Version: meta.Version, Digest: meta.Digest}
+		return &ObjectArg{ImmOrOwnedObject: &ref}, nil
+	default:
+		return nil, fmt.Errorf("unsupported owner kind %d", meta.OwnerKind)
+	}
+}
+
+func trimTxContext(params []MoveParameter) []MoveParameter {
+	if len(params) == 0 {
+		return params
+	}
+	last := params[len(params)-1]
+	if last.TypeName == "0x2::tx_context::TxContext" {
+		return params[:len(params)-1]
+	}
+	return params
+}
+
+func isReceivingType(param MoveParameter) bool {
+	if param.TypeName == "" {
+		return false
+	}
+	return param.TypeName == "0x2::transfer::Receiving" || strings.HasPrefix(param.TypeName, "0x2::transfer::Receiving<")
+}
+
+func (b *Builder) resolveInputs(ctx context.Context, resolver Resolver) ([]CallArg, error) {
 	resolved := make([]CallArg, len(b.inputs))
 	objectIDs := make([]string, 0)
 	for _, in := range b.inputs {
@@ -441,26 +585,34 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([
 		}
 	}
 
-	objectMap := map[string]types.ObjectRef{}
-	if len(objectIDs) > 0 {
+	hasUnresolved := len(objectIDs) > 0
+	var usage []inputUsage
+	if hasUnresolved {
 		if resolver == nil {
 			return nil, ErrResolverRequired
 		}
-
 		if ctx == nil {
 			return nil, fmt.Errorf("nil context")
 		}
+		resolvedUsage, err := b.resolveInputUsage(ctx, resolver)
+		if err != nil {
+			return nil, err
+		}
+		usage = resolvedUsage
+	} else {
+		usage = make([]inputUsage, len(b.inputs))
+	}
 
+	objectMap := map[string]ObjectMetadata{}
+	if hasUnresolved {
 		unique := uniqueStrings(objectIDs)
 		refs, err := resolver.ResolveObjects(ctx, unique)
 		if err != nil {
 			return nil, err
 		}
-
 		if len(refs) != len(unique) {
-			return nil, fmt.Errorf("resolver returned %d refs for %d object ids", len(refs), len(unique))
+			return nil, fmt.Errorf("resolver returned %d objects for %d object ids", len(refs), len(unique))
 		}
-
 		for i, id := range unique {
 			objectMap[id] = refs[i]
 		}
@@ -471,13 +623,22 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([
 		case in.Pure != nil:
 			resolved[i] = CallArg{Pure: in.Pure}
 		case in.Object != nil:
+			if in.Object.SharedObject != nil && usage[i].mutable && !in.Object.SharedObject.Mutable {
+				updated := *in.Object.SharedObject
+				updated.Mutable = true
+				in.Object.SharedObject = &updated
+			}
 			resolved[i] = CallArg{Object: in.Object}
 		case in.UnresolvedObject != nil:
-			ref, ok := objectMap[in.UnresolvedObject.ObjectID]
+			meta, ok := objectMap[in.UnresolvedObject.ObjectID]
 			if !ok {
 				return nil, ErrUnresolvedInput
 			}
-			resolved[i] = CallArg{Object: &ObjectArg{ImmOrOwnedObject: &ref}}
+			objArg, err := buildObjectArg(meta, usage[i])
+			if err != nil {
+				return nil, err
+			}
+			resolved[i] = CallArg{Object: objArg}
 		default:
 			return nil, ErrUnresolvedInput
 		}
