@@ -12,6 +12,12 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
+const (
+	defaultGasCoinType  = "0x2::sui::SUI"
+	gasBudgetBufferPcnt = 10
+	minGasBudgetBuffer  = uint64(1000)
+)
+
 type Resolver struct {
 	client *Client
 	mu     sync.Mutex

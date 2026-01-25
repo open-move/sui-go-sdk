@@ -176,6 +176,7 @@ func (c *Client) ReferenceGasPrice(ctx context.Context, opts ...grpc.CallOption)
 	if err != nil {
 		return 0, err
 	}
+
 	return epoch.GetReferenceGasPrice(), nil
 }
 

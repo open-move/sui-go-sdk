@@ -13,7 +13,8 @@ import (
 )
 
 type BuildOptions struct {
-	Resolver Resolver
+	Resolver    Resolver
+	GasResolver GasResolver
 }
 
 type BuildResult struct {
@@ -368,22 +369,29 @@ func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, er
 		return BuildResult{}, err
 	}
 
+	expiration := b.expiration
+
 	result := BuildResult{
 		KindBytes:         kindBytes,
 		ProgrammableKind:  programmable,
 		ResolvedInputArgs: resolvedInputs,
 	}
-	if !b.hasFullTransaction() {
-		return result, nil
-	}
-
-	gasData := b.buildGasData()
-	expiration := b.expiration
 	if expiration == nil {
 		fallback := ExpirationNone()
 		expiration = &fallback
 	}
 
+	if !b.hasFullTransaction() && opts.GasResolver != nil {
+		if err := b.resolveGas(ctx, opts.GasResolver, kind, *expiration); err != nil {
+			return BuildResult{}, err
+		}
+	}
+
+	if !b.hasFullTransaction() {
+		return result, nil
+	}
+
+	gasData := b.buildGasData()
 	data := TransactionData{
 		V1: &TransactionDataV1{
 			Kind:       kind,
@@ -645,6 +653,64 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver Resolver) ([]CallA
 	}
 
 	return resolved, nil
+}
+
+func (b *Builder) resolveGas(ctx context.Context, resolver GasResolver, kind TransactionKind, expiration TransactionExpiration) error {
+	if resolver == nil {
+		return nil
+	}
+	if b.sender == nil {
+		return nil
+	}
+	if ctx == nil {
+		return fmt.Errorf("nil context")
+	}
+
+	if b.gas.Price == nil {
+		price, err := resolver.ResolveGasPrice(ctx)
+		if err != nil {
+			return err
+		}
+		b.gas.Price = &price
+	}
+
+	if b.gas.Budget == nil {
+		if b.gas.Price == nil {
+			return fmt.Errorf("gas price required to resolve budget")
+		}
+		owner := b.gas.Owner
+		if owner == nil {
+			owner = b.sender
+		}
+		budget, err := resolver.ResolveGasBudget(ctx, GasBudgetInput{
+			Sender:     *b.sender,
+			GasOwner:   *owner,
+			GasPrice:   *b.gas.Price,
+			Kind:       kind,
+			Expiration: expiration,
+		})
+		if err != nil {
+			return err
+		}
+		b.gas.Budget = &budget
+	}
+
+	if len(b.gas.Payment) == 0 {
+		if b.gas.Budget == nil {
+			return fmt.Errorf("gas budget required to resolve payment")
+		}
+		owner := b.gas.Owner
+		if owner == nil {
+			owner = b.sender
+		}
+		payment, err := resolver.ResolveGasPayment(ctx, *owner, *b.gas.Budget)
+		if err != nil {
+			return err
+		}
+		b.gas.Payment = payment
+	}
+
+	return nil
 }
 
 func (b *Builder) hasFullTransaction() bool {

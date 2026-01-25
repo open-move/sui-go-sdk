@@ -56,3 +56,17 @@ type Resolver interface {
 type PackageResolver interface {
 	ResolvePackage(ctx context.Context, packageID string) (*PackageMetadata, error)
 }
+
+type GasBudgetInput struct {
+	Sender     types.Address
+	GasOwner   types.Address
+	GasPrice   uint64
+	Kind       TransactionKind
+	Expiration TransactionExpiration
+}
+
+type GasResolver interface {
+	ResolveGasPrice(ctx context.Context) (uint64, error)
+	ResolveGasBudget(ctx context.Context, input GasBudgetInput) (uint64, error)
+	ResolveGasPayment(ctx context.Context, owner types.Address, budget uint64) ([]types.ObjectRef, error)
+}
