@@ -50,7 +50,7 @@ func (c *Client) ExecuteSignedTransaction(ctx context.Context, req *ExecuteReque
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.executeTransaction(ctx, built, options)
+	resp, err := c.ExecuteTransaction(ctx, built, options)
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +65,8 @@ func (c *Client) ExecuteSignedTransaction(ctx context.Context, req *ExecuteReque
 	return tx, nil
 }
 
-// SignAndExecute resolves, signs, and submits the provided transaction builder.
-func (c *Client) SignAndExecuteTransaction(ctx context.Context, tx *transaction.Builder, signer transaction.TransactionSigner, options *ExecuteOptions) (*v2.ExecutedTransaction, error) {
+// SignAndExecute resolves, signs, and submits the provided transaction.
+func (c *Client) SignAndExecuteTransaction(ctx context.Context, tx *transaction.Transaction, signer transaction.TransactionSigner, options *ExecuteOptions) (*v2.ExecutedTransaction, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -74,7 +74,7 @@ func (c *Client) SignAndExecuteTransaction(ctx context.Context, tx *transaction.
 		return nil, errors.New("nil context")
 	}
 	if tx == nil {
-		return nil, errors.New("nil transaction builder")
+		return nil, errors.New("nil transaction")
 	}
 	if signer == nil {
 		return nil, errors.New("nil signer")
@@ -117,7 +117,7 @@ func (c *Client) SignAndExecuteTransaction(ctx context.Context, tx *transaction.
 }
 
 // ExecuteTransaction submits an ExecuteTransactionRequest and returns its immediate response.
-func (c *Client) executeTransaction(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteOptions) (*v2.ExecuteTransactionResponse, error) {
+func (c *Client) ExecuteTransaction(ctx context.Context, request *v2.ExecuteTransactionRequest, options *ExecuteOptions) (*v2.ExecuteTransactionResponse, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}

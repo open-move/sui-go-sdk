@@ -25,7 +25,7 @@ type BuildResult struct {
 	ResolvedInputArgs []CallArg
 }
 
-type Builder struct {
+type Transaction struct {
 	inputs     []input
 	commands   []Command
 	sender     *types.Address
@@ -51,23 +51,23 @@ type gasConfig struct {
 	Budget  *uint64
 }
 
-func New() *Builder {
-	return &Builder{}
+func New() *Transaction {
+	return &Transaction{}
 }
 
-func (b *Builder) Err() error {
+func (b *Transaction) Err() error {
 	if b == nil {
-		return ErrNilBuilder
+		return ErrNilTransaction
 	}
 
 	return b.err
 }
 
-func (b *Builder) HasSender() bool {
+func (b *Transaction) HasSender() bool {
 	return b != nil && b.sender != nil
 }
 
-func (b *Builder) SetSender(address string) *Builder {
+func (b *Transaction) SetSender(address string) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -82,7 +82,7 @@ func (b *Builder) SetSender(address string) *Builder {
 	return b
 }
 
-func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
+func (b *Transaction) SetExpiration(expiration TransactionExpiration) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -91,7 +91,7 @@ func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasBudget(budget uint64) *Builder {
+func (b *Transaction) SetGasBudget(budget uint64) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -100,7 +100,7 @@ func (b *Builder) SetGasBudget(budget uint64) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasPrice(price uint64) *Builder {
+func (b *Transaction) SetGasPrice(price uint64) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -109,7 +109,7 @@ func (b *Builder) SetGasPrice(price uint64) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasOwner(address string) *Builder {
+func (b *Transaction) SetGasOwner(address string) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -124,7 +124,7 @@ func (b *Builder) SetGasOwner(address string) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasPayment(payment []types.ObjectRef) *Builder {
+func (b *Transaction) SetGasPayment(payment []types.ObjectRef) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -133,11 +133,11 @@ func (b *Builder) SetGasPayment(payment []types.ObjectRef) *Builder {
 	return b
 }
 
-func (b *Builder) Gas() Argument {
+func (b *Transaction) Gas() Argument {
 	return Argument{GasCoin: &struct{}{}}
 }
 
-func (b *Builder) PureBytes(value []byte) Argument {
+func (b *Transaction) PureBytes(value []byte) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -149,32 +149,32 @@ func (b *Builder) PureBytes(value []byte) Argument {
 	return b.addInput(input{Pure: &Pure{Bytes: append([]byte(nil), value...)}})
 }
 
-func (b *Builder) PureBool(value bool) Argument {
+func (b *Transaction) PureBool(value bool) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU8(value uint8) Argument {
+func (b *Transaction) PureU8(value uint8) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU16(value uint16) Argument {
+func (b *Transaction) PureU16(value uint16) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU32(value uint32) Argument {
+func (b *Transaction) PureU32(value uint32) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU64(value uint64) Argument {
+func (b *Transaction) PureU64(value uint64) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU128(value *big.Int) Argument {
+func (b *Transaction) PureU128(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u128 value is nil"))
 		return Argument{}
@@ -189,7 +189,7 @@ func (b *Builder) PureU128(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) PureU256(value *big.Int) Argument {
+func (b *Transaction) PureU256(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u256 value is nil"))
 		return Argument{}
@@ -204,12 +204,12 @@ func (b *Builder) PureU256(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) PureString(value string) Argument {
+func (b *Transaction) PureString(value string) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureAddress(value string) Argument {
+func (b *Transaction) PureAddress(value string) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -229,7 +229,7 @@ func (b *Builder) PureAddress(value string) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) Object(id string) Argument {
+func (b *Transaction) Object(id string) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -243,7 +243,7 @@ func (b *Builder) Object(id string) Argument {
 	return b.addInput(input{UnresolvedObject: &UnresolvedObject{ObjectID: normalized}})
 }
 
-func (b *Builder) ObjectRef(ref types.ObjectRef) Argument {
+func (b *Transaction) ObjectRef(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -251,7 +251,7 @@ func (b *Builder) ObjectRef(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{ImmOrOwnedObject: &ref}})
 }
 
-func (b *Builder) SharedObject(ref types.SharedObjectRef) Argument {
+func (b *Transaction) SharedObject(ref types.SharedObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -259,7 +259,7 @@ func (b *Builder) SharedObject(ref types.SharedObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{SharedObject: &ref}})
 }
 
-func (b *Builder) ReceivingObject(ref types.ObjectRef) Argument {
+func (b *Transaction) ReceivingObject(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -267,7 +267,7 @@ func (b *Builder) ReceivingObject(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{Receiving: &ref}})
 }
 
-func (b *Builder) SplitCoins(args SplitCoins) []Argument {
+func (b *Transaction) SplitCoins(args SplitCoins) []Argument {
 	idx := b.addCommand(Command{SplitCoins: &args})
 	if idx == nil {
 		return nil
@@ -282,15 +282,15 @@ func (b *Builder) SplitCoins(args SplitCoins) []Argument {
 	return results
 }
 
-func (b *Builder) MergeCoins(args MergeCoins) {
+func (b *Transaction) MergeCoins(args MergeCoins) {
 	b.addCommand(Command{MergeCoins: &args})
 }
 
-func (b *Builder) TransferObjects(args TransferObjects) {
+func (b *Transaction) TransferObjects(args TransferObjects) {
 	b.addCommand(Command{TransferObjects: &args})
 }
 
-func (b *Builder) MoveCall(args MoveCall) Result {
+func (b *Transaction) MoveCall(args MoveCall) Result {
 	call, err := args.toProgrammableMoveCall()
 	if err != nil {
 		b.setErr(err)
@@ -305,7 +305,7 @@ func (b *Builder) MoveCall(args MoveCall) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) MakeMoveVec(args MakeMoveVecInput) Result {
+func (b *Transaction) MakeMoveVec(args MakeMoveVecInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -318,7 +318,7 @@ func (b *Builder) MakeMoveVec(args MakeMoveVecInput) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Publish(args PublishInput) Result {
+func (b *Transaction) Publish(args PublishInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -333,7 +333,7 @@ func (b *Builder) Publish(args PublishInput) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Upgrade(args UpgradeInput) Result {
+func (b *Transaction) Upgrade(args UpgradeInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -348,9 +348,9 @@ func (b *Builder) Upgrade(args UpgradeInput) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, error) {
+func (b *Transaction) Build(ctx context.Context, opts BuildOptions) (BuildResult, error) {
 	if b == nil {
-		return BuildResult{}, ErrNilBuilder
+		return BuildResult{}, ErrNilTransaction
 	}
 
 	if b.err != nil {
@@ -415,7 +415,7 @@ func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, er
 	return result, nil
 }
 
-func (b *Builder) addInput(in input) Argument {
+func (b *Transaction) addInput(in input) Argument {
 	if b.err != nil {
 		return Argument{}
 	}
@@ -430,7 +430,7 @@ func (b *Builder) addInput(in input) Argument {
 	return Argument{Input: &idx}
 }
 
-func (b *Builder) addCommand(cmd Command) *uint16 {
+func (b *Transaction) addCommand(cmd Command) *uint16 {
 	if b.err != nil {
 		return nil
 	}
@@ -450,7 +450,7 @@ type inputUsage struct {
 	receiving bool
 }
 
-func (b *Builder) resolveInputUsage(ctx context.Context, resolver Resolver) ([]inputUsage, error) {
+func (b *Transaction) resolveInputUsage(ctx context.Context, resolver Resolver) ([]inputUsage, error) {
 	usage := make([]inputUsage, len(b.inputs))
 
 	markMutable := func(arg Argument) {
@@ -588,7 +588,7 @@ func isReceivingType(param MoveParameter) bool {
 	return param.TypeName == "0x2::transfer::Receiving" || strings.HasPrefix(param.TypeName, "0x2::transfer::Receiving<")
 }
 
-func (b *Builder) resolveInputs(ctx context.Context, resolver Resolver) ([]CallArg, error) {
+func (b *Transaction) resolveInputs(ctx context.Context, resolver Resolver) ([]CallArg, error) {
 	resolved := make([]CallArg, len(b.inputs))
 	objectIDs := make([]string, 0)
 	for _, in := range b.inputs {
@@ -659,7 +659,7 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver Resolver) ([]CallA
 	return resolved, nil
 }
 
-func (b *Builder) resolveGas(ctx context.Context, resolver GasResolver, kind TransactionKind, expiration TransactionExpiration) error {
+func (b *Transaction) resolveGas(ctx context.Context, resolver GasResolver, kind TransactionKind, expiration TransactionExpiration) error {
 	if resolver == nil {
 		return nil
 	}
@@ -717,7 +717,7 @@ func (b *Builder) resolveGas(ctx context.Context, resolver GasResolver, kind Tra
 	return nil
 }
 
-func (b *Builder) hasFullTransaction() bool {
+func (b *Transaction) hasFullTransaction() bool {
 	if b.sender == nil {
 		return false
 	}
@@ -729,7 +729,7 @@ func (b *Builder) hasFullTransaction() bool {
 	return true
 }
 
-func (b *Builder) buildGasData() GasData {
+func (b *Transaction) buildGasData() GasData {
 	owner := b.gas.Owner
 	if owner == nil {
 		owner = b.sender
@@ -743,7 +743,7 @@ func (b *Builder) buildGasData() GasData {
 	}
 }
 
-func (b *Builder) pureEncoded(bytes []byte, err error) Argument {
+func (b *Transaction) pureEncoded(bytes []byte, err error) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -756,7 +756,7 @@ func (b *Builder) pureEncoded(bytes []byte, err error) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) setErr(err error) {
+func (b *Transaction) setErr(err error) {
 	if err != nil && b.err == nil {
 		b.err = err
 	}

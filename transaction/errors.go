@@ -3,7 +3,7 @@ package transaction
 import "errors"
 
 var (
-	ErrNilBuilder              = errors.New("transaction builder is nil")
+	ErrNilTransaction          = errors.New("transaction is nil")
 	ErrInvalidAddress          = errors.New("invalid sui address")
 	ErrInvalidDigest           = errors.New("invalid object digest")
 	ErrInvalidSerializedSig    = errors.New("invalid serialized signature")
