@@ -21,12 +21,14 @@ type QueryBuilder struct {
 	variableIndex int
 }
 
+// variableDef represents a GraphQL variable definition.
 type variableDef struct {
 	name     string
 	typeName string
 	value    any
 }
 
+// selectionBuilder represents a GraphQL field selection.
 type selectionBuilder struct {
 	name       string
 	alias      string
@@ -36,6 +38,7 @@ type selectionBuilder struct {
 	typeName   string // for inline fragments (...on Type)
 }
 
+// argumentBuilder represents a GraphQL field argument.
 type argumentBuilder struct {
 	name     string
 	value    any
@@ -381,6 +384,7 @@ func (qb *QueryBuilder) Build() (string, map[string]any) {
 	return sb.String(), vars
 }
 
+// writeSelection writes a field selection to the string builder with proper indentation.
 func (qb *QueryBuilder) writeSelection(sb *strings.Builder, sel selectionBuilder, indent int) {
 	indentStr := strings.Repeat("  ", indent)
 
@@ -438,6 +442,7 @@ func (qb *QueryBuilder) writeSelection(sb *strings.Builder, sel selectionBuilder
 	sb.WriteString("\n")
 }
 
+// formatValue formats a value for inclusion in a GraphQL query.
 func formatValue(v any) string {
 	switch val := v.(type) {
 	case string:

@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Transactions demonstrates how to fetch transactions.
 func Transactions(ctx context.Context, client *graphql.Client, address string) {
 	fmt.Println("=== GetTransactionBlock ===")
 	digest := "3KmTo5yvbkeg9mrQafUkfFoYVRt45zTg2SoGWBJw615V"

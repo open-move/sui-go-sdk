@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// newTestClient creates a new client for testing purposes.
 func newTestClient() *Client {
 	return NewClient(
 		WithEndpoint(TestnetEndpoint),
@@ -13,6 +14,7 @@ func newTestClient() *Client {
 	)
 }
 
+// TestExecuteChainIdentifier tests the execution of a query to fetch the chain identifier.
 func TestExecuteChainIdentifier(t *testing.T) {
 	client := newTestClient()
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -33,6 +35,7 @@ func TestExecuteChainIdentifier(t *testing.T) {
 	}
 }
 
+// TestQueryBuilderExecuteEpoch tests the query builder by fetching the epoch's reference gas price.
 func TestQueryBuilderExecuteEpoch(t *testing.T) {
 	client := newTestClient()
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)

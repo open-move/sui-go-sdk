@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Packages demonstrates how to fetch packages and modules.
 func Packages(ctx context.Context, client *graphql.Client) {
 	// Example: Get framework package (0x2)
 	fmt.Println("=== GetPackage ===")

@@ -106,6 +106,8 @@ func (smb *SimulateMutationBuilder) Build() (string, map[string]any) {
 	return query, vars
 }
 
+// buildEffectsBlock builds the effects selection block for the query.
+// buildEffectsBlock constructs the effects selection block for the mutation.
 func (smb *SimulateMutationBuilder) buildEffectsBlock() string {
 	if len(smb.effectFields) == 0 {
 		return `
@@ -262,6 +264,7 @@ func (emb *ExecuteMutationBuilder) Build() (string, map[string]any) {
 	return query, vars
 }
 
+// buildEffectsBlock constructs the effects selection block for the mutation.
 func (emb *ExecuteMutationBuilder) buildEffectsBlock() string {
 	if len(emb.effectFields) == 0 {
 		return `

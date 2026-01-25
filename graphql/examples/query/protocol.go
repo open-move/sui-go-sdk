@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Protocol demonstrates how to fetch protocol information.
 func Protocol(ctx context.Context, client *graphql.Client) {
 	// Example: Get chain identifier
 	fmt.Println("=== GetChainIdentifier ===")

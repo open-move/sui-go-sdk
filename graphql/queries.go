@@ -247,6 +247,7 @@ type ObjectDataOptions struct {
 	ShowDisplay             bool
 }
 
+// buildObjectQuery constructs the GraphQL query for fetching an object.
 func (c *Client) buildObjectQuery(options *ObjectDataOptions) string {
 	if options == nil {
 		options = &ObjectDataOptions{
@@ -543,6 +544,7 @@ func (c *Client) GetTransactionBlock(ctx context.Context, digest string, options
 	return result.Transaction, nil
 }
 
+// buildTransactionQuery constructs the GraphQL query for fetching a transaction block.
 func (c *Client) buildTransactionQuery(options *TransactionBlockOptions) string {
 	if options == nil {
 		options = &TransactionBlockOptions{

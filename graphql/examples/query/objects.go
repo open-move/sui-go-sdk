@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Objects demonstrates how to fetch objects.
 func Objects(ctx context.Context, client *graphql.Client) {
 	fmt.Println("=== GetObject ===")
 	objectID := graphql.SuiAddress("0xf41564ce5236f344bc79abb0c6ca22bb31edc4ec64b995824e986b81e71eb031")

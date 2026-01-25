@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Events demonstrates how to query events.
 func Events(ctx context.Context, client *graphql.Client) {
 	// Example: Query recent events
 	fmt.Println("=== QueryEvents (first 5) ===")

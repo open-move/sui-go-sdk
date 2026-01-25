@@ -195,7 +195,7 @@ func ExecuteTransaction(c *Client, ctx context.Context, txBcs Base64, signatures
 	return result.ExecuteTransaction, nil
 }
 
-// ExecuteTransactionWithOptions executes a signed transaction with custom options.
+// ExecuteOptions defines options for transaction execution.
 type ExecuteOptions struct {
 	// WaitForEffects waits for effects to be available (slower but more complete)
 	WaitForEffects bool
@@ -207,7 +207,7 @@ type ExecuteOptions struct {
 	ShowBalanceChanges bool
 }
 
-// ExecuteTransactionWithOptions executes a transaction with specified options.
+// ExecuteTransactionWithOptions executes a signed transaction with custom options.
 func ExecuteTransactionWithOptions(c *Client, ctx context.Context, txBcs Base64, signatures []Base64, opts *ExecuteOptions) (*ExecuteTransactionResult, error) {
 	if opts == nil {
 		opts = &ExecuteOptions{

@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// printJSON prints a value as pretty-printed JSON.
 func printJSON(label string, v interface{}) {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {

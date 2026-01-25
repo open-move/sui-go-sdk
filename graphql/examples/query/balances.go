@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// Balances demonstrates how to fetch balances for an address.
 func Balances(ctx context.Context, client *graphql.Client, address string) {
 	// Example: Get all balances for an address
 	fmt.Println("=== GetAllBalances ===")

@@ -8,6 +8,7 @@ import (
 	"github.com/open-move/sui-go-sdk/graphql"
 )
 
+// QueryBuilder demonstrates how to use the query builder.
 func QueryBuilder(ctx context.Context, client *graphql.Client) {
 	// Example 1: Simple query with single field
 	fmt.Println("=== Simple Query: Chain Identifier ===")

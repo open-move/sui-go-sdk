@@ -29,6 +29,7 @@ type cqTransactionResult struct {
 	} `json:"transaction"`
 }
 
+// exampleBasicCustomQuery demonstrates a basic custom query.
 func exampleBasicCustomQuery(client *graphql.Client, ctx context.Context, digest string) {
 	fmt.Println("=== Example 1: Basic Custom Query - Get Transaction ===")
 
@@ -112,6 +113,7 @@ type cqTransactionWithSenderAssets struct {
 	} `json:"transaction"`
 }
 
+// exampleTransactionWithSenderAssets demonstrates a query fetching transaction and sender assets.
 func exampleTransactionWithSenderAssets(client *graphql.Client, ctx context.Context, digest string) {
 	fmt.Println("=== Example 2: Transaction with Sender's Assets ===")
 
@@ -220,6 +222,7 @@ type cqSenderAssetsResult struct {
 	} `json:"address"`
 }
 
+// exampleTypedQuery demonstrates a typed query.
 func exampleTypedQuery(client *graphql.Client, ctx context.Context, address string) {
 	fmt.Println("=== Example 3: TypedQuery - Get Address Assets ===")
 
@@ -288,6 +291,7 @@ func exampleTypedQuery(client *graphql.Client, ctx context.Context, address stri
 	fmt.Println()
 }
 
+// exampleQueryRequestAPI demonstrates the QueryRequest fluent API.
 func exampleQueryRequestAPI(client *graphql.Client, ctx context.Context, digest string) {
 	fmt.Println("=== Example 4: QueryRequest Fluent API ===")
 
@@ -459,6 +463,7 @@ func exampleMultipleTransactions(client *graphql.Client, ctx context.Context, se
 	fmt.Println()
 }
 
+// CustomQueries runs all custom query examples.
 func CustomQueries(ctx context.Context, client *graphql.Client, digest string, address string) {
 	// Run all examples
 	exampleBasicCustomQuery(client, ctx, digest)

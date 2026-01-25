@@ -102,6 +102,7 @@ type GraphQLErrorLocation struct {
 	Column int `json:"column"`
 }
 
+// Error implements the error interface.
 func (e GraphQLError) Error() string {
 	return e.Message
 }
@@ -109,6 +110,7 @@ func (e GraphQLError) Error() string {
 // GraphQLErrors is a collection of GraphQL errors.
 type GraphQLErrors []GraphQLError
 
+// Error implements the error interface.
 func (e GraphQLErrors) Error() string {
 	if len(e) == 0 {
 		return ""
@@ -124,6 +126,7 @@ func (c *Client) Execute(ctx context.Context, query string, variables map[string
 	return c.executeWithRetry(ctx, query, variables, result, 0)
 }
 
+// executeWithRetry executes a GraphQL query with exponential backoff retry logic.
 func (c *Client) executeWithRetry(ctx context.Context, query string, variables map[string]any, result any, attempt int) error {
 	reqBody := graphqlRequest{
 		Query:     query,
