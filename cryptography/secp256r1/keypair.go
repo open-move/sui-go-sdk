@@ -17,6 +17,7 @@ import (
 	"github.com/open-move/sui-go-sdk/keychain"
 )
 
+// Keypair represents a Secp256r1 public/private key pair.
 type Keypair struct {
 	privateKey *ecdsa.PrivateKey
 	publicKey  *ecdsa.PublicKey
@@ -24,10 +25,12 @@ type Keypair struct {
 	path       keychain.DerivationPath
 }
 
+// Scheme returns the scheme type for this keypair.
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeSecp256r1
 }
 
+// PublicKey returns the public key bytes.
 func (k Keypair) PublicKey() []byte {
 	curve := elliptic.P256()
 	if k.publicKey != nil {
@@ -39,10 +42,12 @@ func (k Keypair) PublicKey() []byte {
 	return append([]byte(nil), elliptic.MarshalCompressed(curve, k.privateKey.X, k.privateKey.Y)...)
 }
 
+// SuiAddress returns the Sui address derived from the public key.
 func (k Keypair) SuiAddress() (string, error) {
 	return keychain.AddressFromPublicKey(keychain.SchemeSecp256r1, k.PublicKey())
 }
 
+// ExportSecret returns the private key bytes.
 func (k Keypair) ExportSecret() ([]byte, error) {
 	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256r1: private key is nil")
@@ -56,6 +61,7 @@ func (k Keypair) ExportSecret() ([]byte, error) {
 	return append([]byte(nil), b...), nil
 }
 
+// signData signs the given data with the private key.
 func (k Keypair) signData(data []byte) ([]byte, error) {
 	if k.privateKey == nil {
 		return nil, fmt.Errorf("secp256r1: private key is nil")
@@ -68,6 +74,7 @@ func (k Keypair) signData(data []byte) ([]byte, error) {
 	return sig, nil
 }
 
+// verifyDigest verifies the signature against the digest and public key.
 func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
 	curve := elliptic.P256()
 	x, y := elliptic.UnmarshalCompressed(curve, publicKey)
@@ -216,12 +223,14 @@ func deriveECDSAKey(secret []byte) (*ecdsa.PrivateKey, []byte, error) {
 	return ecdsaPriv, compressed, nil
 }
 
+// zero clears the byte slice.
 func zero(b []byte) {
 	for i := range b {
 		b[i] = 0
 	}
 }
 
+// deterministicP256Signature generates a deterministic ECDSA signature using SHA256.
 func deterministicP256Signature(priv *ecdsa.PrivateKey, digest []byte) ([]byte, error) {
 	curve := priv.Curve.Params()
 	order := curve.N

@@ -40,6 +40,7 @@ func Sign(
 	return serialized, nil
 }
 
+// Verify checks the signature of a personal message.
 func Verify(
 	scheme keychain.Scheme,
 	message []byte,
@@ -54,6 +55,7 @@ func Verify(
 	return verifyFunc(digest, signature)
 }
 
+// digest computes the digest of a personal message.
 func digest(message []byte) ([32]byte, error) {
 	if len(message) == 0 {
 		return [32]byte{}, ErrEmptyPersonalMessage

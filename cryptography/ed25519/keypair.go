@@ -17,6 +17,7 @@ const seedSize = 32
 // The master key HMAC salt for Ed25519 according to SLIP-0010.
 var slip10Key = []byte("ed25519 seed")
 
+// Keypair represents an Ed25519 public/private key pair.
 type Keypair struct {
 	privateKey cryptoed25519.PrivateKey
 	publicKey  cryptoed25519.PublicKey
@@ -24,18 +25,22 @@ type Keypair struct {
 	path       keychain.DerivationPath
 }
 
+// Scheme returns the scheme type for this keypair.
 func (k Keypair) Scheme() keychain.Scheme {
 	return keychain.SchemeEd25519
 }
 
+// PublicKey returns the public key bytes.
 func (k Keypair) PublicKey() []byte {
 	return append(cryptoed25519.PublicKey(nil), k.publicKey...)
 }
 
+// SuiAddress returns the Sui address derived from the public key.
 func (k Keypair) SuiAddress() (string, error) {
 	return keychain.AddressFromPublicKey(keychain.SchemeEd25519, k.publicKey)
 }
 
+// ExportSecret returns the private key seed.
 func (k Keypair) ExportSecret() ([]byte, error) {
 	seed := k.privateKey.Seed()
 	out := make([]byte, len(seed))
@@ -43,6 +48,7 @@ func (k Keypair) ExportSecret() ([]byte, error) {
 	return out, nil
 }
 
+// signData signs the given data with the private key.
 func (k Keypair) signData(data []byte) ([]byte, error) {
 	if len(k.privateKey) != cryptoed25519.PrivateKeySize {
 		return nil, fmt.Errorf("ed25519: invalid private key length %d", len(k.privateKey))
@@ -52,6 +58,7 @@ func (k Keypair) signData(data []byte) ([]byte, error) {
 	return append([]byte(nil), signature...), nil
 }
 
+// verifyDigest verifies the signature against the digest and public key.
 func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
 	if len(publicKey) != cryptoed25519.PublicKeySize {
 		return fmt.Errorf("ed25519: invalid public key length %d", len(publicKey))
@@ -75,6 +82,7 @@ func verifyDigest(publicKey []byte, digest [32]byte, signature []byte) error {
 	return nil
 }
 
+// SignPersonalMessage signs a personal message with the Ed25519 keypair.
 func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	return personalmsg.Sign(
 		keychain.SchemeEd25519,
@@ -84,6 +92,7 @@ func (k Keypair) SignPersonalMessage(message []byte) ([]byte, error) {
 	)
 }
 
+// SignTransaction signs a transaction with the Ed25519 keypair.
 func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	return transaction.Sign(
 		keychain.SchemeEd25519,
@@ -93,16 +102,19 @@ func (k Keypair) SignTransaction(txBytes []byte) ([]byte, error) {
 	)
 }
 
+// VerifyPersonalMessage verifies a personal message signature.
 func (k Keypair) VerifyPersonalMessage(message []byte, signature []byte) error {
 	return VerifyPersonalMessage(k.PublicKey(), message, signature)
 }
 
+// VerifyPersonalMessage verifies a personal message signature against a public key.
 func VerifyPersonalMessage(publicKey []byte, message []byte, signature []byte) error {
 	return personalmsg.Verify(keychain.SchemeEd25519, message, signature, func(digest [32]byte, signature []byte) error {
 		return verifyDigest(publicKey, digest, signature)
 	})
 }
 
+// Generate creates a new Ed25519 keypair.
 func Generate() (*Keypair, error) {
 	pub, priv, err := cryptoed25519.GenerateKey(rand.Reader)
 	if err != nil {
