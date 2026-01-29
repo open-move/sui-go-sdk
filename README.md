@@ -1,90 +1,112 @@
-# Sui Go Client
+# Sui Go SDK
 
-A Go client SDK for the public Sui gRPC (currently) endpoints. It wraps the generated protobuf stubs with helpers, pagination, coin selection, and transaction utils so you can interact with Sui fullnodes.
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+The official Go SDK for the Sui blockchain, providing gRPC and GraphQL clients, along with cryptography utilities.
+
+## Modules
+
+This SDK includes the following main modules:
+
+*   **gRPC Client**: A strongly-typed gRPC client for interacting with Sui RPC services.
+*   **GraphQL Client**: A client for interacting with the Sui GraphQL API.
+*   **Cryptography**: Utilities for key generation, signing, and verification (Ed25519, Secp256k1, Secp256r1).
+
+## Project Structure
+
+```
+sui-go-sdk/
+├── cryptography/ # Cryptographic primitives (Ed25519, Secp256k1, Secp256r1)
+├── graphql/      # GraphQL client and query/mutation builders
+├── grpc/         # gRPC client for Sui RPC services
+├── keychain/     # Key management and derivation utilities
+├── keypair/      # Keypair interfaces and derivation logic
+├── proto/        # Generated Protocol Buffer files
+├── transaction/  # Transaction building and serialization
+├── types/        # Common Sui types
+└── typetag/      # Move type tag parsing and handling
+```
 
 ## Installation
 
-```
+```bash
 go get github.com/open-move/sui-go-sdk
 ```
 
-## Features
+## Usage
 
-- Dial helpers for mainnet/devnet/testnet and custom endpoints.
-- Strongly typed service accessors (`LedgerClient`, `StateClient`, etc.).
-- Convenience helpers for common read APIs:
-  - `GetObject`, `BatchGetObjects`, `GetTransaction`, checkpoint & epoch helpers.
-  - Automatic pagination for `ListOwnedObjects`, `ListBalances`, `ListDynamicFields`, and package versions.
-- Coin selection utilities (`SelectCoins`, `SelectUpToNLargestCoins`) for gas/payment flows.
-- Transaction helpers:
-  - `SimulateTransaction` with optional gas selection.
-  - `ExecuteTransactionAndWait` / `ExecuteSignedTransactionAndWait` that block until the transaction appears in a checkpoint.
+### gRPC Client
 
-## Getting Started
+The gRPC client provides a direct interface to Sui's RPC services.
 
 ```go
-ctx := context.Background()
-client, err := grpc.NewMainnetClient(ctx)
-if err != nil {
-    log.Fatal(err)
-}
-defer client.Close()
+package main
 
-obj, err := client.GetObject(ctx, "0x72f5c6eef73d77de271886219a2543e7c29a33de19a6c69c5cf1899f729c3f17", nil)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("object version", obj.GetVersion())
+import (
+	"context"
+	"log"
 
-tx, err := client.GetTransaction(ctx, "3HZq1gEnF4sr5MTkRCirAapw3YaqgiwhWbjJdcqXmPra", nil)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("transaction digest", tx.GetDigest())
+	"github.com/open-move/sui-go-sdk/grpc"
+)
 
-objects, err := client.BatchGetObjects(ctx, []grpc.ObjectRequest{
-    {ObjectID: "0x72f5c6eef73d77de271886219a2543e7c29a33de19a6c69c5cf1899f729c3f17"},
-    {ObjectID: "0x57c9a3d7bdfc965ef4cb402ae0caf4f8535678d009f930910affa599facab39b"},
-}, nil)
-if err != nil {
-    log.Fatal(err)
-}
-for _, res := range objects {
-    if res.Err != nil {
-        log.Fatal(res.Err)
-    }
-    fmt.Printf("object %s balance %d\n", res.Object.GetObjectId(), res.Object.GetBalance())
+func main() {
+	ctx := context.Background()
+
+	// Create a client connected to the Sui Mainnet
+	client, err := grpc.NewMainnetClient(ctx)
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
+	defer client.Close()
+
+	// Use the client to interact with the blockchain...
 }
 ```
 
-For coin selection + transaction execution see `grpc/coin_selection.go` and `grpc/transaction.go` for examples.
+For more details, see the [gRPC README](grpc/README.md).
 
-## Testing
+### GraphQL Client
 
-This repo includes some tests that run against Sui mainnet via gRPC. To run them:
+The GraphQL client allows you to query the Sui blockchain using the flexible GraphQL API.
 
+```go
+package main
+
+import (
+	"github.com/open-move/sui-go-sdk/graphql"
+)
+
+func main() {
+	// Create a client connected to the Sui Mainnet
+	client := graphql.NewClient(graphql.WithEndpoint(graphql.MainnetEndpoint))
+
+	// Use the client to execute queries and mutations...
+}
 ```
-go test ./tests
+
+For more details, see the [GraphQL README](graphql/README.md).
+
+### Cryptography
+
+The cryptography module supports key pair generation and signing for transactions and personal messages.
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/open-move/sui-go-sdk/cryptography/ed25519"
+)
+
+func main() {
+	// Generate a new Ed25519 keypair
+	kp, err := ed25519.Generate()
+	if err != nil {
+		log.Fatalf("Failed to generate keypair: %v", err)
+	}
+
+	fmt.Printf("Sui Address: %s\n", kp.SuiAddress())
+}
 ```
-
-## Regenerating Protos
-
-```
-make proto
-```
-
-This expects `protoc` and `protoc-gen-go` / `protoc-gen-go-grpc` to be installed.
-
-## Contributing
-
-1. Fork and clone this repository.
-2. Install Go 1.24+ and the protobuf toolchain (`protoc`, `protoc-gen-go`, `protoc-gen-go-grpc`).
-3. Run `go test ./...` before submitting a PR. If you add helpers around live RPCs, include unit tests that use fakes alongside any integration tests.
-4. Regenerate gRPC code with `make proto` when proto files change, and run `gofmt` on modified Go files.
-5. Create a pull request describing the change.
-
-Issues and feature requests are welcome via GitHub Issues.
-
-## License
-
-Apache-2.0 (matching upstream Sui SDK licensing).

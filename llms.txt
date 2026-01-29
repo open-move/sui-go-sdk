@@ -1,0 +1,33 @@
+# Sui Go SDK Context for LLMs
+
+This file provides a high-level overview of the Sui Go SDK structure to assist LLMs in understanding the codebase.
+
+## Project Structure
+
+*   `grpc/`: Contains the gRPC client implementation for interacting with Sui RPC nodes.
+    *   `client.go`: Main entry point for creating gRPC clients (`NewClient`, `NewMainnetClient`, etc.).
+    *   `transaction.go`: Transaction building and execution logic via gRPC.
+*   `graphql/`: Contains the GraphQL client implementation.
+    *   `client.go`: Main entry point for creating GraphQL clients (`NewClient`).
+    *   `queries.go`: Pre-defined GraphQL queries.
+    *   `mutations.go`: Pre-defined GraphQL mutations.
+*   `cryptography/`: Contains cryptographic primitives and key management.
+    *   `ed25519/`: Ed25519 keypair implementation.
+    *   `secp256k1/`: Secp256k1 keypair implementation.
+    *   `secp256r1/`: Secp256r1 keypair implementation.
+    *   `keypair/`: Interfaces for keypairs.
+*   `proto/`: Generated Protocol Buffer Go files.
+
+## Key Concepts
+
+*   **Client Initialization**:
+    *   gRPC: Use `grpc.NewClient` or network-specific helpers like `grpc.NewMainnetClient`.
+    *   GraphQL: Use `graphql.NewClient` with options like `graphql.WithEndpoint`.
+*   **Cryptography**:
+    *   Keypairs support `Sign`, `Verify`, and `SuiAddress` generation.
+    *   Supports standard Sui signature schemes (Ed25519, Secp256k1, Secp256r1).
+
+## Usage Patterns
+
+*   Prefer using the specific client (gRPC or GraphQL) based on the interaction type required.
+*   Use the `cryptography` package for signing transactions before sending them via the clients.

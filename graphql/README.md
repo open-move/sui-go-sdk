@@ -14,7 +14,7 @@ The Sui GraphQL Go SDK provides a robust and type-safe way to interact with the 
 ## Installation
 
 ```bash
-go get github.com/open-move/sui-go-sdk/graphql
+go get github.com/open-move/sui-go-sdk
 ```
 
 ## Quick Start
