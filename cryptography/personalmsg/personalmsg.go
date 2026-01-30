@@ -1,3 +1,4 @@
+// Package personalmsg implements personal message signing and verification.
 package personalmsg
 
 import (

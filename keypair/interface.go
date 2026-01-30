@@ -1,7 +1,9 @@
+// Package keypair defines the interface for Sui keypairs and provides utilities for key generation and management.
 package keypair
 
 import "github.com/open-move/sui-go-sdk/keychain"
 
+// Keypair defines the interface for Sui keypairs and provides utilities for key generation and management.
 type Keypair interface {
 	Scheme() keychain.Scheme
 	SuiAddress() (string, error)

@@ -8,6 +8,7 @@ import (
 
 type pageFetcher[T any] func(ctx context.Context, token []byte) ([]T, []byte, error)
 
+// pageIterator iterates over paginated results.
 type pageIterator[T any] struct {
 	token []byte
 	fetch pageFetcher[T]
@@ -25,6 +26,7 @@ func newPageIterator[T any](initial []byte, fetch pageFetcher[T]) (*pageIterator
 	}, nil
 }
 
+// Next returns the next batch of items. It returns io.EOF when there are no more items.
 func (it *pageIterator[T]) Next(ctx context.Context) ([]T, error) {
 	if it == nil {
 		return nil, errors.New("nil iterator")
@@ -56,6 +58,7 @@ func (it *pageIterator[T]) Next(ctx context.Context) ([]T, error) {
 	}
 }
 
+// ForEach iterates over all items in all pages, calling fn for each item.
 func (it *pageIterator[T]) ForEach(ctx context.Context, fn func(T) error) error {
 	if it == nil {
 		return errors.New("nil iterator")
@@ -80,6 +83,7 @@ func (it *pageIterator[T]) ForEach(ctx context.Context, fn func(T) error) error 
 	}
 }
 
+// Collect retrieves all items from all pages and returns them as a slice.
 func (it *pageIterator[T]) Collect(ctx context.Context) ([]T, error) {
 	if it == nil {
 		return nil, errors.New("nil iterator")

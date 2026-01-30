@@ -29,6 +29,7 @@ func NormalizeAddress(input string) (string, error) {
 	return "0x" + padded, nil
 }
 
+// ParseAddress parses a hex string into a Sui Address type.
 func ParseAddress(input string) (types.Address, error) {
 	normalized, err := NormalizeAddress(input)
 	if err != nil {

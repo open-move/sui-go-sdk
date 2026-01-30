@@ -8,11 +8,13 @@ import (
 
 const suiCoinType uint32 = 784
 
+// PathSegment represents a single segment in a BIP-32 derivation path.
 type PathSegment struct {
 	Index    uint32
 	Hardened bool
 }
 
+// HardenedIndex returns the index with the hardened bit set if the segment is hardened.
 func (s PathSegment) HardenedIndex() uint32 {
 	if s.Hardened {
 		return s.Index | 0x80000000
@@ -21,16 +23,19 @@ func (s PathSegment) HardenedIndex() uint32 {
 	return s.Index
 }
 
+// DerivationPath represents a full BIP-32 derivation path (e.g., m/44'/784'/0'/0'/0').
 type DerivationPath struct {
 	segments []PathSegment
 }
 
+// Segments returns a copy of the path segments.
 func (p DerivationPath) Segments() []PathSegment {
 	out := make([]PathSegment, len(p.segments))
 	copy(out, p.segments)
 	return out
 }
 
+// String returns the string representation of the derivation path (e.g., "m/44'/784'/0'/0'/0'").
 func (p DerivationPath) String() string {
 	parts := make([]string, len(p.segments))
 	for i, seg := range p.segments {
@@ -74,6 +79,7 @@ func ParseDerivationPath(raw string) (DerivationPath, error) {
 	return DerivationPath{segments: segments}, nil
 }
 
+// ValidateForScheme checks if the path structure adheres to the requirements of the given signature scheme.
 func (p DerivationPath) ValidateForScheme(s Scheme) error {
 	if len(p.segments) < 5 {
 		return fmt.Errorf("path: expected at least 5 segments, got %d", len(p.segments))

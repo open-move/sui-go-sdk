@@ -1,3 +1,4 @@
+// Package transaction provides a builder for constructing Programmable Transactions.
 package transaction
 
 import (
@@ -11,10 +12,12 @@ import (
 	"github.com/open-move/sui-go-sdk/utils"
 )
 
+// BuildOptions configures the behavior of the transaction builder.
 type BuildOptions struct {
 	Resolver ObjectResolver
 }
 
+// BuildResult represents the result of a transaction build operation, including the raw bytes and the structured transaction.
 type BuildResult struct {
 	KindBytes         []byte
 	TransactionBytes  []byte
@@ -23,6 +26,7 @@ type BuildResult struct {
 	ResolvedInputArgs []CallArg
 }
 
+// Builder constructs a Programmable Transaction.
 type Builder struct {
 	inputs     []input
 	commands   []Command
@@ -49,10 +53,12 @@ type gasConfig struct {
 	Budget  *uint64
 }
 
+// New creates a new transaction builder.
 func New() *Builder {
 	return &Builder{}
 }
 
+// Err returns the first error encountered during the building process, if any.
 func (b *Builder) Err() error {
 	if b == nil {
 		return ErrNilBuilder
@@ -61,6 +67,7 @@ func (b *Builder) Err() error {
 	return b.err
 }
 
+// SetSender sets the sender address for the transaction.
 func (b *Builder) SetSender(address string) *Builder {
 	if b == nil {
 		return b
@@ -76,6 +83,7 @@ func (b *Builder) SetSender(address string) *Builder {
 	return b
 }
 
+// SetExpiration sets the expiration of the transaction.
 func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
 	if b == nil {
 		return b
@@ -85,6 +93,7 @@ func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
 	return b
 }
 
+// SetGasBudget sets the gas budget for the transaction.
 func (b *Builder) SetGasBudget(budget uint64) *Builder {
 	if b == nil {
 		return b
@@ -94,6 +103,7 @@ func (b *Builder) SetGasBudget(budget uint64) *Builder {
 	return b
 }
 
+// SetGasPrice sets the gas price for the transaction.
 func (b *Builder) SetGasPrice(price uint64) *Builder {
 	if b == nil {
 		return b

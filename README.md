@@ -11,6 +11,11 @@ This SDK includes the following main modules:
 *   **gRPC Client**: A strongly-typed gRPC client for interacting with Sui RPC services.
 *   **GraphQL Client**: A client for interacting with the Sui GraphQL API.
 *   **Cryptography**: Utilities for key generation, signing, and verification (Ed25519, Secp256k1, Secp256r1).
+*   **Keychain**: Key derivation (BIP-32), mnemonic handling (BIP-39), and address generation.
+*   **Keypair**: Interfaces and helpers for managing different types of keypairs.
+*   **Transaction**: A powerful builder for constructing Programmable Transactions.
+*   **Types**: Common Sui types (Addresses, ObjectRefs, etc.) and BCS serialization.
+*   **Typetag**: Utilities for parsing and manipulating Move type tags.
 
 ## Project Structure
 
@@ -19,8 +24,8 @@ sui-go-sdk/
 ├── cryptography/ # Cryptographic primitives (Ed25519, Secp256k1, Secp256r1)
 ├── graphql/      # GraphQL client and query/mutation builders
 ├── grpc/         # gRPC client for Sui RPC services
-├── keychain/     # Key management and derivation utilities
-├── keypair/      # Keypair interfaces and derivation logic
+├── keychain/     # Key management, BIP-32/BIP-39, and address derivation
+├── keypair/      # Keypair interfaces and high-level derivation logic
 ├── proto/        # Generated Protocol Buffer files
 ├── transaction/  # Transaction building and serialization
 ├── types/        # Common Sui types
@@ -110,3 +115,58 @@ func main() {
 	fmt.Printf("Sui Address: %s\n", kp.SuiAddress())
 }
 ```
+
+For more details, see the [Cryptography README](cryptography/README.md).
+
+### Transaction Builder
+
+The `transaction` package allows you to build Programmable Transactions easily.
+
+```go
+package main
+
+import (
+	"context"
+	
+	"github.com/open-move/sui-go-sdk/transaction"
+	"github.com/open-move/sui-go-sdk/types"
+)
+
+func main() {
+	// Initialize builder
+	b := transaction.New()
+	
+	// Add inputs and commands
+	// ...
+	
+	// Build the transaction
+	// result, err := b.Build(context.Background(), transaction.BuildOptions{})
+}
+```
+
+### Keychain
+
+The `keychain` package handles mnemonics and key derivation.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/open-move/sui-go-sdk/keychain"
+)
+
+func main() {
+	// Generate a new mnemonic
+	mnemonic, _ := keychain.NewMnemonic()
+	fmt.Println("Mnemonic:", mnemonic)
+}
+```
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTION.md](CONTRIBUTION.md) for guidelines on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

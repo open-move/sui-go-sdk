@@ -1,3 +1,4 @@
+// Command sui-go-sdk provides examples of using the Sui Go SDK.
 package main
 
 import (

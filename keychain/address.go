@@ -1,3 +1,4 @@
+// Package keychain provides key derivation, management, and address generation utilities.
 package keychain
 
 import (
@@ -9,6 +10,7 @@ import (
 
 const addressLength = 32
 
+// AddressFromPublicKey derives the Sui address for the given signature scheme and public key bytes.
 func AddressFromPublicKey(s Scheme, publicKey []byte) (string, error) {
 	if len(publicKey) == 0 {
 		return "", fmt.Errorf("address: public key must not be empty")

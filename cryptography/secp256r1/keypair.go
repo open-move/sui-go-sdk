@@ -1,3 +1,4 @@
+// Package secp256r1 implements the Secp256r1 signature scheme for Sui.
 package secp256r1
 
 import (
