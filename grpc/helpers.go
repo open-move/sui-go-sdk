@@ -21,7 +21,7 @@ type GetObjectOptions struct {
 }
 
 // GetObject fetches a single object by ID, optionally specifying a version and field mask.
-func (c *GRPCClient) GetObject(ctx context.Context, objectID string, options *GetObjectOptions, opts ...grpc.CallOption) (*v2.Object, error) {
+func (c *Client) GetObject(ctx context.Context, objectID string, options *GetObjectOptions, opts ...grpc.CallOption) (*v2.Object, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -60,7 +60,7 @@ type GetTransactionOptions struct {
 }
 
 // GetTransaction fetches an executed transaction by digest.
-func (c *GRPCClient) GetTransaction(ctx context.Context, digest string, options *GetTransactionOptions, opts ...grpc.CallOption) (*v2.ExecutedTransaction, error) {
+func (c *Client) GetTransaction(ctx context.Context, digest string, options *GetTransactionOptions, opts ...grpc.CallOption) (*v2.ExecutedTransaction, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -88,7 +88,7 @@ func (c *GRPCClient) GetTransaction(ctx context.Context, digest string, options 
 }
 
 // GetCheckpointBySequence fetches a checkpoint by its sequence number.
-func (c *GRPCClient) GetCheckpointBySequence(ctx context.Context, sequence uint64, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Checkpoint, error) {
+func (c *Client) GetCheckpointBySequence(ctx context.Context, sequence uint64, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Checkpoint, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -115,7 +115,7 @@ func (c *GRPCClient) GetCheckpointBySequence(ctx context.Context, sequence uint6
 }
 
 // GetCheckpointByDigest fetches a checkpoint by its digest.
-func (c *GRPCClient) GetCheckpointByDigest(ctx context.Context, digest string, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Checkpoint, error) {
+func (c *Client) GetCheckpointByDigest(ctx context.Context, digest string, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Checkpoint, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -145,7 +145,7 @@ func (c *GRPCClient) GetCheckpointByDigest(ctx context.Context, digest string, r
 }
 
 // GetCurrentEpoch fetches information about the current epoch, optionally restricting the response with a field mask.
-func (c *GRPCClient) GetCurrentEpoch(ctx context.Context, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Epoch, error) {
+func (c *Client) GetCurrentEpoch(ctx context.Context, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) (*v2.Epoch, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -170,12 +170,13 @@ func (c *GRPCClient) GetCurrentEpoch(ctx context.Context, readMask *fieldmaskpb.
 }
 
 // ReferenceGasPrice returns the reference gas price from the current epoch.
-func (c *GRPCClient) ReferenceGasPrice(ctx context.Context, opts ...grpc.CallOption) (uint64, error) {
+func (c *Client) ReferenceGasPrice(ctx context.Context, opts ...grpc.CallOption) (uint64, error) {
 	mask := &fieldmaskpb.FieldMask{Paths: []string{"reference_gas_price"}}
 	epoch, err := c.GetCurrentEpoch(ctx, mask, opts...)
 	if err != nil {
 		return 0, err
 	}
+
 	return epoch.GetReferenceGasPrice(), nil
 }
 
@@ -192,7 +193,7 @@ type ObjectResult struct {
 }
 
 // BatchGetObjects issues a BatchGetObjects RPC and maps the response to the provided requests.
-func (c *GRPCClient) BatchGetObjects(ctx context.Context, requests []ObjectRequest, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) ([]ObjectResult, error) {
+func (c *Client) BatchGetObjects(ctx context.Context, requests []ObjectRequest, readMask *fieldmaskpb.FieldMask, opts ...grpc.CallOption) ([]ObjectResult, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}

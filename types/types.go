@@ -27,27 +27,35 @@ func init() {
 			return d.Err()
 		}
 		// Read the 32 bytes
-		_, err := d.Read(dig[:])
-		return err
+		buf := make([]byte, length)
+		_, err := d.Read(buf)
+		if err != nil {
+			return err
+		}
+		*dig = buf
+		return nil
+
 	})
 }
 
 type Address [32]byte
 
-type Digest [32]byte
+type Digest []byte
+
+type ObjectID = Address
 
 type PersonalMessage struct {
 	Message []byte
 }
 
 type ObjectRef struct {
-	ObjectID Address
+	ObjectID ObjectID
 	Version  uint64
 	Digest   Digest
 }
 
 type SharedObjectRef struct {
-	ObjectID             Address
+	ObjectID             ObjectID
 	InitialSharedVersion uint64
 	Mutable              bool
 }
@@ -57,5 +65,5 @@ func (a Address) String() string {
 }
 
 func (d Digest) String() string {
-	return base58.Encode(d[:])
+	return base58.Encode(d)
 }
