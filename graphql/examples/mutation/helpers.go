@@ -9,7 +9,6 @@ import (
 
 	"github.com/open-move/sui-go-sdk/graphql"
 	"github.com/open-move/sui-go-sdk/types"
-	"github.com/open-move/sui-go-sdk/utils"
 )
 
 // GetGasPrice gets the reference gas price from the network
@@ -55,16 +54,11 @@ func extractUpdatedGasCoin(result *graphql.ExecuteTransactionResult, gasCoinAddr
 
 	for _, change := range result.Effects.ObjectChanges.Nodes {
 		// Check if this is our gas coin by comparing addresses
-		if string(change.Address) == gasCoinAddress && change.OutputState != nil {
-			// Parse the updated object ref
-			ref, err := utils.ParseObjectRef(
-				string(change.OutputState.Address),
-				uint64(change.OutputState.Version),
-				change.OutputState.Digest,
-			)
-			if err != nil {
-				log.Printf("Failed to parse updated gas coin ref: %v", err)
-				return nil
+		if change.Address.String() == gasCoinAddress && change.OutputState != nil {
+			ref := types.ObjectRef{
+				ObjectID: change.OutputState.Address,
+				Version:  uint64(change.OutputState.Version),
+				Digest:   change.OutputState.Digest,
 			}
 			return &ref
 		}

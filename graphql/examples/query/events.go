@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/open-move/sui-go-sdk/graphql"
+	"github.com/open-move/sui-go-sdk/utils"
 )
 
 // Events demonstrates how to query events.
@@ -13,7 +14,7 @@ func Events(ctx context.Context, client *graphql.Client) {
 	// Example: Query recent events
 	fmt.Println("=== QueryEvents (first 5) ===")
 	events, err := client.QueryEvents(ctx, nil, &graphql.PaginationArgs{
-		First: graphql.Ptr(5),
+		First: utils.Ptr(5),
 	})
 	if err != nil {
 		log.Printf("QueryEvents error: %v", err)

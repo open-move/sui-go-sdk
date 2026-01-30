@@ -194,8 +194,3 @@ func (c *Client) executeWithRetry(ctx context.Context, query string, variables m
 
 	return nil
 }
-
-// Ptr returns a pointer to the given value. Useful for optional parameters.
-func Ptr[T any](v T) *T {
-	return &v
-}

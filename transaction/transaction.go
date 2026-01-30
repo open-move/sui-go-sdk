@@ -413,7 +413,7 @@ func (b *Transaction) Build(ctx context.Context, opts BuildOptions) (BuildResult
 	}
 
 	result.TransactionBytes = bytes
-	result.Transaction = &v2.Transaction{Bcs: &v2.Bcs{Name: utils.StringPtr("TransactionData"), Value: bytes}}
+	result.Transaction = &v2.Transaction{Bcs: &v2.Bcs{Name: utils.Ptr("TransactionData"), Value: bytes}}
 	return result, nil
 }
 

@@ -2,7 +2,10 @@ package graphql
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+
+	"github.com/open-move/sui-go-sdk/types"
 )
 
 // =============================================================================
@@ -10,7 +13,7 @@ import (
 // =============================================================================
 
 // SimulateTransaction simulates a transaction from BCS-encoded bytes.
-func SimulateTransaction(c *Client, ctx context.Context, txBcs Base64, opts *SimulationOptions) (*SimulationResult, error) {
+func SimulateTransaction(c *Client, ctx context.Context, txBcs []byte, opts *SimulationOptions) (*SimulationResult, error) {
 	query := `
 		mutation SimulateTransaction($txBytes: String!, $skipChecks: Boolean) {
 			simulateTransaction(txBytes: $txBytes, skipChecks: $skipChecks) {
@@ -41,7 +44,7 @@ func SimulateTransaction(c *Client, ctx context.Context, txBcs Base64, opts *Sim
 	}
 
 	vars := map[string]any{
-		"txBytes":    string(txBcs),
+		"txBytes":    base64.StdEncoding.EncodeToString(txBcs),
 		"skipChecks": skipChecks,
 	}
 
@@ -63,7 +66,7 @@ func SimulateTransaction(c *Client, ctx context.Context, txBcs Base64, opts *Sim
 
 // ExecuteTransaction executes a signed transaction.
 // The transaction must include valid signatures.
-func ExecuteTransaction(c *Client, ctx context.Context, txBcs Base64, signatures []Base64) (*ExecuteTransactionResult, error) {
+func ExecuteTransaction(c *Client, ctx context.Context, txBcs []byte, signatures [][]byte) (*ExecuteTransactionResult, error) {
 	query := `
 		mutation ExecuteTransaction($tx: String!, $sigs: [String!]!) {
 			executeTransaction(transactionDataBcs: $tx, signatures: $sigs) {
@@ -108,11 +111,11 @@ func ExecuteTransaction(c *Client, ctx context.Context, txBcs Base64, signatures
 	// Convert signatures to strings
 	sigs := make([]string, len(signatures))
 	for i, sig := range signatures {
-		sigs[i] = string(sig)
+		sigs[i] = base64.StdEncoding.EncodeToString(sig)
 	}
 
 	vars := map[string]any{
-		"tx":   string(txBcs),
+		"tx":   base64.StdEncoding.EncodeToString(txBcs),
 		"sigs": sigs,
 	}
 
@@ -141,7 +144,7 @@ type ExecuteOptions struct {
 }
 
 // ExecuteTransactionWithOptions executes a signed transaction with custom options.
-func ExecuteTransactionWithOptions(c *Client, ctx context.Context, txBcs Base64, signatures []Base64, opts *ExecuteOptions) (*ExecuteTransactionResult, error) {
+func ExecuteTransactionWithOptions(c *Client, ctx context.Context, txBcs []byte, signatures [][]byte, opts *ExecuteOptions) (*ExecuteTransactionResult, error) {
 	if opts == nil {
 		opts = &ExecuteOptions{
 			WaitForEffects:     true,
@@ -212,11 +215,11 @@ func ExecuteTransactionWithOptions(c *Client, ctx context.Context, txBcs Base64,
 
 	sigs := make([]string, len(signatures))
 	for i, sig := range signatures {
-		sigs[i] = string(sig)
+		sigs[i] = base64.StdEncoding.EncodeToString(sig)
 	}
 
 	vars := map[string]any{
-		"tx":   string(txBcs),
+		"tx":   base64.StdEncoding.EncodeToString(txBcs),
 		"sigs": sigs,
 	}
 
@@ -237,7 +240,7 @@ func ExecuteTransactionWithOptions(c *Client, ctx context.Context, txBcs Base64,
 // =============================================================================
 
 // VerifyZkLoginSignature verifies a zkLogin signature.
-func VerifyZkLoginSignature(c *Client, ctx context.Context, bytes Base64, signature Base64, intentScope ZkLoginIntentScope, author SuiAddress) (*ZkLoginVerifyResult, error) {
+func VerifyZkLoginSignature(c *Client, ctx context.Context, bytes []byte, signature []byte, intentScope ZkLoginIntentScope, author types.Address) (*ZkLoginVerifyResult, error) {
 	query := `
 		mutation VerifyZkLoginSignature($bytes: String!, $signature: String!, $intentScope: ZkLoginIntentScope!, $author: SuiAddress!) {
 			verifyZkloginSignature(bytes: $bytes, signature: $signature, intentScope: $intentScope, author: $author) {
@@ -248,8 +251,8 @@ func VerifyZkLoginSignature(c *Client, ctx context.Context, bytes Base64, signat
 	`
 
 	vars := map[string]any{
-		"bytes":       string(bytes),
-		"signature":   string(signature),
+		"bytes":       base64.StdEncoding.EncodeToString(bytes),
+		"signature":   base64.StdEncoding.EncodeToString(signature),
 		"intentScope": intentScope,
 		"author":      author,
 	}

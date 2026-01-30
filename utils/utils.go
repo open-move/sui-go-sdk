@@ -5,8 +5,8 @@ import (
 	"math/big"
 )
 
-func StringPtr(value string) *string {
-	return &value
+func Ptr[T any](v T) *T {
+	return &v
 }
 
 func EncodeU256(value *big.Int) ([]byte, error) {

@@ -3,6 +3,8 @@ package graphql
 import (
 	"context"
 	"fmt"
+
+	"github.com/open-move/sui-go-sdk/types"
 )
 
 // =============================================================================
@@ -11,7 +13,7 @@ import (
 
 // GetAllBalances returns all coin balances for an address.
 // Equivalent to Blockvision's SuiXGetAllBalance.
-func (c *Client) GetAllBalances(ctx context.Context, owner SuiAddress) ([]Balance, error) {
+func (c *Client) GetAllBalances(ctx context.Context, owner types.Address) ([]Balance, error) {
 	query := `
 		query GetAllBalances($address: SuiAddress!) {
 			address(address: $address) {
@@ -47,7 +49,7 @@ func (c *Client) GetAllBalances(ctx context.Context, owner SuiAddress) ([]Balanc
 
 // GetBalance returns the balance of a specific coin type for an address.
 // coinType is required (e.g., "0x2::sui::SUI").
-func (c *Client) GetBalance(ctx context.Context, owner SuiAddress, coinType string) (*Balance, error) {
+func (c *Client) GetBalance(ctx context.Context, owner types.Address, coinType string) (*Balance, error) {
 	query := `
 		query GetBalance($address: SuiAddress!, $coinType: String!) {
 			address(address: $address) {
@@ -86,7 +88,7 @@ func (c *Client) GetBalance(ctx context.Context, owner SuiAddress, coinType stri
 
 // GetCoins returns coins of a specific type owned by an address.
 // Uses objects query with type filter to get coin objects.
-func (c *Client) GetCoins(ctx context.Context, owner SuiAddress, coinType *string, pagination *PaginationArgs) (*Connection[Coin], error) {
+func (c *Client) GetCoins(ctx context.Context, owner types.Address, coinType *string, pagination *PaginationArgs) (*Connection[Coin], error) {
 	// Default to SUI if no coin type specified
 	cType := "0x2::coin::Coin<0x2::sui::SUI>"
 	if coinType != nil {
@@ -135,10 +137,10 @@ func (c *Client) GetCoins(ctx context.Context, owner SuiAddress, coinType *strin
 			Objects *struct {
 				PageInfo PageInfo `json:"pageInfo"`
 				Nodes    []struct {
-					Address  SuiAddress `json:"address"`
-					Version  UInt53     `json:"version"`
-					Digest   string     `json:"digest"`
-					Contents *MoveValue `json:"contents"`
+					Address  types.Address `json:"address"`
+					Version  UInt53        `json:"version"`
+					Digest   types.Digest  `json:"digest"`
+					Contents *MoveValue    `json:"contents"`
 				} `json:"nodes"`
 			} `json:"objects"`
 		} `json:"address"`
@@ -221,7 +223,7 @@ func (c *Client) GetTotalSupply(ctx context.Context, coinType string) (*BigInt, 
 
 // GetObject returns details for a specific object.
 // Equivalent to Blockvision's SuiGetObject.
-func (c *Client) GetObject(ctx context.Context, objectID SuiAddress, options *ObjectDataOptions) (*Object, error) {
+func (c *Client) GetObject(ctx context.Context, objectID types.Address, options *ObjectDataOptions) (*Object, error) {
 	query := c.buildObjectQuery(options)
 
 	var result struct {
@@ -297,7 +299,7 @@ func (c *Client) buildObjectQuery(options *ObjectDataOptions) string {
 
 // GetMultipleObjects returns details for multiple objects.
 // Equivalent to Blockvision's SuiMultiGetObjects.
-func (c *Client) GetMultipleObjects(ctx context.Context, objectIDs []SuiAddress, options *ObjectDataOptions) ([]Object, error) {
+func (c *Client) GetMultipleObjects(ctx context.Context, objectIDs []types.Address, options *ObjectDataOptions) ([]Object, error) {
 	query := `
 		query MultiGetObjects($keys: [ObjectKey!]!) {
 			multiGetObjects(keys: $keys) {
@@ -344,7 +346,7 @@ func (c *Client) GetMultipleObjects(ctx context.Context, objectIDs []SuiAddress,
 
 // GetOwnedObjects returns objects owned by an address.
 // Note: Returns MoveObject connection, not Object connection.
-func (c *Client) GetOwnedObjects(ctx context.Context, owner SuiAddress, filter *ObjectFilter, pagination *PaginationArgs) (*Connection[Object], error) {
+func (c *Client) GetOwnedObjects(ctx context.Context, owner types.Address, filter *ObjectFilter, pagination *PaginationArgs) (*Connection[Object], error) {
 	query := `
 		query GetOwnedObjects($address: SuiAddress!, $filter: ObjectFilter, $first: Int, $after: String, $last: Int, $before: String) {
 			address(address: $address) {
@@ -402,7 +404,7 @@ func (c *Client) GetOwnedObjects(ctx context.Context, owner SuiAddress, filter *
 }
 
 // GetDynamicFields returns dynamic fields for an object.
-func (c *Client) GetDynamicFields(ctx context.Context, parentID SuiAddress, pagination *PaginationArgs) (*Connection[DynamicField], error) {
+func (c *Client) GetDynamicFields(ctx context.Context, parentID types.Address, pagination *PaginationArgs) (*Connection[DynamicField], error) {
 	query := `
 		query GetDynamicFields($parentId: SuiAddress!, $first: Int, $after: String, $last: Int, $before: String) {
 			object(address: $parentId) {
@@ -463,7 +465,7 @@ func (c *Client) GetDynamicFields(ctx context.Context, parentID SuiAddress, pagi
 }
 
 // GetDynamicFieldObject returns a specific dynamic field object.
-func (c *Client) GetDynamicFieldObject(ctx context.Context, parentID SuiAddress, name DynamicFieldName) (*DynamicField, error) {
+func (c *Client) GetDynamicFieldObject(ctx context.Context, parentID types.Address, name DynamicFieldName) (*DynamicField, error) {
 	query := `
 		query GetDynamicFieldObject($parentId: SuiAddress!, $name: DynamicFieldName!) {
 			object(address: $parentId) {
@@ -1119,7 +1121,7 @@ func (c *Client) GetValidators(ctx context.Context, epochID *UInt53, pagination 
 }
 
 // GetStakedSui returns staked SUI for an address.
-func (c *Client) GetStakedSui(ctx context.Context, owner SuiAddress, pagination *PaginationArgs) (*Connection[StakedSui], error) {
+func (c *Client) GetStakedSui(ctx context.Context, owner types.Address, pagination *PaginationArgs) (*Connection[StakedSui], error) {
 	query := `
 		query GetStakedSui($address: SuiAddress!, $first: Int, $after: String, $last: Int, $before: String) {
 			address(address: $address) {
@@ -1175,7 +1177,7 @@ func (c *Client) GetStakedSui(ctx context.Context, owner SuiAddress, pagination 
 // =============================================================================
 
 // GetPackage returns a Move package by address.
-func (c *Client) GetPackage(ctx context.Context, address SuiAddress) (*MovePackage, error) {
+func (c *Client) GetPackage(ctx context.Context, address types.Address) (*MovePackage, error) {
 	query := `
 		query GetPackage($address: SuiAddress!) {
 			object(address: $address) {
@@ -1224,7 +1226,7 @@ func (c *Client) GetPackage(ctx context.Context, address SuiAddress) (*MovePacka
 }
 
 // GetModule returns a Move module from a package.
-func (c *Client) GetModule(ctx context.Context, packageAddress SuiAddress, moduleName string) (*MoveModule, error) {
+func (c *Client) GetModule(ctx context.Context, packageAddress types.Address, moduleName string) (*MoveModule, error) {
 	query := `
 		query GetModule($address: SuiAddress!, $module: String!) {
 			object(address: $address) {
@@ -1311,7 +1313,7 @@ func (c *Client) GetModule(ctx context.Context, packageAddress SuiAddress, modul
 
 // GetNormalizedMoveFunction returns normalized function info for a Move function.
 // Equivalent to Blockvision's SuiGetNormalizedMoveFunction.
-func (c *Client) GetNormalizedMoveFunction(ctx context.Context, packageAddress SuiAddress, moduleName, functionName string) (*MoveFunction, error) {
+func (c *Client) GetNormalizedMoveFunction(ctx context.Context, packageAddress types.Address, moduleName, functionName string) (*MoveFunction, error) {
 	query := `
 		query GetNormalizedMoveFunction($address: SuiAddress!, $module: String!, $function: String!) {
 			object(address: $address) {
@@ -1366,7 +1368,7 @@ func (c *Client) GetNormalizedMoveFunction(ctx context.Context, packageAddress S
 
 // GetNormalizedMoveStruct returns normalized struct info.
 // Equivalent to Blockvision's SuiGetNormalizedMoveStruct.
-func (c *Client) GetNormalizedMoveStruct(ctx context.Context, packageAddress SuiAddress, moduleName, structName string) (*MoveStruct, error) {
+func (c *Client) GetNormalizedMoveStruct(ctx context.Context, packageAddress types.Address, moduleName, structName string) (*MoveStruct, error) {
 	query := `
 		query GetNormalizedMoveStruct($address: SuiAddress!, $module: String!, $struct: String!) {
 			object(address: $address) {
