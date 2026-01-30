@@ -1,3 +1,4 @@
+// Package ed25519 implements the Ed25519 signature scheme for Sui.
 package ed25519
 
 import (

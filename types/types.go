@@ -1,3 +1,4 @@
+// Package types defines common Sui data types and their BCS serialization rules.
 package types
 
 import (
@@ -32,30 +33,37 @@ func init() {
 	})
 }
 
+// Address represents a 32-byte Sui address.
 type Address [32]byte
 
+// Digest represents a 32-byte transaction or object digest.
 type Digest [32]byte
 
+// PersonalMessage represents a personal message to be signed.
 type PersonalMessage struct {
 	Message []byte
 }
 
+// ObjectRef represents a reference to a Sui object, including its ID, version, and digest.
 type ObjectRef struct {
 	ObjectID Address
 	Version  uint64
 	Digest   Digest
 }
 
+// SharedObjectRef represents a reference to a shared Sui object.
 type SharedObjectRef struct {
 	ObjectID             Address
 	InitialSharedVersion uint64
 	Mutable              bool
 }
 
+// String returns the hex-encoded string representation of the address, prefixed with "0x".
 func (a Address) String() string {
 	return "0x" + hex.EncodeToString(a[:])
 }
 
+// String returns the Base58-encoded string representation of the digest.
 func (d Digest) String() string {
 	return base58.Encode(d[:])
 }

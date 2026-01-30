@@ -1,3 +1,4 @@
+// Package keypair provides key derivation and management utilities.
 package keypair
 
 import (
@@ -10,6 +11,7 @@ import (
 	"github.com/open-move/sui-go-sdk/keychain"
 )
 
+// DeriveFromMnemonic derives a keypair from a BIP-39 mnemonic and derivation path.
 func DeriveFromMnemonic(s keychain.Scheme, mnemonic, passphrase, path string) (Keypair, error) {
 	parsed, err := keychain.ParseDerivationPath(path)
 	if err != nil {
@@ -32,6 +34,7 @@ func DeriveFromMnemonic(s keychain.Scheme, mnemonic, passphrase, path string) (K
 	}
 }
 
+// Generate generates a new random keypair for the given scheme.
 func Generate(s keychain.Scheme) (Keypair, error) {
 	switch s {
 	case keychain.SchemeEd25519:
@@ -45,6 +48,7 @@ func Generate(s keychain.Scheme) (Keypair, error) {
 	}
 }
 
+// FromSecretKey creates a keypair from a raw secret key bytes.
 func FromSecretKey(s keychain.Scheme, secret []byte) (Keypair, error) {
 	switch s {
 	case keychain.SchemeEd25519:
@@ -58,6 +62,7 @@ func FromSecretKey(s keychain.Scheme, secret []byte) (Keypair, error) {
 	}
 }
 
+// FromBech32 parses a Bech32-encoded private key (suiprivkey...) into a Keypair.
 func FromBech32(encoded string) (Keypair, error) {
 	parsed, err := keychain.DecodePrivateKey(encoded)
 	if err != nil {
@@ -79,6 +84,7 @@ func ToBech32(s keychain.Scheme, secret []byte) (string, error) {
 	return encoded, err
 }
 
+// ToBech32FromKeypair encodes a Keypair's secret key into the Sui Bech32 format.
 func ToBech32FromKeypair(k SecretExporter) (string, error) {
 	if k == nil {
 		return "", fmt.Errorf("export: nil keypair")

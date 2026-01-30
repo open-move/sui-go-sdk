@@ -7,6 +7,7 @@ import (
 	"github.com/open-move/sui-go-sdk/utils"
 )
 
+// MoveCall represents a Move call command.
 type MoveCall struct {
 	Target        string
 	Package       string
@@ -16,6 +17,7 @@ type MoveCall struct {
 	Arguments     []Argument
 }
 
+// MakeMoveVecInput represents the input for a MakeMoveVec command.
 type MakeMoveVecInput struct {
 	Type     *string
 	Elements []Argument
@@ -26,6 +28,7 @@ type PublishInput struct {
 	Dependencies []string
 }
 
+// UpgradeInput represents the input for an Upgrade command.
 type UpgradeInput struct {
 	Modules      [][]byte
 	Dependencies []string

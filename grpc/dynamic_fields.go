@@ -10,12 +10,14 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
+// ListDynamicFieldsOptions configures the ListDynamicFields request.
 type ListDynamicFieldsOptions struct {
 	PageSize  uint32
 	PageToken []byte
 	ReadMask  *fieldmaskpb.FieldMask
 }
 
+// ListDynamicFields returns the dynamic fields associated with the parent object.
 func (c *GRPCClient) ListDynamicFields(
 	ctx context.Context,
 	parentID string,
@@ -69,6 +71,7 @@ func (c *GRPCClient) GetDynamicFieldObject(
 	return c.GetObject(ctx, fieldID, options, opts...)
 }
 
+// GetDerivedObject returns the object derived from the parent object and key.
 func (c *GRPCClient) GetDerivedObject(
 	ctx context.Context,
 	parentID string,

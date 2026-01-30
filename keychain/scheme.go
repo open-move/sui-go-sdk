@@ -6,11 +6,15 @@ import (
 	"strings"
 )
 
+// Scheme represents a cryptographic signature scheme supported by Sui.
 type Scheme uint8
 
 const (
+	// SchemeEd25519 represents the Ed25519 signature scheme.
 	SchemeEd25519 Scheme = iota
+	// SchemeSecp256k1 represents the Secp256k1 signature scheme.
 	SchemeSecp256k1
+	// SchemeSecp256r1 represents the Secp256r1 signature scheme.
 	SchemeSecp256r1
 )
 
@@ -18,6 +22,7 @@ const (
 	flagUnspecified byte = 0xff
 )
 
+// AddressFlag returns the single-byte flag used for address derivation for the scheme.
 func (s Scheme) AddressFlag() byte {
 	switch s {
 	case SchemeEd25519:
@@ -57,6 +62,7 @@ func (scheme Scheme) Label() string {
 	}
 }
 
+// SchemeFromFlag returns the Scheme corresponding to the given flag byte.
 func SchemeFromFlag(flag byte) (Scheme, error) {
 	switch flag {
 	case 0x00:

@@ -1,3 +1,4 @@
+// Package grpc provides a Go SDK for the Sui gRPC API.
 package grpc
 
 import (

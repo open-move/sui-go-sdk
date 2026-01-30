@@ -1,3 +1,4 @@
+// Package mutation contains examples of GraphQL mutations.
 package mutation
 
 import (

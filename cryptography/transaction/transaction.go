@@ -1,3 +1,4 @@
+// Package transaction provides utilities for signing transaction data with intent.
 package transaction
 
 import (

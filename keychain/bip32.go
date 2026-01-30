@@ -8,13 +8,13 @@ import (
 
 const bip32MasterKey = "Bitcoin seed"
 
-// Returns the master private key and chain code.
+// BIP32MasterPrivateKey returns the master private key and chain code.
 func BIP32MasterPrivateKey(seed []byte) ([]byte, []byte) {
 	digest := HMACSHA512([]byte(bip32MasterKey), seed)
 	return digest[:privateKeySize], digest[privateKeySize:]
 }
 
-// Derives the BIP32 child for an ECDSA curve.
+// DeriveChildPrivateKey derives the BIP32 child for an ECDSA curve.
 func DeriveChildPrivateKey(privKey, chainCode []byte, segment PathSegment, pubKeyFunc func([]byte) ([]byte, error), order *big.Int) ([]byte, []byte, error) {
 	var data []byte
 	index := segment.Index

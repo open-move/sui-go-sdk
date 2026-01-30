@@ -1,3 +1,4 @@
+// Package query contains examples of GraphQL queries.
 package query
 
 import (
