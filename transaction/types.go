@@ -37,6 +37,7 @@ type CallArg struct {
 	Object *ObjectArg
 }
 
+// IsBcsEnum marks CallArg as a BCS enum.
 func (CallArg) IsBcsEnum() {}
 
 // ObjectArg represents an object argument.
@@ -46,6 +47,7 @@ type ObjectArg struct {
 	Receiving        *types.ObjectRef
 }
 
+// IsBcsEnum marks ObjectArg as a BCS enum.
 func (ObjectArg) IsBcsEnum() {}
 
 // Argument represents a transaction argument.
@@ -56,6 +58,7 @@ type Argument struct {
 	NestedResult *NestedResult
 }
 
+// IsBcsEnum marks Argument as a BCS enum.
 func (Argument) IsBcsEnum() {}
 
 // NestedResult represents a nested result index.
@@ -122,6 +125,7 @@ type Command struct {
 	Upgrade         *Upgrade
 }
 
+// IsBcsEnum marks Command as a BCS enum.
 func (Command) IsBcsEnum() {}
 
 // ProgrammableTransaction represents a programmable transaction.
@@ -138,6 +142,7 @@ type TransactionKind struct {
 	ConsensusCommitPrologue *struct{}
 }
 
+// IsBcsEnum marks TransactionKind as a BCS enum.
 func (TransactionKind) IsBcsEnum() {}
 
 // TransactionExpiration represents the transaction expiration.
@@ -146,6 +151,7 @@ type TransactionExpiration struct {
 	Epoch *uint64
 }
 
+// IsBcsEnum marks TransactionExpiration as a BCS enum.
 func (TransactionExpiration) IsBcsEnum() {}
 
 // ExpirationNone returns a TransactionExpiration with None set.
@@ -180,6 +186,7 @@ type TransactionData struct {
 	V1 *TransactionDataV1
 }
 
+// IsBcsEnum marks TransactionData as a BCS enum.
 func (TransactionData) IsBcsEnum() {}
 
 type GasBudgetInput struct {

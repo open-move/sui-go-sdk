@@ -28,6 +28,7 @@ type Resolver struct {
 	packageCache  map[string]*transaction.PackageMetadata
 }
 
+// NewResolver returns a resolver backed by the provided gRPC client.
 func NewResolver(client *Client) *Resolver {
 	return &Resolver{
 		client:        client,
@@ -37,6 +38,7 @@ func NewResolver(client *Client) *Resolver {
 	}
 }
 
+// ResolveObjects resolves object IDs into metadata using the gRPC client.
 func (r *Resolver) ResolveObjects(ctx context.Context, objectIDs []string) ([]transaction.ObjectMetadata, error) {
 	if r == nil || r.client == nil {
 		return nil, fmt.Errorf("nil client")
@@ -109,6 +111,7 @@ func (r *Resolver) ResolveObjects(ctx context.Context, objectIDs []string) ([]tr
 	return results, nil
 }
 
+// ResolveMoveFunction fetches Move function metadata for the requested target.
 func (r *Resolver) ResolveMoveFunction(ctx context.Context, packageID, module, function string) (*transaction.MoveFunction, error) {
 	if r == nil || r.client == nil {
 		return nil, fmt.Errorf("nil client")
@@ -143,6 +146,7 @@ func (r *Resolver) ResolveMoveFunction(ctx context.Context, packageID, module, f
 	return converted, nil
 }
 
+// ResolvePackage fetches Move package metadata for the provided package ID.
 func (r *Resolver) ResolvePackage(ctx context.Context, packageID string) (*transaction.PackageMetadata, error) {
 	if r == nil || r.client == nil {
 		return nil, fmt.Errorf("nil client")
@@ -181,6 +185,7 @@ func (r *Resolver) ResolvePackage(ctx context.Context, packageID string) (*trans
 	return meta, nil
 }
 
+// ResolveGasPrice fetches the current reference gas price.
 func (r *Resolver) ResolveGasPrice(ctx context.Context) (uint64, error) {
 	if r == nil || r.client == nil {
 		return 0, fmt.Errorf("nil client")
@@ -192,6 +197,7 @@ func (r *Resolver) ResolveGasPrice(ctx context.Context) (uint64, error) {
 	return r.client.ReferenceGasPrice(ctx)
 }
 
+// ResolveGasBudget estimates a gas budget using simulation.
 func (r *Resolver) ResolveGasBudget(ctx context.Context, input transaction.GasBudgetInput) (uint64, error) {
 	if r == nil || r.client == nil {
 		return 0, fmt.Errorf("nil client")
@@ -268,6 +274,7 @@ func (r *Resolver) ResolveGasBudget(ctx context.Context, input transaction.GasBu
 	return addGasBudgetBuffer(base), nil
 }
 
+// ResolveGasPayment selects gas payment objects for the given budget.
 func (r *Resolver) ResolveGasPayment(ctx context.Context, owner types.Address, budget uint64) ([]types.ObjectRef, error) {
 	if r == nil || r.client == nil {
 		return nil, fmt.Errorf("nil client")

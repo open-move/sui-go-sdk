@@ -35,7 +35,7 @@ func (c *Client) ListDynamicFields(
 		return nil, err
 	}
 
-	req := &v2.ListDynamicFieldsRequest{Parent: utils.StringPtr(normalized)}
+	req := &v2.ListDynamicFieldsRequest{Parent: utils.Ptr(normalized)}
 	if options != nil {
 		if options.PageSize != 0 {
 			size := options.PageSize

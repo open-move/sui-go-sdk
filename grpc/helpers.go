@@ -32,7 +32,7 @@ func (c *Client) GetObject(ctx context.Context, objectID string, options *GetObj
 		return nil, errors.New("object ID is empty")
 	}
 
-	req := &v2.GetObjectRequest{ObjectId: utils.StringPtr(objectID)}
+	req := &v2.GetObjectRequest{ObjectId: utils.Ptr(objectID)}
 	if options != nil {
 		if options.Version != nil {
 			version := *options.Version
@@ -71,7 +71,7 @@ func (c *Client) GetTransaction(ctx context.Context, digest string, options *Get
 		return nil, errors.New("transaction digest is empty")
 	}
 
-	req := &v2.GetTransactionRequest{Digest: utils.StringPtr(digest)}
+	req := &v2.GetTransactionRequest{Digest: utils.Ptr(digest)}
 	if options != nil && options.ReadMask != nil {
 		req.ReadMask = cloneFieldMask(options.ReadMask)
 	}
@@ -213,7 +213,7 @@ func (c *Client) BatchGetObjects(ctx context.Context, requests []ObjectRequest, 
 		if strings.TrimSpace(req.ObjectID) == "" {
 			return nil, fmt.Errorf("request %d has empty object ID", i)
 		}
-		objReq := &v2.GetObjectRequest{ObjectId: utils.StringPtr(req.ObjectID)}
+		objReq := &v2.GetObjectRequest{ObjectId: utils.Ptr(req.ObjectID)}
 		if req.Version != nil {
 			version := *req.Version
 			objReq.Version = &version

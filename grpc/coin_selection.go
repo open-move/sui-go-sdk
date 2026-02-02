@@ -97,8 +97,8 @@ func (c *Client) SelectCoins(ctx context.Context, owner string, coinType string,
 	}
 
 	req := &v2.ListOwnedObjectsRequest{
-		Owner:      utils.StringPtr(owner),
-		ObjectType: utils.StringPtr("0x2::coin::Coin<" + coinType + ">"),
+		Owner:      utils.Ptr(owner),
+		ObjectType: utils.Ptr("0x2::coin::Coin<" + coinType + ">"),
 	}
 	if cfg.pageSize > 0 {
 		size := cfg.pageSize
@@ -175,8 +175,8 @@ func (c *Client) SelectUpToNLargestCoins(ctx context.Context, owner string, coin
 	}
 
 	req := &v2.ListOwnedObjectsRequest{
-		Owner:      utils.StringPtr(owner),
-		ObjectType: utils.StringPtr(coinType),
+		Owner:      utils.Ptr(owner),
+		ObjectType: utils.Ptr(coinType),
 	}
 	if cfg.pageSize > 0 {
 		size := cfg.pageSize

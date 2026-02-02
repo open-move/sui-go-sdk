@@ -51,10 +51,12 @@ type gasConfig struct {
 	Budget  *uint64
 }
 
+// New returns an empty Transaction builder.
 func New() *Transaction {
 	return &Transaction{}
 }
 
+// Err returns the first error encountered while building the transaction.
 func (b *Transaction) Err() error {
 	if b == nil {
 		return ErrNilTransaction
@@ -63,10 +65,12 @@ func (b *Transaction) Err() error {
 	return b.err
 }
 
+// HasSender reports whether the transaction sender is set.
 func (b *Transaction) HasSender() bool {
 	return b != nil && b.sender != nil
 }
 
+// SetSender sets the transaction sender address.
 func (b *Transaction) SetSender(address string) *Transaction {
 	if b == nil {
 		return b
@@ -82,6 +86,7 @@ func (b *Transaction) SetSender(address string) *Transaction {
 	return b
 }
 
+// SetExpiration sets the transaction expiration.
 func (b *Transaction) SetExpiration(expiration TransactionExpiration) *Transaction {
 	if b == nil {
 		return b
@@ -91,6 +96,7 @@ func (b *Transaction) SetExpiration(expiration TransactionExpiration) *Transacti
 	return b
 }
 
+// SetGasBudget sets the gas budget for the transaction.
 func (b *Transaction) SetGasBudget(budget uint64) *Transaction {
 	if b == nil {
 		return b
@@ -100,6 +106,7 @@ func (b *Transaction) SetGasBudget(budget uint64) *Transaction {
 	return b
 }
 
+// SetGasPrice sets the gas price for the transaction.
 func (b *Transaction) SetGasPrice(price uint64) *Transaction {
 	if b == nil {
 		return b
@@ -109,6 +116,7 @@ func (b *Transaction) SetGasPrice(price uint64) *Transaction {
 	return b
 }
 
+// SetGasOwner sets the gas owner address.
 func (b *Transaction) SetGasOwner(address string) *Transaction {
 	if b == nil {
 		return b
@@ -124,6 +132,7 @@ func (b *Transaction) SetGasOwner(address string) *Transaction {
 	return b
 }
 
+// SetGasPayment sets the gas payment object references.
 func (b *Transaction) SetGasPayment(payment []types.ObjectRef) *Transaction {
 	if b == nil {
 		return b
@@ -133,10 +142,12 @@ func (b *Transaction) SetGasPayment(payment []types.ObjectRef) *Transaction {
 	return b
 }
 
+// Gas returns the gas coin argument.
 func (b *Transaction) Gas() Argument {
 	return Argument{GasCoin: &struct{}{}}
 }
 
+// PureBytes adds a pure byte vector input and returns its argument reference.
 func (b *Transaction) PureBytes(value []byte) Argument {
 	if b == nil {
 		return Argument{}
@@ -149,31 +160,37 @@ func (b *Transaction) PureBytes(value []byte) Argument {
 	return b.addInput(input{Pure: &Pure{Bytes: append([]byte(nil), value...)}})
 }
 
+// PureBool adds a pure bool input.
 func (b *Transaction) PureBool(value bool) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureU8 adds a pure u8 input.
 func (b *Transaction) PureU8(value uint8) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureU16 adds a pure u16 input.
 func (b *Transaction) PureU16(value uint16) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureU32 adds a pure u32 input.
 func (b *Transaction) PureU32(value uint32) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureU64 adds a pure u64 input.
 func (b *Transaction) PureU64(value uint64) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureU128 adds a pure u128 input.
 func (b *Transaction) PureU128(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u128 value is nil"))
@@ -189,6 +206,7 @@ func (b *Transaction) PureU128(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
+// PureU256 adds a pure u256 input.
 func (b *Transaction) PureU256(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u256 value is nil"))
@@ -204,11 +222,13 @@ func (b *Transaction) PureU256(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
+// PureString adds a pure string input.
 func (b *Transaction) PureString(value string) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
+// PureAddress adds a pure address input.
 func (b *Transaction) PureAddress(value string) Argument {
 	if b == nil {
 		return Argument{}
@@ -229,6 +249,7 @@ func (b *Transaction) PureAddress(value string) Argument {
 	return b.PureBytes(bytes)
 }
 
+// Object adds an unresolved object input by ID.
 func (b *Transaction) Object(id string) Argument {
 	if b == nil {
 		return Argument{}
@@ -243,6 +264,7 @@ func (b *Transaction) Object(id string) Argument {
 	return b.addInput(input{UnresolvedObject: &UnresolvedObject{ObjectID: normalized}})
 }
 
+// ObjectRef adds an owned object reference input.
 func (b *Transaction) ObjectRef(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
@@ -251,6 +273,7 @@ func (b *Transaction) ObjectRef(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{ImmOrOwnedObject: &ref}})
 }
 
+// SharedObject adds a shared object reference input.
 func (b *Transaction) SharedObject(ref types.SharedObjectRef) Argument {
 	if b == nil {
 		return Argument{}
@@ -259,6 +282,7 @@ func (b *Transaction) SharedObject(ref types.SharedObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{SharedObject: &ref}})
 }
 
+// ReceivingObject adds a receiving object reference input.
 func (b *Transaction) ReceivingObject(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
@@ -267,6 +291,7 @@ func (b *Transaction) ReceivingObject(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{Receiving: &ref}})
 }
 
+// SplitCoins adds a split-coins command and returns the resulting arguments.
 func (b *Transaction) SplitCoins(args SplitCoins) []Argument {
 	idx := b.addCommand(Command{SplitCoins: &args})
 	if idx == nil {
@@ -282,14 +307,17 @@ func (b *Transaction) SplitCoins(args SplitCoins) []Argument {
 	return results
 }
 
+// MergeCoins adds a merge-coins command.
 func (b *Transaction) MergeCoins(args MergeCoins) {
 	b.addCommand(Command{MergeCoins: &args})
 }
 
+// TransferObjects adds a transfer-objects command.
 func (b *Transaction) TransferObjects(args TransferObjects) {
 	b.addCommand(Command{TransferObjects: &args})
 }
 
+// MoveCall adds a Move call command and returns its result.
 func (b *Transaction) MoveCall(args MoveCall) Result {
 	call, err := args.toProgrammableMoveCall()
 	if err != nil {
@@ -305,6 +333,7 @@ func (b *Transaction) MoveCall(args MoveCall) Result {
 	return Result{Index: *idx}
 }
 
+// MakeMoveVec adds a make-move-vector command and returns its result.
 func (b *Transaction) MakeMoveVec(args MakeMoveVecInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
@@ -319,6 +348,7 @@ func (b *Transaction) MakeMoveVec(args MakeMoveVecInput) Result {
 	return Result{Index: *idx}
 }
 
+// Publish adds a publish command and returns its result.
 func (b *Transaction) Publish(args PublishInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
@@ -334,6 +364,7 @@ func (b *Transaction) Publish(args PublishInput) Result {
 	return Result{Index: *idx}
 }
 
+// Upgrade adds an upgrade command and returns its result.
 func (b *Transaction) Upgrade(args UpgradeInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
@@ -349,6 +380,7 @@ func (b *Transaction) Upgrade(args UpgradeInput) Result {
 	return Result{Index: *idx}
 }
 
+// Build assembles the transaction data and returns its serialized bytes.
 func (b *Transaction) Build(ctx context.Context, opts BuildOptions) (BuildResult, error) {
 	if b == nil {
 		return BuildResult{}, ErrNilTransaction

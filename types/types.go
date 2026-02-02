@@ -80,10 +80,12 @@ func (d Digest) String() string {
 
 const digestLength = 32
 
+// MarshalJSON encodes the address as a JSON string.
 func (a Address) MarshalJSON() ([]byte, error) {
 	return json.Marshal(a.String())
 }
 
+// UnmarshalJSON decodes a JSON string into an address.
 func (a *Address) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		*a = Address{}
@@ -101,10 +103,12 @@ func (a *Address) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalJSON encodes the digest as a JSON string.
 func (d Digest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(d.String())
 }
 
+// UnmarshalJSON decodes a JSON string into a digest.
 func (d *Digest) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		*d = nil
