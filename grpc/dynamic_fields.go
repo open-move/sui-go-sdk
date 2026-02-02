@@ -17,8 +17,7 @@ type ListDynamicFieldsOptions struct {
 	ReadMask  *fieldmaskpb.FieldMask
 }
 
-// ListDynamicFields returns the dynamic fields associated with the parent object.
-func (c *GRPCClient) ListDynamicFields(
+func (c *Client) ListDynamicFields(
 	ctx context.Context,
 	parentID string,
 	options *ListDynamicFieldsOptions,
@@ -53,7 +52,7 @@ func (c *GRPCClient) ListDynamicFields(
 	return c.StateClient().ListDynamicFields(ctx, req, opts...)
 }
 
-func (c *GRPCClient) GetDynamicFieldObject(
+func (c *Client) GetDynamicFieldObject(
 	ctx context.Context,
 	parentID string,
 	nameType string,
@@ -71,8 +70,7 @@ func (c *GRPCClient) GetDynamicFieldObject(
 	return c.GetObject(ctx, fieldID, options, opts...)
 }
 
-// GetDerivedObject returns the object derived from the parent object and key.
-func (c *GRPCClient) GetDerivedObject(
+func (c *Client) GetDerivedObject(
 	ctx context.Context,
 	parentID string,
 	typeTag string,

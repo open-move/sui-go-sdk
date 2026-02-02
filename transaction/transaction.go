@@ -1,10 +1,10 @@
-// Package transaction provides a builder for constructing Programmable Transactions.
 package transaction
 
 import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 
 	bcs "github.com/iotaledger/bcs-go"
 	v2 "github.com/open-move/sui-go-sdk/proto/sui/rpc/v2"
@@ -12,12 +12,11 @@ import (
 	"github.com/open-move/sui-go-sdk/utils"
 )
 
-// BuildOptions configures the behavior of the transaction builder.
 type BuildOptions struct {
-	Resolver ObjectResolver
+	Resolver    Resolver
+	GasResolver GasResolver
 }
 
-// BuildResult represents the result of a transaction build operation, including the raw bytes and the structured transaction.
 type BuildResult struct {
 	KindBytes         []byte
 	TransactionBytes  []byte
@@ -26,8 +25,7 @@ type BuildResult struct {
 	ResolvedInputArgs []CallArg
 }
 
-// Builder constructs a Programmable Transaction.
-type Builder struct {
+type Transaction struct {
 	inputs     []input
 	commands   []Command
 	sender     *types.Address
@@ -53,22 +51,23 @@ type gasConfig struct {
 	Budget  *uint64
 }
 
-// New creates a new transaction builder.
-func New() *Builder {
-	return &Builder{}
+func New() *Transaction {
+	return &Transaction{}
 }
 
-// Err returns the first error encountered during the building process, if any.
-func (b *Builder) Err() error {
+func (b *Transaction) Err() error {
 	if b == nil {
-		return ErrNilBuilder
+		return ErrNilTransaction
 	}
 
 	return b.err
 }
 
-// SetSender sets the sender address for the transaction.
-func (b *Builder) SetSender(address string) *Builder {
+func (b *Transaction) HasSender() bool {
+	return b != nil && b.sender != nil
+}
+
+func (b *Transaction) SetSender(address string) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -83,8 +82,7 @@ func (b *Builder) SetSender(address string) *Builder {
 	return b
 }
 
-// SetExpiration sets the expiration of the transaction.
-func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
+func (b *Transaction) SetExpiration(expiration TransactionExpiration) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -93,8 +91,7 @@ func (b *Builder) SetExpiration(expiration TransactionExpiration) *Builder {
 	return b
 }
 
-// SetGasBudget sets the gas budget for the transaction.
-func (b *Builder) SetGasBudget(budget uint64) *Builder {
+func (b *Transaction) SetGasBudget(budget uint64) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -103,8 +100,7 @@ func (b *Builder) SetGasBudget(budget uint64) *Builder {
 	return b
 }
 
-// SetGasPrice sets the gas price for the transaction.
-func (b *Builder) SetGasPrice(price uint64) *Builder {
+func (b *Transaction) SetGasPrice(price uint64) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -113,7 +109,7 @@ func (b *Builder) SetGasPrice(price uint64) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasOwner(address string) *Builder {
+func (b *Transaction) SetGasOwner(address string) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -128,7 +124,7 @@ func (b *Builder) SetGasOwner(address string) *Builder {
 	return b
 }
 
-func (b *Builder) SetGasPayment(payment []types.ObjectRef) *Builder {
+func (b *Transaction) SetGasPayment(payment []types.ObjectRef) *Transaction {
 	if b == nil {
 		return b
 	}
@@ -137,11 +133,11 @@ func (b *Builder) SetGasPayment(payment []types.ObjectRef) *Builder {
 	return b
 }
 
-func (b *Builder) Gas() Argument {
+func (b *Transaction) Gas() Argument {
 	return Argument{GasCoin: &struct{}{}}
 }
 
-func (b *Builder) PureBytes(value []byte) Argument {
+func (b *Transaction) PureBytes(value []byte) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -153,32 +149,32 @@ func (b *Builder) PureBytes(value []byte) Argument {
 	return b.addInput(input{Pure: &Pure{Bytes: append([]byte(nil), value...)}})
 }
 
-func (b *Builder) PureBool(value bool) Argument {
+func (b *Transaction) PureBool(value bool) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU8(value uint8) Argument {
+func (b *Transaction) PureU8(value uint8) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU16(value uint16) Argument {
+func (b *Transaction) PureU16(value uint16) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU32(value uint32) Argument {
+func (b *Transaction) PureU32(value uint32) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU64(value uint64) Argument {
+func (b *Transaction) PureU64(value uint64) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureU128(value *big.Int) Argument {
+func (b *Transaction) PureU128(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u128 value is nil"))
 		return Argument{}
@@ -193,13 +189,13 @@ func (b *Builder) PureU128(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) PureU256(value *big.Int) Argument {
+func (b *Transaction) PureU256(value *big.Int) Argument {
 	if value == nil {
 		b.setErr(fmt.Errorf("u256 value is nil"))
 		return Argument{}
 	}
 
-	bytes, err := encodeU256(value)
+	bytes, err := utils.EncodeU256(value)
 	if err != nil {
 		b.setErr(err)
 		return Argument{}
@@ -208,12 +204,12 @@ func (b *Builder) PureU256(value *big.Int) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) PureString(value string) Argument {
+func (b *Transaction) PureString(value string) Argument {
 	bytes, err := bcs.Marshal(&value)
 	return b.pureEncoded(bytes, err)
 }
 
-func (b *Builder) PureAddress(value string) Argument {
+func (b *Transaction) PureAddress(value string) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -233,7 +229,7 @@ func (b *Builder) PureAddress(value string) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) Object(id string) Argument {
+func (b *Transaction) Object(id string) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -247,7 +243,7 @@ func (b *Builder) Object(id string) Argument {
 	return b.addInput(input{UnresolvedObject: &UnresolvedObject{ObjectID: normalized}})
 }
 
-func (b *Builder) ObjectRef(ref types.ObjectRef) Argument {
+func (b *Transaction) ObjectRef(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -255,7 +251,7 @@ func (b *Builder) ObjectRef(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{ImmOrOwnedObject: &ref}})
 }
 
-func (b *Builder) SharedObject(ref types.SharedObjectRef) Argument {
+func (b *Transaction) SharedObject(ref types.SharedObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -263,7 +259,7 @@ func (b *Builder) SharedObject(ref types.SharedObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{SharedObject: &ref}})
 }
 
-func (b *Builder) ReceivingObject(ref types.ObjectRef) Argument {
+func (b *Transaction) ReceivingObject(ref types.ObjectRef) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -271,7 +267,7 @@ func (b *Builder) ReceivingObject(ref types.ObjectRef) Argument {
 	return b.addInput(input{Object: &ObjectArg{Receiving: &ref}})
 }
 
-func (b *Builder) SplitCoins(args SplitCoins) []Argument {
+func (b *Transaction) SplitCoins(args SplitCoins) []Argument {
 	idx := b.addCommand(Command{SplitCoins: &args})
 	if idx == nil {
 		return nil
@@ -286,15 +282,15 @@ func (b *Builder) SplitCoins(args SplitCoins) []Argument {
 	return results
 }
 
-func (b *Builder) MergeCoins(args MergeCoins) {
+func (b *Transaction) MergeCoins(args MergeCoins) {
 	b.addCommand(Command{MergeCoins: &args})
 }
 
-func (b *Builder) TransferObjects(args TransferObjects) {
+func (b *Transaction) TransferObjects(args TransferObjects) {
 	b.addCommand(Command{TransferObjects: &args})
 }
 
-func (b *Builder) MoveCall(args MoveCall) Result {
+func (b *Transaction) MoveCall(args MoveCall) Result {
 	call, err := args.toProgrammableMoveCall()
 	if err != nil {
 		b.setErr(err)
@@ -309,7 +305,7 @@ func (b *Builder) MoveCall(args MoveCall) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) MakeMoveVec(args MakeMoveVecInput) Result {
+func (b *Transaction) MakeMoveVec(args MakeMoveVecInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -319,10 +315,11 @@ func (b *Builder) MakeMoveVec(args MakeMoveVecInput) Result {
 	if idx == nil {
 		return Result{}
 	}
+
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Publish(args PublishInput) Result {
+func (b *Transaction) Publish(args PublishInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -337,7 +334,7 @@ func (b *Builder) Publish(args PublishInput) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Upgrade(args UpgradeInput) Result {
+func (b *Transaction) Upgrade(args UpgradeInput) Result {
 	command, err := args.toCommand()
 	if err != nil {
 		b.setErr(err)
@@ -352,9 +349,9 @@ func (b *Builder) Upgrade(args UpgradeInput) Result {
 	return Result{Index: *idx}
 }
 
-func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, error) {
+func (b *Transaction) Build(ctx context.Context, opts BuildOptions) (BuildResult, error) {
 	if b == nil {
-		return BuildResult{}, ErrNilBuilder
+		return BuildResult{}, ErrNilTransaction
 	}
 
 	if b.err != nil {
@@ -377,22 +374,29 @@ func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, er
 		return BuildResult{}, err
 	}
 
+	expiration := b.expiration
+
 	result := BuildResult{
 		KindBytes:         kindBytes,
 		ProgrammableKind:  programmable,
 		ResolvedInputArgs: resolvedInputs,
 	}
-	if !b.hasFullTransaction() {
-		return result, nil
-	}
-
-	gasData := b.buildGasData()
-	expiration := b.expiration
 	if expiration == nil {
 		fallback := ExpirationNone()
 		expiration = &fallback
 	}
 
+	if !b.hasFullTransaction() && opts.GasResolver != nil {
+		if err = b.resolveGas(ctx, opts.GasResolver, kind, *expiration); err != nil {
+			return BuildResult{}, err
+		}
+	}
+
+	if !b.hasFullTransaction() {
+		return result, nil
+	}
+
+	gasData := b.buildGasData()
 	data := TransactionData{
 		V1: &TransactionDataV1{
 			Kind:       kind,
@@ -408,11 +412,11 @@ func (b *Builder) Build(ctx context.Context, opts BuildOptions) (BuildResult, er
 	}
 
 	result.TransactionBytes = bytes
-	result.Transaction = &v2.Transaction{Bcs: &v2.Bcs{Name: utils.StringPtr("TransactionData"), Value: bytes}}
+	result.Transaction = &v2.Transaction{Bcs: &v2.Bcs{Name: utils.Ptr("TransactionData"), Value: bytes}}
 	return result, nil
 }
 
-func (b *Builder) addInput(in input) Argument {
+func (b *Transaction) addInput(in input) Argument {
 	if b.err != nil {
 		return Argument{}
 	}
@@ -427,7 +431,7 @@ func (b *Builder) addInput(in input) Argument {
 	return Argument{Input: &idx}
 }
 
-func (b *Builder) addCommand(cmd Command) *uint16 {
+func (b *Transaction) addCommand(cmd Command) *uint16 {
 	if b.err != nil {
 		return nil
 	}
@@ -442,35 +446,188 @@ func (b *Builder) addCommand(cmd Command) *uint16 {
 	return &idx
 }
 
-func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([]CallArg, error) {
-	resolved := make([]CallArg, len(b.inputs))
+type inputUsage struct {
+	mutable   bool
+	receiving bool
+}
+
+func (b *Transaction) resolveInputUsage(ctx context.Context, resolver Resolver) ([]inputUsage, error) {
+	usage := make([]inputUsage, len(b.inputs))
+
+	markMutable := func(arg Argument) {
+		if arg.Input == nil {
+			return
+		}
+		idx := int(*arg.Input)
+		if idx < 0 || idx >= len(usage) {
+			return
+		}
+		if b.inputs[idx].UnresolvedObject == nil {
+			return
+		}
+		usage[idx].mutable = true
+	}
+
+	for _, cmd := range b.commands {
+		switch {
+		case cmd.SplitCoins != nil:
+			markMutable(cmd.SplitCoins.Coin)
+			for _, amount := range cmd.SplitCoins.Amounts {
+				markMutable(amount)
+			}
+		case cmd.MergeCoins != nil:
+			markMutable(cmd.MergeCoins.Destination)
+			for _, source := range cmd.MergeCoins.Sources {
+				markMutable(source)
+			}
+		case cmd.TransferObjects != nil:
+			for _, obj := range cmd.TransferObjects.Objects {
+				markMutable(obj)
+			}
+		case cmd.MakeMoveVec != nil:
+			for _, elem := range cmd.MakeMoveVec.Elements {
+				markMutable(elem)
+			}
+		}
+	}
+
+	for _, cmd := range b.commands {
+		if cmd.MoveCall == nil {
+			continue
+		}
+		moveCall := cmd.MoveCall
+		needsResolution := false
+		for _, arg := range moveCall.Arguments {
+			if arg.Input == nil {
+				continue
+			}
+			idx := int(*arg.Input)
+			if idx < 0 || idx >= len(b.inputs) {
+				continue
+			}
+			if b.inputs[idx].UnresolvedObject != nil {
+				needsResolution = true
+				break
+			}
+		}
+		if !needsResolution {
+			continue
+		}
+
+		sig, err := resolver.ResolveMoveFunction(ctx, moveCall.Package.String(), moveCall.Module, moveCall.Function)
+		if err != nil {
+			return nil, err
+		}
+		params := trimTxContext(sig.Parameters)
+		if len(params) < len(moveCall.Arguments) {
+			return nil, fmt.Errorf("move call %s::%s::%s expects %d args, got %d", moveCall.Package.String(), moveCall.Module, moveCall.Function, len(params), len(moveCall.Arguments))
+		}
+
+		for i, arg := range moveCall.Arguments {
+			if arg.Input == nil {
+				continue
+			}
+			idx := int(*arg.Input)
+			if idx < 0 || idx >= len(usage) {
+				continue
+			}
+			if b.inputs[idx].UnresolvedObject == nil {
+				continue
+			}
+			param := params[i]
+			if param.Reference != ReferenceImmutable {
+				usage[idx].mutable = true
+			}
+			if isReceivingType(param) {
+				usage[idx].receiving = true
+			}
+		}
+	}
+
+	return usage, nil
+}
+
+func buildObjectArg(meta ObjectMetadata, usage inputUsage) (*ObjectArg, error) {
+	switch meta.OwnerKind {
+	case OwnerShared, OwnerConsensusAddress:
+		if meta.OwnerVersion == nil {
+			return nil, fmt.Errorf("shared object missing initial shared version")
+		}
+		shared := types.SharedObjectRef{
+			ObjectID:             meta.ID,
+			InitialSharedVersion: *meta.OwnerVersion,
+			Mutable:              usage.mutable,
+		}
+		return &ObjectArg{SharedObject: &shared}, nil
+	case OwnerImmutable, OwnerAddress, OwnerObject, OwnerUnknown:
+		if usage.receiving {
+			ref := types.ObjectRef{ObjectID: meta.ID, Version: meta.Version, Digest: meta.Digest}
+			return &ObjectArg{Receiving: &ref}, nil
+		}
+		ref := types.ObjectRef{ObjectID: meta.ID, Version: meta.Version, Digest: meta.Digest}
+		return &ObjectArg{ImmOrOwnedObject: &ref}, nil
+	default:
+		return nil, fmt.Errorf("unsupported owner kind %d", meta.OwnerKind)
+	}
+}
+
+func trimTxContext(params []MoveParameter) []MoveParameter {
+	if len(params) == 0 {
+		return params
+	}
+	last := params[len(params)-1]
+	if last.TypeName == "0x2::tx_context::TxContext" {
+		return params[:len(params)-1]
+	}
+	return params
+}
+
+func isReceivingType(param MoveParameter) bool {
+	if param.TypeName == "" {
+		return false
+	}
+
+	return param.TypeName == "0x2::transfer::Receiving" || strings.HasPrefix(param.TypeName, "0x2::transfer::Receiving<")
+}
+
+func (b *Transaction) resolveInputs(ctx context.Context, resolver Resolver) ([]CallArg, error) {
 	objectIDs := make([]string, 0)
+	resolved := make([]CallArg, len(b.inputs))
+
 	for _, in := range b.inputs {
 		if in.UnresolvedObject != nil {
 			objectIDs = append(objectIDs, in.UnresolvedObject.ObjectID)
 		}
 	}
 
-	objectMap := map[string]types.ObjectRef{}
-	if len(objectIDs) > 0 {
+	hasUnresolved := len(objectIDs) > 0
+	var usage []inputUsage
+	if hasUnresolved {
 		if resolver == nil {
 			return nil, ErrResolverRequired
 		}
-
 		if ctx == nil {
 			return nil, fmt.Errorf("nil context")
 		}
+		resolvedUsage, err := b.resolveInputUsage(ctx, resolver)
+		if err != nil {
+			return nil, err
+		}
+		usage = resolvedUsage
+	} else {
+		usage = make([]inputUsage, len(b.inputs))
+	}
 
-		unique := uniqueStrings(objectIDs)
+	objectMap := map[string]ObjectMetadata{}
+	if hasUnresolved {
+		unique := utils.UniqueValues(objectIDs)
 		refs, err := resolver.ResolveObjects(ctx, unique)
 		if err != nil {
 			return nil, err
 		}
-
 		if len(refs) != len(unique) {
-			return nil, fmt.Errorf("resolver returned %d refs for %d object ids", len(refs), len(unique))
+			return nil, fmt.Errorf("resolver returned %d objects for %d object ids", len(refs), len(unique))
 		}
-
 		for i, id := range unique {
 			objectMap[id] = refs[i]
 		}
@@ -481,13 +638,22 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([
 		case in.Pure != nil:
 			resolved[i] = CallArg{Pure: in.Pure}
 		case in.Object != nil:
+			if in.Object.SharedObject != nil && usage[i].mutable && !in.Object.SharedObject.Mutable {
+				updated := *in.Object.SharedObject
+				updated.Mutable = true
+				in.Object.SharedObject = &updated
+			}
 			resolved[i] = CallArg{Object: in.Object}
 		case in.UnresolvedObject != nil:
-			ref, ok := objectMap[in.UnresolvedObject.ObjectID]
+			meta, ok := objectMap[in.UnresolvedObject.ObjectID]
 			if !ok {
 				return nil, ErrUnresolvedInput
 			}
-			resolved[i] = CallArg{Object: &ObjectArg{ImmOrOwnedObject: &ref}}
+			objArg, err := buildObjectArg(meta, usage[i])
+			if err != nil {
+				return nil, err
+			}
+			resolved[i] = CallArg{Object: objArg}
 		default:
 			return nil, ErrUnresolvedInput
 		}
@@ -496,7 +662,71 @@ func (b *Builder) resolveInputs(ctx context.Context, resolver ObjectResolver) ([
 	return resolved, nil
 }
 
-func (b *Builder) hasFullTransaction() bool {
+func (b *Transaction) resolveGas(ctx context.Context, resolver GasResolver, kind TransactionKind, expiration TransactionExpiration) error {
+	if resolver == nil {
+		return nil
+	}
+	if b.sender == nil {
+		return nil
+	}
+	if ctx == nil {
+		return fmt.Errorf("nil context")
+	}
+
+	if b.gas.Price == nil {
+		price, err := resolver.ResolveGasPrice(ctx)
+		if err != nil {
+			return err
+		}
+		b.gas.Price = &price
+	}
+
+	if b.gas.Budget == nil {
+		if b.gas.Price == nil {
+			return fmt.Errorf("gas price required to resolve budget")
+		}
+
+		owner := b.gas.Owner
+		if owner == nil {
+			owner = b.sender
+		}
+
+		budget, err := resolver.ResolveGasBudget(ctx, GasBudgetInput{
+			Sender:     *b.sender,
+			GasOwner:   *owner,
+			GasPrice:   *b.gas.Price,
+			Kind:       kind,
+			Expiration: expiration,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		b.gas.Budget = &budget
+	}
+
+	if len(b.gas.Payment) == 0 {
+		if b.gas.Budget == nil {
+			return fmt.Errorf("gas budget required to resolve payment")
+		}
+
+		owner := b.gas.Owner
+		if owner == nil {
+			owner = b.sender
+		}
+
+		payment, err := resolver.ResolveGasPayment(ctx, *owner, *b.gas.Budget)
+		if err != nil {
+			return err
+		}
+		b.gas.Payment = payment
+	}
+
+	return nil
+}
+
+func (b *Transaction) hasFullTransaction() bool {
 	if b.sender == nil {
 		return false
 	}
@@ -508,7 +738,7 @@ func (b *Builder) hasFullTransaction() bool {
 	return true
 }
 
-func (b *Builder) buildGasData() GasData {
+func (b *Transaction) buildGasData() GasData {
 	owner := b.gas.Owner
 	if owner == nil {
 		owner = b.sender
@@ -522,7 +752,7 @@ func (b *Builder) buildGasData() GasData {
 	}
 }
 
-func (b *Builder) pureEncoded(bytes []byte, err error) Argument {
+func (b *Transaction) pureEncoded(bytes []byte, err error) Argument {
 	if b == nil {
 		return Argument{}
 	}
@@ -535,7 +765,7 @@ func (b *Builder) pureEncoded(bytes []byte, err error) Argument {
 	return b.PureBytes(bytes)
 }
 
-func (b *Builder) setErr(err error) {
+func (b *Transaction) setErr(err error) {
 	if err != nil && b.err == nil {
 		b.err = err
 	}
@@ -553,41 +783,4 @@ func nextIndex(length int) (uint16, error) {
 
 func nestedResultArg(index uint16, resultIndex uint16) Argument {
 	return Argument{NestedResult: &NestedResult{Index: index, ResultIndex: resultIndex}}
-}
-
-func encodeU256(value *big.Int) ([]byte, error) {
-	if value.Sign() < 0 {
-		return nil, fmt.Errorf("u256 value must be positive")
-	}
-
-	if value.BitLen() > 256 {
-		return nil, fmt.Errorf("u256 value out of range")
-	}
-
-	buf := make([]byte, 32)
-	bigBytes := value.Bytes()
-	copy(buf[32-len(bigBytes):], bigBytes)
-	for i, j := 0, len(buf)-1; i < j; i, j = i+1, j-1 {
-		buf[i], buf[j] = buf[j], buf[i]
-	}
-
-	return buf, nil
-}
-
-func uniqueStrings(values []string) []string {
-	if len(values) == 0 {
-		return nil
-	}
-
-	seen := make(map[string]struct{}, len(values))
-	unique := make([]string, 0, len(values))
-	for _, value := range values {
-		if _, ok := seen[value]; ok {
-			continue
-		}
-		seen[value] = struct{}{}
-		unique = append(unique, value)
-	}
-
-	return unique
 }

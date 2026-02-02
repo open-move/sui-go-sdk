@@ -6,27 +6,33 @@ import (
 	"log"
 
 	"github.com/open-move/sui-go-sdk/graphql"
+	"github.com/open-move/sui-go-sdk/utils"
 )
 
 // Packages demonstrates how to fetch packages and modules.
 func Packages(ctx context.Context, client *graphql.Client) {
 	// Example: Get framework package (0x2)
 	fmt.Println("=== GetPackage ===")
-	pkg, err := client.GetPackage(ctx, "0x2")
+	pkgAddr, err := utils.ParseAddress("0x2")
+	if err != nil {
+		log.Printf("invalid package address: %v", err)
+		return
+	}
+	pkg, err := client.GetPackage(ctx, pkgAddr)
 	if err != nil {
 		log.Printf("GetPackage error: %v", err)
 		return // Changed from log.Fatal to return to avoid stopping other examples
 	}
 
 	printJSON("GetPackage result", pkg)
-	fmt.Printf("Package Address: %s\n", pkg.Address)
+	fmt.Printf("Package Address: %s\n", pkg.Address.String())
 	fmt.Printf("Version: %d\n", pkg.Version)
-	fmt.Printf("Digest: %s\n", pkg.Digest)
+	fmt.Printf("Digest: %s\n", pkg.Digest.String())
 	fmt.Println()
 
 	// Example: Get a specific module
 	fmt.Println("=== GetModule (coin) ===")
-	module, err := client.GetModule(ctx, "0x2", "coin")
+	module, err := client.GetModule(ctx, pkgAddr, "coin")
 	if err != nil {
 		log.Printf("GetModule error: %v", err)
 	} else if module != nil {
@@ -44,7 +50,7 @@ func Packages(ctx context.Context, client *graphql.Client) {
 
 	// Example: Get normalized Move function
 	fmt.Println("=== GetNormalizedMoveFunction (coin::value) ===")
-	fn, err := client.GetNormalizedMoveFunction(ctx, "0x2", "coin", "value")
+	fn, err := client.GetNormalizedMoveFunction(ctx, pkgAddr, "coin", "value")
 	if err != nil {
 		log.Printf("GetNormalizedMoveFunction error: %v", err)
 	} else if fn != nil {
@@ -60,7 +66,7 @@ func Packages(ctx context.Context, client *graphql.Client) {
 
 	// Example: Get normalized Move struct
 	fmt.Println("=== GetNormalizedMoveStruct (coin::Coin) ===")
-	s, err := client.GetNormalizedMoveStruct(ctx, "0x2", "coin", "Coin")
+	s, err := client.GetNormalizedMoveStruct(ctx, pkgAddr, "coin", "Coin")
 	if err != nil {
 		log.Printf("GetNormalizedMoveStruct error: %v", err)
 	} else if s != nil {

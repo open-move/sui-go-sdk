@@ -84,8 +84,7 @@ func ToBech32(s keychain.Scheme, secret []byte) (string, error) {
 	return encoded, err
 }
 
-// ToBech32FromKeypair encodes a Keypair's secret key into the Sui Bech32 format.
-func ToBech32FromKeypair(k SecretExporter) (string, error) {
+func ToBech32FromKeypair(k Keypair) (string, error) {
 	if k == nil {
 		return "", fmt.Errorf("export: nil keypair")
 	}
@@ -93,6 +92,7 @@ func ToBech32FromKeypair(k SecretExporter) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	encoded, err := ToBech32(k.Scheme(), secret)
 	zero(secret)
 	return encoded, err

@@ -41,6 +41,12 @@ func UseCustomMutationSender(ctx context.Context, client *graphql.Client, kp key
 	amount := uint64(500000) // 0.0005 SUI
 	gasBudget := uint64(10000000)
 
+	senderAddr, err := utils.ParseAddress(sender)
+	if err != nil {
+		log.Printf("invalid sender address: %v", err)
+		return nil
+	}
+
 	var gasPayment types.ObjectRef
 	var gasCoinAddress string
 
@@ -49,7 +55,7 @@ func UseCustomMutationSender(ctx context.Context, client *graphql.Client, kp key
 		gasCoinAddress = gasPayment.ObjectID.String()
 		fmt.Printf("Using provided gas coin: %s (version: %d)\n", gasCoinAddress, gasPayment.Version)
 	} else {
-		coins, err := client.GetCoins(ctx, graphql.SuiAddress(sender), nil, nil)
+		coins, err := client.GetCoins(ctx, senderAddr, nil, nil)
 		if err != nil {
 			log.Printf("Failed to get coins: %v", err)
 			return nil
@@ -61,13 +67,13 @@ func UseCustomMutationSender(ctx context.Context, client *graphql.Client, kp key
 		}
 
 		gasCoin := coins.Nodes[0]
-		gasPayment, err = utils.ParseObjectRef(string(gasCoin.Address), uint64(gasCoin.Version), gasCoin.Digest)
-		if err != nil {
-			log.Printf("Failed to parse gas coin ref: %v", err)
-			return nil
+		gasPayment = types.ObjectRef{
+			ObjectID: gasCoin.Address,
+			Version:  uint64(gasCoin.Version),
+			Digest:   gasCoin.Digest,
 		}
-		gasCoinAddress = string(gasCoin.Address)
-		fmt.Printf("Using gas coin: %s (version: %d)\n", gasCoin.Address, gasCoin.Version)
+		gasCoinAddress = gasCoin.Address.String()
+		fmt.Printf("Using gas coin: %s (version: %d)\n", gasCoinAddress, gasCoin.Version)
 	}
 
 	// Build the transaction

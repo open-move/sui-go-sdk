@@ -15,7 +15,7 @@ type OwnedObjectsPager struct {
 }
 
 // OwnedObjectsPager constructs a pager for ListOwnedObjects using the provided request template.
-func (c *GRPCClient) OwnedObjectsPager(req *v2.ListOwnedObjectsRequest, opts ...grpc.CallOption) (*OwnedObjectsPager, error) {
+func (c *Client) OwnedObjectsPager(req *v2.ListOwnedObjectsRequest, opts ...grpc.CallOption) (*OwnedObjectsPager, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -77,7 +77,7 @@ type DynamicFieldsPager struct {
 }
 
 // DynamicFieldsPager constructs a pager for ListDynamicFields using the provided request template.
-func (c *GRPCClient) DynamicFieldsPager(req *v2.ListDynamicFieldsRequest, opts ...grpc.CallOption) (*DynamicFieldsPager, error) {
+func (c *Client) DynamicFieldsPager(req *v2.ListDynamicFieldsRequest, opts ...grpc.CallOption) (*DynamicFieldsPager, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -140,7 +140,7 @@ type BalancesPager struct {
 }
 
 // BalancesPager constructs a pager for ListBalances using the provided request template.
-func (c *GRPCClient) BalancesPager(req *v2.ListBalancesRequest, opts ...grpc.CallOption) (*BalancesPager, error) {
+func (c *Client) BalancesPager(req *v2.ListBalancesRequest, opts ...grpc.CallOption) (*BalancesPager, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}
@@ -202,7 +202,7 @@ type PackageVersionsPager struct {
 }
 
 // PackageVersionsPager constructs a pager for ListPackageVersions using the provided request template.
-func (c *GRPCClient) PackageVersionsPager(req *v2.ListPackageVersionsRequest, opts ...grpc.CallOption) (*PackageVersionsPager, error) {
+func (c *Client) PackageVersionsPager(req *v2.ListPackageVersionsRequest, opts ...grpc.CallOption) (*PackageVersionsPager, error) {
 	if c == nil {
 		return nil, errors.New("nil client")
 	}

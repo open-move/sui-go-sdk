@@ -8,14 +8,14 @@ The official Go SDK for the Sui blockchain, providing gRPC and GraphQL clients, 
 
 This SDK includes the following main modules:
 
-*   **gRPC Client**: A strongly-typed gRPC client for interacting with Sui RPC services.
-*   **GraphQL Client**: A client for interacting with the Sui GraphQL API.
-*   **Cryptography**: Utilities for key generation, signing, and verification (Ed25519, Secp256k1, Secp256r1).
-*   **Keychain**: Key derivation (BIP-32), mnemonic handling (BIP-39), and address generation.
-*   **Keypair**: Interfaces and helpers for managing different types of keypairs.
-*   **Transaction**: A powerful builder for constructing Programmable Transactions.
-*   **Types**: Common Sui types (Addresses, ObjectRefs, etc.) and BCS serialization.
-*   **Typetag**: Utilities for parsing and manipulating Move type tags.
+- **gRPC Client**: A strongly-typed gRPC client for interacting with Sui RPC services.
+- **GraphQL Client**: A client for interacting with the Sui GraphQL API.
+- **Cryptography**: Utilities for key generation, signing, and verification (Ed25519, Secp256k1, Secp256r1).
+- **Keychain**: Key derivation (BIP-32), mnemonic handling (BIP-39), and address generation.
+- **Keypair**: Interfaces and helpers for managing different types of keypairs.
+- **Transaction**: A powerful builder for constructing Programmable Transactions.
+- **Types**: Common Sui types (Addresses, ObjectRefs, etc.) and BCS serialization.
+- **Typetag**: Utilities for parsing and manipulating Move type tags.
 
 ## Project Structure
 
@@ -127,7 +127,7 @@ package main
 
 import (
 	"context"
-	
+
 	"github.com/open-move/sui-go-sdk/transaction"
 	"github.com/open-move/sui-go-sdk/types"
 )
@@ -135,10 +135,10 @@ import (
 func main() {
 	// Initialize builder
 	b := transaction.New()
-	
+
 	// Add inputs and commands
 	// ...
-	
+
 	// Build the transaction
 	// result, err := b.Build(context.Background(), transaction.BuildOptions{})
 }

@@ -21,6 +21,12 @@ func UseMutationBuilder(ctx context.Context, client *graphql.Client, kp keypair.
 	amount := uint64(500000) // 0.0005 SUI
 	gasBudget := uint64(10000000)
 
+	senderAddr, err := utils.ParseAddress(sender)
+	if err != nil {
+		log.Printf("invalid sender address: %v", err)
+		return nil
+	}
+
 	var gasPayment types.ObjectRef
 	var gasCoinAddress string
 
@@ -29,7 +35,7 @@ func UseMutationBuilder(ctx context.Context, client *graphql.Client, kp keypair.
 		gasCoinAddress = gasPayment.ObjectID.String()
 		fmt.Printf("Using provided gas coin: %s (version: %d)\n", gasCoinAddress, gasPayment.Version)
 	} else {
-		coins, err := client.GetCoins(ctx, graphql.SuiAddress(sender), nil, nil)
+		coins, err := client.GetCoins(ctx, senderAddr, nil, nil)
 		if err != nil {
 			log.Printf("Failed to get coins: %v", err)
 			return nil
@@ -41,13 +47,13 @@ func UseMutationBuilder(ctx context.Context, client *graphql.Client, kp keypair.
 		}
 
 		gasCoin := coins.Nodes[0]
-		gasPayment, err = utils.ParseObjectRef(string(gasCoin.Address), uint64(gasCoin.Version), gasCoin.Digest)
-		if err != nil {
-			log.Printf("Failed to parse gas coin ref: %v", err)
-			return nil
+		gasPayment = types.ObjectRef{
+			ObjectID: gasCoin.Address,
+			Version:  uint64(gasCoin.Version),
+			Digest:   gasCoin.Digest,
 		}
-		gasCoinAddress = string(gasCoin.Address)
-		fmt.Printf("Using gas coin: %s (version: %d)\n", gasCoin.Address, gasCoin.Version)
+		gasCoinAddress = gasCoin.Address.String()
+		fmt.Printf("Using gas coin: %s (version: %d)\n", gasCoinAddress, gasCoin.Version)
 	}
 
 	// Build the transaction
@@ -108,7 +114,7 @@ func UseMutationBuilder(ctx context.Context, client *graphql.Client, kp keypair.
 
 	// Execute the transaction
 	fmt.Println("Executing transaction...")
-	result, err := graphql.ExecuteTransaction(client, ctx, graphql.Base64(txBcsBase64), []graphql.Base64{graphql.Base64(signatureBase64)})
+	result, err := graphql.ExecuteTransaction(client, ctx, buildResult.TransactionBytes, [][]byte{signature})
 	if err != nil {
 		log.Printf("Failed to execute transaction: %v", err)
 		return nil
@@ -116,7 +122,7 @@ func UseMutationBuilder(ctx context.Context, client *graphql.Client, kp keypair.
 
 	if result.Effects != nil {
 		fmt.Printf("✅ Transaction executed successfully!\n")
-		fmt.Printf("  Transaction digest: %s\n", result.Effects.Digest)
+		fmt.Printf("  Transaction digest: %s\n", result.Effects.Digest.String())
 		fmt.Printf("  Status: %s\n", result.Effects.Status)
 		if result.Effects.ExecutionError != nil {
 			fmt.Printf("  Execution error: %s\n", result.Effects.ExecutionError.Message)

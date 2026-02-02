@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/open-move/sui-go-sdk/graphql"
+	"github.com/open-move/sui-go-sdk/utils"
 )
 
 // Transactions demonstrates how to fetch transactions.
@@ -43,12 +44,18 @@ func Transactions(ctx context.Context, client *graphql.Client, address string) {
 	fmt.Println()
 
 	fmt.Println("=== QueryTransactionBlocks ===")
+	addr, err := utils.ParseAddress(address)
+	if err != nil {
+		log.Printf("invalid address: %v", err)
+		return
+	}
+
 	filter := &graphql.TransactionFilter{
-		SentAddress: graphql.Ptr(graphql.SuiAddress(address)),
+		SentAddress: utils.Ptr(addr),
 	}
 
 	txsConnection, err := client.QueryTransactionBlocks(ctx, filter, &graphql.PaginationArgs{
-		First: graphql.Ptr(10),
+		First: utils.Ptr(10),
 	})
 	if err != nil {
 		log.Printf("QueryTransactionBlocks error: %v", err)

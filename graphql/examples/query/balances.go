@@ -6,13 +6,20 @@ import (
 	"log"
 
 	"github.com/open-move/sui-go-sdk/graphql"
+	"github.com/open-move/sui-go-sdk/utils"
 )
 
 // Balances demonstrates how to fetch balances for an address.
 func Balances(ctx context.Context, client *graphql.Client, address string) {
 	// Example: Get all balances for an address
 	fmt.Println("=== GetAllBalances ===")
-	balances, err := client.GetAllBalances(ctx, graphql.SuiAddress(address))
+	addr, err := utils.ParseAddress(address)
+	if err != nil {
+		log.Printf("invalid address: %v", err)
+		return
+	}
+
+	balances, err := client.GetAllBalances(ctx, addr)
 	if err != nil {
 		log.Printf("GetAllBalances error: %v", err)
 	} else {

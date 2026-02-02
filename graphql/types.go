@@ -4,13 +4,9 @@ import (
 	"encoding/json"
 	"math/big"
 	"strconv"
+
+	"github.com/open-move/sui-go-sdk/types"
 )
-
-// SuiAddress represents a Sui address (32-byte hex string with 0x prefix).
-type SuiAddress string
-
-// Base64 represents Base64-encoded binary data.
-type Base64 string
 
 // DateTime represents an ISO-8601 formatted date-time string.
 type DateTime string
@@ -164,162 +160,6 @@ func DefaultFieldSelector() *FieldSelector {
 	}
 }
 
-// --- From mutations.go ---
-
-// TransactionBuilder provides a fluent API for building programmable transactions.
-// It helps users construct transactions that can be simulated or executed.
-type TransactionBuilder struct {
-	Sender       *SuiAddress
-	GasObject    *ObjectRef
-	GasBudget    *uint64
-	GasPrice     *uint64
-	GasSponsor   *SuiAddress
-	Expiration   *EpochRef
-	Inputs       []TransactionInputBuilder
-	Transactions []ProgrammableTransactionCommand
-}
-
-// ObjectRef identifies an object by ID, version, and digest.
-type ObjectRef struct {
-	ObjectID SuiAddress `json:"objectId"`
-	Version  UInt53     `json:"version"`
-	Digest   string     `json:"digest"`
-}
-
-// EpochRef specifies an epoch for transaction expiration.
-type EpochRef struct {
-	EpochID uint64 `json:"epochId"`
-}
-
-// TransactionInputBuilder represents an input being built.
-type TransactionInputBuilder struct {
-	Kind       string      `json:"kind"`
-	Type       string      `json:"type,omitempty"`       // For Pure inputs
-	Value      interface{} `json:"value,omitempty"`      // For Pure inputs
-	ObjectRef  *ObjectRef  `json:"objectRef,omitempty"`  // For Object inputs
-	SharedInfo *SharedInfo `json:"sharedInfo,omitempty"` // For Shared object inputs
-}
-
-// SharedInfo contains information for shared object inputs.
-type SharedInfo struct {
-	ObjectID             SuiAddress `json:"objectId"`
-	InitialSharedVersion UInt53     `json:"initialSharedVersion"`
-	Mutable              bool       `json:"mutable"`
-}
-
-// ProgrammableTransactionCommand represents a command in a programmable transaction.
-type ProgrammableTransactionCommand struct {
-	Kind          string       `json:"kind"`
-	Target        string       `json:"target,omitempty"`        // For MoveCall
-	TypeArguments []string     `json:"typeArguments,omitempty"` // For MoveCall
-	Arguments     []Argument   `json:"arguments,omitempty"`     // For various commands
-	Destinations  []Argument   `json:"destinations,omitempty"`  // For SplitCoins
-	Amounts       []Argument   `json:"amounts,omitempty"`       // For SplitCoins
-	Objects       []Argument   `json:"objects,omitempty"`       // For MergeCoins, MakeMoveVec
-	Coin          *Argument    `json:"coin,omitempty"`          // For MergeCoins, SplitCoins
-	Address       *Argument    `json:"address,omitempty"`       // For TransferObjects
-	Object        *Argument    `json:"object,omitempty"`        // For Publish, Upgrade
-	Modules       []Base64     `json:"modules,omitempty"`       // For Publish
-	Dependencies  []SuiAddress `json:"dependencies,omitempty"`  // For Publish
-	Package       *SuiAddress  `json:"package,omitempty"`       // For Upgrade
-	Ticket        *Argument    `json:"ticket,omitempty"`        // For Upgrade
-	ElementType   string       `json:"elementType,omitempty"`   // For MakeMoveVec
-}
-
-// Argument represents a transaction argument reference.
-type Argument struct {
-	Kind  string `json:"kind"`
-	Index uint16 `json:"index,omitempty"`
-	// For NestedResult
-	ResultIndex uint16 `json:"resultIndex,omitempty"`
-}
-
-// ArgumentKind constants
-const (
-	ArgumentKindGasCoin      = "GasCoin"
-	ArgumentKindInput        = "Input"
-	ArgumentKindResult       = "Result"
-	ArgumentKindNestedResult = "NestedResult"
-)
-
-// TransactionData represents a complete transaction ready for simulation or signing.
-type TransactionData struct {
-	Sender     *SuiAddress          `json:"sender,omitempty"`
-	GasConfig  *GasConfig           `json:"gasConfig,omitempty"`
-	Expiration *EpochRef            `json:"expiration,omitempty"`
-	Kind       *TransactionKindData `json:"kind,omitempty"`
-}
-
-// GasConfig contains gas configuration for a transaction.
-type GasConfig struct {
-	Budget  *uint64     `json:"budget,omitempty"`
-	Price   *uint64     `json:"price,omitempty"`
-	Owner   *SuiAddress `json:"owner,omitempty"`
-	Payment []ObjectRef `json:"payment,omitempty"`
-}
-
-// TransactionKindData represents the transaction kind.
-type TransactionKindData struct {
-	ProgrammableTransaction *ProgrammableTransactionData `json:"programmableTransaction,omitempty"`
-}
-
-// ProgrammableTransactionData represents a programmable transaction.
-type ProgrammableTransactionData struct {
-	Inputs       []TransactionInputBuilder        `json:"inputs"`
-	Transactions []ProgrammableTransactionCommand `json:"transactions"`
-}
-
-// TransferSuiParams contains parameters for a SUI transfer.
-type TransferSuiParams struct {
-	Sender    SuiAddress `json:"sender"`
-	Recipient SuiAddress `json:"recipient"`
-	Amount    uint64     `json:"amount"`
-	GasBudget uint64     `json:"gasBudget"`
-}
-
-// TransferObjectParams contains parameters for transferring an object.
-type TransferObjectParams struct {
-	Sender    SuiAddress `json:"sender"`
-	Recipient SuiAddress `json:"recipient"`
-	Object    ObjectRef  `json:"object"`
-	GasBudget uint64     `json:"gasBudget"`
-}
-
-// MoveCallParams contains parameters for a Move function call.
-type MoveCallParams struct {
-	Sender        SuiAddress    `json:"sender"`
-	Package       SuiAddress    `json:"package"`
-	Module        string        `json:"module"`
-	Function      string        `json:"function"`
-	TypeArguments []string      `json:"typeArguments,omitempty"`
-	Arguments     []interface{} `json:"arguments,omitempty"`
-	GasBudget     uint64        `json:"gasBudget"`
-}
-
-// SplitCoinsParams contains parameters for splitting coins.
-type SplitCoinsParams struct {
-	Sender    SuiAddress `json:"sender"`
-	Coin      ObjectRef  `json:"coin"`
-	Amounts   []uint64   `json:"amounts"`
-	GasBudget uint64     `json:"gasBudget"`
-}
-
-// MergeCoinsParams contains parameters for merging coins.
-type MergeCoinsParams struct {
-	Sender      SuiAddress  `json:"sender"`
-	Destination ObjectRef   `json:"destination"`
-	Sources     []ObjectRef `json:"sources"`
-	GasBudget   uint64      `json:"gasBudget"`
-}
-
-// PublishPackageParams contains parameters for publishing a package.
-type PublishPackageParams struct {
-	Sender       SuiAddress   `json:"sender"`
-	Modules      []Base64     `json:"modules"`
-	Dependencies []SuiAddress `json:"dependencies"`
-	GasBudget    uint64       `json:"gasBudget"`
-}
-
 // --- From events.go ---
 
 // Event represents a Sui event.
@@ -328,28 +168,28 @@ type Event struct {
 	Sender            *Address    `json:"sender"`
 	Timestamp         *DateTime   `json:"timestamp"`
 	Contents          *MoveValue  `json:"contents"`
-	EventBcs          Base64      `json:"eventBcs"`
+	EventBcs          []byte      `json:"eventBcs"`
 }
 
 // EventFilter contains filters for event queries.
 type EventFilter struct {
-	Sender            *SuiAddress `json:"sender,omitempty"`
-	TransactionDigest *string     `json:"transactionDigest,omitempty"`
-	EmittingModule    *string     `json:"emittingModule,omitempty"`
-	EventType         *string     `json:"eventType,omitempty"`
+	Sender            *types.Address `json:"sender,omitempty"`
+	TransactionDigest *types.Digest  `json:"transactionDigest,omitempty"`
+	EmittingModule    *string        `json:"emittingModule,omitempty"`
+	EventType         *string        `json:"eventType,omitempty"`
 }
 
 // CoinMetadata represents coin metadata.
 type CoinMetadata struct {
-	Address     SuiAddress `json:"address"`
-	Version     UInt53     `json:"version"`
-	Digest      string     `json:"digest"`
-	Decimals    *int       `json:"decimals"`
-	Name        *string    `json:"name"`
-	Symbol      *string    `json:"symbol"`
-	Description *string    `json:"description"`
-	IconURL     *string    `json:"iconUrl"`
-	Supply      *BigInt    `json:"supply"`
+	Address     types.Address `json:"address"`
+	Version     UInt53        `json:"version"`
+	Digest      types.Digest  `json:"digest"`
+	Decimals    *int          `json:"decimals"`
+	Name        *string       `json:"name"`
+	Symbol      *string       `json:"symbol"`
+	Description *string       `json:"description"`
+	IconURL     *string       `json:"iconUrl"`
+	Supply      *BigInt       `json:"supply"`
 }
 
 // ServiceConfig represents the GraphQL service configuration.
@@ -411,14 +251,14 @@ type PackageCheckpointFilter struct {
 
 // Object represents a Sui object.
 type Object struct {
-	Address                  SuiAddress      `json:"address"`
+	Address                  types.Address   `json:"address"`
 	Version                  UInt53          `json:"version"`
-	Digest                   string          `json:"digest"`
+	Digest                   types.Digest    `json:"digest"`
 	StorageRebate            *BigInt         `json:"storageRebate,omitempty"`
 	Owner                    *ObjectOwner    `json:"owner,omitempty"`
 	PreviousTransactionBlock *TransactionRef `json:"previousTransactionBlock,omitempty"`
 	Display                  []DisplayEntry  `json:"display,omitempty"`
-	ObjectBcs                *Base64         `json:"objectBcs,omitempty"`
+	ObjectBcs                *[]byte         `json:"objectBcs,omitempty"`
 	HasPublicTransfer        *bool           `json:"hasPublicTransfer,omitempty"`
 	AsMoveObject             *MoveObject     `json:"asMoveObject,omitempty"`
 	AsMovePackage            *MovePackage    `json:"asMovePackage,omitempty"`
@@ -426,7 +266,7 @@ type Object struct {
 
 // TransactionRef is a minimal transaction reference.
 type TransactionRef struct {
-	Digest string `json:"digest"`
+	Digest types.Digest `json:"digest"`
 }
 
 // DisplayEntry represents a single display field.
@@ -438,7 +278,7 @@ type DisplayEntry struct {
 
 // OwnerAddress represents the address of an owner.
 type OwnerAddress struct {
-	Address SuiAddress `json:"address"`
+	Address types.Address `json:"address"`
 }
 
 // ObjectOwner represents ownership information for an object.
@@ -454,19 +294,19 @@ type ObjectOwner struct {
 
 // MoveObject represents a Move object with type information.
 type MoveObject struct {
-	Address           SuiAddress `json:"address"`
-	Version           UInt53     `json:"version"`
-	Digest            string     `json:"digest"`
-	Contents          *MoveValue `json:"contents,omitempty"`
-	HasPublicTransfer bool       `json:"hasPublicTransfer"`
-	Type              *MoveType  `json:"type,omitempty"`
+	Address           types.Address `json:"address"`
+	Version           UInt53        `json:"version"`
+	Digest            types.Digest  `json:"digest"`
+	Contents          *MoveValue    `json:"contents,omitempty"`
+	HasPublicTransfer bool          `json:"hasPublicTransfer"`
+	Type              *MoveType     `json:"type,omitempty"`
 }
 
 // MovePackage represents a published Move package.
 type MovePackage struct {
-	Address     SuiAddress              `json:"address"`
+	Address     types.Address           `json:"address"`
 	Version     UInt53                  `json:"version"`
-	Digest      string                  `json:"digest"`
+	Digest      types.Digest            `json:"digest"`
 	Modules     *Connection[MoveModule] `json:"modules,omitempty"`
 	Linkage     []Linkage               `json:"linkage,omitempty"`
 	TypeOrigins []TypeOrigin            `json:"typeOrigins,omitempty"`
@@ -481,13 +321,13 @@ type MoveModule struct {
 	Structs           *Connection[MoveStruct]   `json:"structs,omitempty"`
 	Enums             *Connection[MoveEnum]     `json:"enums,omitempty"`
 	Functions         *Connection[MoveFunction] `json:"functions,omitempty"`
-	Bytes             *Base64                   `json:"bytes,omitempty"`
+	Bytes             *[]byte                   `json:"bytes,omitempty"`
 	Disassembly       *string                   `json:"disassembly,omitempty"`
 }
 
 // MovePackageRef is a reference to a Move package.
 type MovePackageRef struct {
-	Address SuiAddress `json:"address"`
+	Address types.Address `json:"address"`
 }
 
 // MoveStruct represents a Move struct definition.
@@ -568,22 +408,22 @@ type OpenMoveType struct {
 // MoveValue represents a Move value.
 type MoveValue struct {
 	Type MoveType        `json:"type"`
-	Bcs  Base64          `json:"bcs"`
+	Bcs  []byte          `json:"bcs"`
 	Json json.RawMessage `json:"json,omitempty"`
 }
 
 // Linkage represents package linkage information.
 type Linkage struct {
-	OriginalID SuiAddress `json:"originalId"`
-	UpgradedID SuiAddress `json:"upgradedId"`
-	Version    UInt53     `json:"version"`
+	OriginalID types.Address `json:"originalId"`
+	UpgradedID types.Address `json:"upgradedId"`
+	Version    UInt53        `json:"version"`
 }
 
 // TypeOrigin represents the origin of a type.
 type TypeOrigin struct {
-	Module     string     `json:"module"`
-	Struct     string     `json:"struct"`
-	DefiningId SuiAddress `json:"definingId"`
+	Module     string        `json:"module"`
+	Struct     string        `json:"struct"`
+	DefiningId types.Address `json:"definingId"`
 }
 
 // DynamicField represents a dynamic field on an object.
@@ -602,24 +442,24 @@ type DynamicFieldValue struct {
 // DynamicFieldName is an input type for querying dynamic fields.
 type DynamicFieldName struct {
 	Type string `json:"type"`
-	Bcs  Base64 `json:"bcs"`
+	Bcs  []byte `json:"bcs"`
 }
 
 // ObjectFilter contains filters for object queries.
 type ObjectFilter struct {
-	Type       *string      `json:"type,omitempty"`
-	Owner      *SuiAddress  `json:"owner,omitempty"`
-	ObjectID   *SuiAddress  `json:"objectId,omitempty"`
-	ObjectIDs  []SuiAddress `json:"objectIds,omitempty"`
-	ObjectKeys []ObjectKey  `json:"objectKeys,omitempty"`
+	Type       *string         `json:"type,omitempty"`
+	Owner      *types.Address  `json:"owner,omitempty"`
+	ObjectID   *types.Address  `json:"objectId,omitempty"`
+	ObjectIDs  []types.Address `json:"objectIds,omitempty"`
+	ObjectKeys []ObjectKey     `json:"objectKeys,omitempty"`
 }
 
 // ObjectKey identifies an object by address and optional version.
 type ObjectKey struct {
-	Address      SuiAddress `json:"address"`
-	Version      *UInt53    `json:"version,omitempty"`
-	RootVersion  *UInt53    `json:"rootVersion,omitempty"`
-	AtCheckpoint *UInt53    `json:"atCheckpoint,omitempty"`
+	Address      types.Address `json:"address"`
+	Version      *UInt53       `json:"version,omitempty"`
+	RootVersion  *UInt53       `json:"rootVersion,omitempty"`
+	AtCheckpoint *UInt53       `json:"atCheckpoint,omitempty"`
 }
 
 // VersionFilter filters object versions.
@@ -632,19 +472,19 @@ type VersionFilter struct {
 
 // Transaction represents a Sui transaction.
 type Transaction struct {
-	Digest         string              `json:"digest"`
+	Digest         types.Digest        `json:"digest"`
 	Sender         *Address            `json:"sender"`
 	GasInput       *GasInput           `json:"gasInput"`
 	Kind           *TransactionKind    `json:"kind"`
 	Signatures     []UserSignature     `json:"signatures,omitempty"`
 	Effects        *TransactionEffects `json:"effects,omitempty"`
 	Expiration     *Epoch              `json:"expiration,omitempty"`
-	TransactionBcs *Base64             `json:"transactionBcs,omitempty"`
+	TransactionBcs []byte              `json:"transactionBcs,omitempty"`
 }
 
 // Address represents a Sui address with associated data.
 type Address struct {
-	Address            SuiAddress                     `json:"address"`
+	Address            types.Address                  `json:"address"`
 	Balance            *Balance                       `json:"balance,omitempty"`
 	Balances           *Connection[Balance]           `json:"balances,omitempty"`
 	StakedSuis         *Connection[StakedSui]         `json:"stakedSuis,omitempty"`
@@ -661,29 +501,29 @@ type Balance struct {
 
 // Coin represents a coin object.
 type Coin struct {
-	CoinBalance BigInt     `json:"coinBalance"`
-	Address     SuiAddress `json:"address"`
-	Version     UInt53     `json:"version"`
-	Digest      string     `json:"digest"`
-	Contents    *MoveValue `json:"contents,omitempty"`
+	CoinBalance BigInt        `json:"coinBalance"`
+	Address     types.Address `json:"address"`
+	Version     UInt53        `json:"version"`
+	Digest      types.Digest  `json:"digest"`
+	Contents    *MoveValue    `json:"contents,omitempty"`
 }
 
 // StakedSui represents staked SUI.
 type StakedSui struct {
-	Address         SuiAddress `json:"address"`
-	Version         UInt53     `json:"version"`
-	Digest          string     `json:"digest"`
-	Principal       BigInt     `json:"principal"`
-	StakeStatus     string     `json:"stakeStatus"`
-	ActivatedEpoch  *Epoch     `json:"activatedEpoch"`
-	RequestedEpoch  *Epoch     `json:"requestedEpoch"`
-	EstimatedReward *BigInt    `json:"estimatedReward"`
+	Address         types.Address `json:"address"`
+	Version         UInt53        `json:"version"`
+	Digest          types.Digest  `json:"digest"`
+	Principal       BigInt        `json:"principal"`
+	StakeStatus     string        `json:"stakeStatus"`
+	ActivatedEpoch  *Epoch        `json:"activatedEpoch"`
+	RequestedEpoch  *Epoch        `json:"requestedEpoch"`
+	EstimatedReward *BigInt       `json:"estimatedReward"`
 }
 
 // SuinsRegistration represents a SuiNS registration.
 type SuinsRegistration struct {
-	Domain  string     `json:"domain"`
-	Address SuiAddress `json:"address"`
+	Domain  string        `json:"domain"`
+	Address types.Address `json:"address"`
 }
 
 // GasInput represents gas configuration for a transaction.
@@ -696,7 +536,7 @@ type GasInput struct {
 
 // UserSignature represents a user's signature.
 type UserSignature struct {
-	SignatureBytes Base64 `json:"signatureBytes"`
+	SignatureBytes []byte `json:"signatureBytes"`
 }
 
 // TransactionKind represents the kind of transaction.
@@ -718,21 +558,21 @@ type TransactionInput struct {
 
 // SharedInput represents a shared object input.
 type SharedInput struct {
-	Address              SuiAddress `json:"address"`
-	InitialSharedVersion UInt53     `json:"initialSharedVersion"`
-	Mutable              bool       `json:"mutable"`
+	Address              types.Address `json:"address"`
+	InitialSharedVersion UInt53        `json:"initialSharedVersion"`
+	Mutable              bool          `json:"mutable"`
 }
 
 // PureInput represents a pure value input.
 type PureInput struct {
-	Bytes Base64 `json:"bytes"`
+	Bytes []byte `json:"bytes"`
 }
 
 // ObjectInput represents an object input.
 type ObjectInput struct {
-	Address SuiAddress `json:"address"`
-	Version *UInt53    `json:"version,omitempty"`
-	Digest  *string    `json:"digest,omitempty"`
+	Address types.Address `json:"address"`
+	Version *UInt53       `json:"version,omitempty"`
+	Digest  *types.Digest `json:"digest,omitempty"`
 }
 
 // ProgrammableCommand represents a command in a programmable transaction.
@@ -744,7 +584,7 @@ type ProgrammableCommand struct {
 
 // TransactionEffects represents the effects of a transaction.
 type TransactionEffects struct {
-	Digest         string                     `json:"digest"`
+	Digest         types.Digest               `json:"digest"`
 	Status         ExecutionStatus            `json:"status"`
 	ExecutionError *ExecutionError            `json:"executionError,omitempty"`
 	Lamport        UInt53                     `json:"lamportVersion"`
@@ -755,9 +595,9 @@ type TransactionEffects struct {
 	Epoch          *Epoch                     `json:"epoch,omitempty"`
 	Checkpoint     *Checkpoint                `json:"checkpoint,omitempty"`
 	Timestamp      *DateTime                  `json:"timestamp,omitempty"`
-	EffectsBcs     *Base64                    `json:"effectsBcs,omitempty"`
+	EffectsBcs     *[]byte                    `json:"effectsBcs,omitempty"`
 	EffectsJson    any                        `json:"effectsJson,omitempty"`
-	EffectsDigest  *string                    `json:"effectsDigest,omitempty"`
+	EffectsDigest  *types.Digest              `json:"effectsDigest,omitempty"`
 }
 
 // ExecutionError represents an execution error.
@@ -787,11 +627,11 @@ type BalanceChange struct {
 
 // ObjectChange represents an object change from a transaction.
 type ObjectChange struct {
-	Address     SuiAddress `json:"address"`
-	IDCreated   *bool      `json:"idCreated,omitempty"`
-	IDDeleted   *bool      `json:"idDeleted,omitempty"`
-	InputState  *Object    `json:"inputState,omitempty"`
-	OutputState *Object    `json:"outputState,omitempty"`
+	Address     types.Address `json:"address"`
+	IDCreated   *bool         `json:"idCreated,omitempty"`
+	IDDeleted   *bool         `json:"idDeleted,omitempty"`
+	InputState  *Object       `json:"inputState,omitempty"`
+	OutputState *Object       `json:"outputState,omitempty"`
 }
 
 // GasEffects represents gas usage information.
@@ -810,18 +650,18 @@ type GasCostSummary struct {
 
 // TransactionFilter contains filters for transaction queries.
 type TransactionFilter struct {
-	Function         *string     `json:"function,omitempty"`
-	Kind             *string     `json:"kind,omitempty"`
-	AfterCheckpoint  *UInt53     `json:"afterCheckpoint,omitempty"`
-	BeforeCheckpoint *UInt53     `json:"beforeCheckpoint,omitempty"`
-	AtCheckpoint     *UInt53     `json:"atCheckpoint,omitempty"`
-	SignAddress      *SuiAddress `json:"signAddress,omitempty"`
-	SentAddress      *SuiAddress `json:"sentAddress,omitempty"`
-	RecvAddress      *SuiAddress `json:"recvAddress,omitempty"`
-	PaidAddress      *SuiAddress `json:"paidAddress,omitempty"`
-	InputObject      *SuiAddress `json:"inputObject,omitempty"`
-	ChangedObject    *SuiAddress `json:"changedObject,omitempty"`
-	TransactionIDs   []string    `json:"transactionIds,omitempty"`
+	Function         *string        `json:"function,omitempty"`
+	Kind             *string        `json:"kind,omitempty"`
+	AfterCheckpoint  *UInt53        `json:"afterCheckpoint,omitempty"`
+	BeforeCheckpoint *UInt53        `json:"beforeCheckpoint,omitempty"`
+	AtCheckpoint     *UInt53        `json:"atCheckpoint,omitempty"`
+	SignAddress      *types.Address `json:"signAddress,omitempty"`
+	SentAddress      *types.Address `json:"sentAddress,omitempty"`
+	RecvAddress      *types.Address `json:"recvAddress,omitempty"`
+	PaidAddress      *types.Address `json:"paidAddress,omitempty"`
+	InputObject      *types.Address `json:"inputObject,omitempty"`
+	ChangedObject    *types.Address `json:"changedObject,omitempty"`
+	TransactionIDs   []string       `json:"transactionIds,omitempty"`
 }
 
 // --- From epochs.go ---
@@ -857,9 +697,9 @@ type Epoch struct {
 // Checkpoint represents a Sui checkpoint.
 type Checkpoint struct {
 	SequenceNumber           UInt53                   `json:"sequenceNumber"`
-	Digest                   string                   `json:"digest"`
+	Digest                   types.Digest             `json:"digest"`
 	Timestamp                *DateTime                `json:"timestamp,omitempty"`
-	PreviousCheckpointDigest *string                  `json:"previousCheckpointDigest,omitempty"`
+	PreviousCheckpointDigest *types.Digest            `json:"previousCheckpointDigest,omitempty"`
 	NetworkTotalTransactions *UInt53                  `json:"networkTotalTransactions,omitempty"`
 	RollingGasSummary        *GasCostSummary          `json:"rollingGasSummary,omitempty"`
 	Epoch                    *Epoch                   `json:"epoch,omitempty"`
@@ -884,7 +724,7 @@ type ValidatorSet struct {
 
 // Validator represents a Sui validator.
 type Validator struct {
-	Address                    SuiAddress            `json:"address"`
+	Address                    types.Address         `json:"address"`
 	Name                       *string               `json:"name,omitempty"`
 	Description                *string               `json:"description,omitempty"`
 	ImageURL                   *string               `json:"imageUrl,omitempty"`
@@ -907,16 +747,16 @@ type Validator struct {
 	NextEpochGasPrice          *BigInt               `json:"nextEpochGasPrice,omitempty"`
 	NextEpochCommissionRate    *UInt53               `json:"nextEpochCommissionRate,omitempty"`
 	AtRisk                     *UInt53               `json:"atRisk,omitempty"`
-	ReportRecords              []SuiAddress          `json:"reportRecords,omitempty"`
+	ReportRecords              []types.Address       `json:"reportRecords,omitempty"`
 	Credentials                *ValidatorCredentials `json:"credentials,omitempty"`
 }
 
 // ValidatorCredentials represents validator credentials.
 type ValidatorCredentials struct {
-	ProtocolPubKey    *Base64 `json:"protocolPubKey,omitempty"`
-	NetworkPubKey     *Base64 `json:"networkPubKey,omitempty"`
-	WorkerPubKey      *Base64 `json:"workerPubKey,omitempty"`
-	ProofOfPossession *Base64 `json:"proofOfPossession,omitempty"`
+	ProtocolPubKey    *[]byte `json:"protocolPubKey,omitempty"`
+	NetworkPubKey     *[]byte `json:"networkPubKey,omitempty"`
+	WorkerPubKey      *[]byte `json:"workerPubKey,omitempty"`
+	ProofOfPossession *[]byte `json:"proofOfPossession,omitempty"`
 	NetAddress        *string `json:"netAddress,omitempty"`
 	P2PAddress        *string `json:"p2PAddress,omitempty"`
 	PrimaryAddress    *string `json:"primaryAddress,omitempty"`
@@ -998,7 +838,7 @@ type SimulationOptions struct {
 // This matches the comprehensive JSON structure returned by Sui RPC.
 type TransactionResult struct {
 	// Transaction digest (unique identifier)
-	Digest string `json:"digest"`
+	Digest types.Digest `json:"digest"`
 
 	// Transaction data
 	Transaction *TransactionData_ `json:"transaction,omitempty"`
@@ -1045,7 +885,7 @@ type TransactionDataContent struct {
 	Transaction *TransactionKindContent `json:"transaction,omitempty"`
 
 	// Sender address
-	Sender string `json:"sender,omitempty"`
+	Sender *types.Address `json:"sender,omitempty"`
 
 	// Gas data
 	GasData *GasData `json:"gasData,omitempty"`
@@ -1064,27 +904,27 @@ type TransactionKindContent struct {
 
 // InputContent represents an input in a transaction.
 type InputContent struct {
-	Type      string `json:"type,omitempty"`
-	ValueType string `json:"valueType,omitempty"`
-	Value     any    `json:"value,omitempty"`
-	ObjectID  string `json:"objectId,omitempty"`
-	Version   string `json:"version,omitempty"`
-	Digest    string `json:"digest,omitempty"`
+	Type      string         `json:"type,omitempty"`
+	ValueType string         `json:"valueType,omitempty"`
+	Value     any            `json:"value,omitempty"`
+	ObjectID  *types.Address `json:"objectId,omitempty"`
+	Version   string         `json:"version,omitempty"`
+	Digest    *types.Digest  `json:"digest,omitempty"`
 }
 
 // GasData represents gas payment data.
 type GasData struct {
 	Payment []ObjectRefResult `json:"payment,omitempty"`
-	Owner   string            `json:"owner,omitempty"`
+	Owner   *types.Address    `json:"owner,omitempty"`
 	Price   string            `json:"price,omitempty"`
 	Budget  string            `json:"budget,omitempty"`
 }
 
 // ObjectRefResult represents an object reference in results.
 type ObjectRefResult struct {
-	ObjectID string `json:"objectId"`
-	Version  string `json:"version"`
-	Digest   string `json:"digest"`
+	ObjectID types.Address `json:"objectId"`
+	Version  string        `json:"version"`
+	Digest   types.Digest  `json:"digest"`
 }
 
 // TransactionEffectsResult represents transaction effects.
@@ -1094,12 +934,14 @@ type TransactionEffectsResult struct {
 	ExecutedEpoch      string              `json:"executedEpoch,omitempty"`
 	GasUsed            *GasUsedResult      `json:"gasUsed,omitempty"`
 	ModifiedAtVersions []ModifiedAtVersion `json:"modifiedAtVersions,omitempty"`
-	TransactionDigest  string              `json:"transactionDigest,omitempty"`
+	TransactionDigest  types.Digest        `json:"transactionDigest,omitempty"`
 	Created            []ObjectOwnerResult `json:"created,omitempty"`
 	Mutated            []ObjectOwnerResult `json:"mutated,omitempty"`
 	Deleted            []ObjectRefResult   `json:"deleted,omitempty"`
+	Unwrapped          []ObjectOwnerResult `json:"unwrapped,omitempty"`
+	Wrapped            []ObjectRefResult   `json:"wrapped,omitempty"`
 	GasObject          *ObjectOwnerResult  `json:"gasObject,omitempty"`
-	Dependencies       []string            `json:"dependencies,omitempty"`
+	Dependencies       []types.Digest      `json:"dependencies,omitempty"`
 }
 
 // StatusResult represents execution status.
@@ -1118,8 +960,8 @@ type GasUsedResult struct {
 
 // ModifiedAtVersion represents an object modified at a specific version.
 type ModifiedAtVersion struct {
-	ObjectID       string `json:"objectId"`
-	SequenceNumber string `json:"sequenceNumber"`
+	ObjectID       types.Address `json:"objectId"`
+	SequenceNumber string        `json:"sequenceNumber"`
 }
 
 // ObjectOwnerResult represents an object with its owner.
@@ -1130,35 +972,35 @@ type ObjectOwnerResult struct {
 
 // EventResult represents an event emitted by a transaction.
 type EventResult struct {
-	ID                *EventID `json:"id,omitempty"`
-	PackageID         string   `json:"packageId,omitempty"`
-	TransactionModule string   `json:"transactionModule,omitempty"`
-	Sender            string   `json:"sender,omitempty"`
-	Type              string   `json:"type,omitempty"`
-	ParsedJSON        any      `json:"parsedJson,omitempty"`
-	Bcs               string   `json:"bcs,omitempty"`
-	TimestampMs       string   `json:"timestampMs,omitempty"`
+	ID                *EventID       `json:"id,omitempty"`
+	PackageID         *types.Address `json:"packageId,omitempty"`
+	TransactionModule string         `json:"transactionModule,omitempty"`
+	Sender            *types.Address `json:"sender,omitempty"`
+	Type              string         `json:"type,omitempty"`
+	ParsedJSON        any            `json:"parsedJson,omitempty"`
+	Bcs               string         `json:"bcs,omitempty"`
+	TimestampMs       string         `json:"timestampMs,omitempty"`
 }
 
 // EventID represents an event identifier.
 type EventID struct {
-	TxDigest string `json:"txDigest"`
-	EventSeq string `json:"eventSeq"`
+	TxDigest types.Digest `json:"txDigest"`
+	EventSeq string       `json:"eventSeq"`
 }
 
 // ObjectChangeResult represents an object change from a transaction.
 type ObjectChangeResult struct {
-	Type            string `json:"type"` // "created", "mutated", "deleted", "published", "transferred", "wrapped"
-	Sender          string `json:"sender,omitempty"`
-	Owner           any    `json:"owner,omitempty"` // Can be string or object
-	ObjectType      string `json:"objectType,omitempty"`
-	ObjectID        string `json:"objectId,omitempty"`
-	Version         string `json:"version,omitempty"`
-	PreviousVersion string `json:"previousVersion,omitempty"`
-	Digest          string `json:"digest,omitempty"`
+	Type            string         `json:"type"` // "created", "mutated", "deleted", "published", "transferred", "wrapped"
+	Sender          *types.Address `json:"sender,omitempty"`
+	Owner           any            `json:"owner,omitempty"` // Can be string or object
+	ObjectType      string         `json:"objectType,omitempty"`
+	ObjectID        *types.Address `json:"objectId,omitempty"`
+	Version         string         `json:"version,omitempty"`
+	PreviousVersion string         `json:"previousVersion,omitempty"`
+	Digest          *types.Digest  `json:"digest,omitempty"`
 	// For published packages
-	PackageID string   `json:"packageId,omitempty"`
-	Modules   []string `json:"modules,omitempty"`
+	PackageID *types.Address `json:"packageId,omitempty"`
+	Modules   []string       `json:"modules,omitempty"`
 }
 
 // BalanceChangeResult represents a balance change from a transaction.
@@ -1201,22 +1043,22 @@ func (r *TransactionResult) GetGasUsed() (uint64, error) {
 }
 
 // GetCreatedObjects returns the IDs of created objects.
-func (r *TransactionResult) GetCreatedObjects() []string {
-	var created []string
+func (r *TransactionResult) GetCreatedObjects() []types.Address {
+	created := make([]types.Address, 0)
 	for _, change := range r.ObjectChanges {
-		if change.Type == "created" {
-			created = append(created, change.ObjectID)
+		if change.Type == "created" && change.ObjectID != nil {
+			created = append(created, *change.ObjectID)
 		}
 	}
 	return created
 }
 
 // GetPublishedPackages returns the IDs of published packages.
-func (r *TransactionResult) GetPublishedPackages() []string {
-	var packages []string
+func (r *TransactionResult) GetPublishedPackages() []types.Address {
+	packages := make([]types.Address, 0)
 	for _, change := range r.ObjectChanges {
-		if change.Type == "published" {
-			packages = append(packages, change.PackageID)
+		if change.Type == "published" && change.PackageID != nil {
+			packages = append(packages, *change.PackageID)
 		}
 	}
 	return packages

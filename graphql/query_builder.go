@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"github.com/open-move/sui-go-sdk/types"
 )
 
 // =============================================================================
@@ -481,7 +483,7 @@ func (rqt *RawQueryTemplate) Execute(ctx context.Context, client *Client, result
 }
 
 // ObjectQueryTemplate creates a query template for object queries.
-func ObjectQueryTemplate(objectID SuiAddress) *RawQueryTemplate {
+func ObjectQueryTemplate(objectID types.Address) *RawQueryTemplate {
 	return &RawQueryTemplate{
 		Query: `
 			query GetObject($objectId: SuiAddress!) {
@@ -508,7 +510,7 @@ func ObjectQueryTemplate(objectID SuiAddress) *RawQueryTemplate {
 }
 
 // BalanceQueryTemplate creates a query template for balance queries.
-func BalanceQueryTemplate(owner SuiAddress) *RawQueryTemplate {
+func BalanceQueryTemplate(owner types.Address) *RawQueryTemplate {
 	return &RawQueryTemplate{
 		Query: `
 			query GetBalances($address: SuiAddress!) {
@@ -557,7 +559,7 @@ func TransactionQueryTemplate(digest string) *RawQueryTemplate {
 }
 
 // CoinsQueryTemplate creates a query template for coin queries.
-func CoinsQueryTemplate(owner SuiAddress, coinType *string, first int) *RawQueryTemplate {
+func CoinsQueryTemplate(owner types.Address, coinType *string, first int) *RawQueryTemplate {
 	vars := map[string]any{
 		"address": owner,
 		"first":   first,

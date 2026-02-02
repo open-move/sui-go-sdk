@@ -57,7 +57,13 @@ Fetch all balances for a specific address.
 
 ```go
 func GetBalances(ctx context.Context, client *graphql.Client, address string) {
-	balances, err := client.GetAllBalances(ctx, graphql.SuiAddress(address))
+	addr, err := utils.ParseAddress(address)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	balances, err := client.GetAllBalances(ctx, addr)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
@@ -77,7 +83,13 @@ Retrieve object details by ID.
 
 ```go
 func GetObject(ctx context.Context, client *graphql.Client, objectID string) {
-	obj, err := client.GetObject(ctx, graphql.SuiAddress(objectID), &graphql.ObjectDataOptions{
+	addr, err := utils.ParseAddress(objectID)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	obj, err := client.GetObject(ctx, addr, &graphql.ObjectDataOptions{
 		ShowType:    true,
 		ShowContent: true,
 		ShowOwner:   true,
@@ -159,8 +171,13 @@ func GetTransaction(ctx context.Context, client *graphql.Client, digest string) 
 	fmt.Printf("Status: %v\n", tx.Effects.Status)
 
 	// Query transactions by sender
+	sender, err := utils.ParseAddress("0xSenderAddress")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
 	filter := &graphql.TransactionFilter{
-		SentAddress: graphql.Ptr(graphql.SuiAddress("0xSenderAddress")),
+		SentAddress: graphql.Ptr(sender),
 	}
 	txs, err := client.QueryTransactionBlocks(ctx, filter, &graphql.PaginationArgs{
 		First: graphql.Ptr(10),
@@ -180,8 +197,13 @@ Fetch events emitted by transactions.
 ```go
 func GetEvents(ctx context.Context, client *graphql.Client) {
 	// Query events by sender
+	sender, err := utils.ParseAddress("0xSenderAddress")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
 	filter := &graphql.EventFilter{
-		Sender: graphql.Ptr(graphql.SuiAddress("0xSenderAddress")),
+		Sender: graphql.Ptr(sender),
 	}
 	events, err := client.QueryEvents(ctx, filter, nil)
 	if err != nil {
@@ -201,15 +223,21 @@ Retrieve specific coins for an address.
 
 ```go
 func GetCoins(ctx context.Context, client *graphql.Client, address string) {
+	addr, err := utils.ParseAddress(address)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
 	// Get SUI coins
-	coins, err := client.GetCoins(ctx, graphql.SuiAddress(address), nil, nil)
+	coins, err := client.GetCoins(ctx, addr, nil, nil)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
 	for _, coin := range coins.Nodes {
-		fmt.Printf("Coin ID: %s, Balance: %v\n", coin.Address, coin.Contents)
+		fmt.Printf("Coin ID: %s, Balance: %v\n", coin.Address.String(), coin.Contents)
 	}
 }
 ```
@@ -220,12 +248,18 @@ Access dynamic fields of an object.
 
 ```go
 func GetDynamicField(ctx context.Context, client *graphql.Client, parentID string) {
+	parent, err := utils.ParseAddress(parentID)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
 	// Get a specific dynamic field
 	name := graphql.DynamicFieldName{
 		Type:  "0x2::kiosk::ItemKey",
 		Value: "...", // BCS encoded value or JSON
 	}
-	field, err := client.GetDynamicFieldObject(ctx, graphql.SuiAddress(parentID), name)
+	field, err := client.GetDynamicFieldObject(ctx, parent, name)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
@@ -241,7 +275,7 @@ Simulate a transaction to estimate gas and check effects before execution.
 ```go
 func SimulateTx(ctx context.Context, client *graphql.Client, txBytes []byte) {
 	// Simulate transaction from bytes
-	result, err := graphql.SimulateTransactionBcs(ctx, client, graphql.Base64(txBytes), nil)
+	result, err := graphql.SimulateTransaction(client, ctx, txBytes, nil)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
@@ -258,21 +292,15 @@ func SimulateTx(ctx context.Context, client *graphql.Client, txBytes []byte) {
 Execute a signed transaction.
 
 ```go
-func ExecuteTx(ctx context.Context, client *graphql.Client, txBytes []byte, signatures []string) {
-	// Convert signatures to Base64
-	sigs := make([]graphql.Base64, len(signatures))
-	for i, s := range signatures {
-		sigs[i] = graphql.Base64(s)
-	}
-
+func ExecuteTx(ctx context.Context, client *graphql.Client, txBytes []byte, signatures [][]byte) {
 	// Execute
-	result, err := graphql.ExecuteTransaction(client, ctx, graphql.Base64(txBytes), sigs)
+	result, err := graphql.ExecuteTransaction(client, ctx, txBytes, signatures)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf("Digest: %s\n", result.Effects.Digest)
+	fmt.Printf("Digest: %s\n", result.Effects.Digest.String())
 }
 ```
 
@@ -282,9 +310,14 @@ Handle large datasets using pagination.
 
 ```go
 func IterateCoins(ctx context.Context, client *graphql.Client, address string) {
+	addr, err := utils.ParseAddress(address)
+	if err != nil {
+		return
+	}
+
 	var cursor *string
 	for {
-		coins, err := client.GetCoins(ctx, graphql.SuiAddress(address), nil, &graphql.PaginationArgs{
+		coins, err := client.GetCoins(ctx, addr, nil, &graphql.PaginationArgs{
 			First: graphql.Ptr(10),
 			After: cursor,
 		})
