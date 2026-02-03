@@ -14,9 +14,26 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
+// ObjectRequest describes a single object fetch to include in BatchGetObjects.
+type ObjectRequest struct {
+	ObjectID string
+	Version  *uint64
+}
+
+// ObjectResult contains either an object or an error for an entry returned by BatchGetObjects.
+type ObjectResult struct {
+	Object *v2.Object
+	Err    error
+}
+
 // GetObjectOptions customises the behaviour of GetObject.
 type GetObjectOptions struct {
 	Version  *uint64
+	ReadMask *fieldmaskpb.FieldMask
+}
+
+// GetTransactionOptions customises the behaviour of GetTransaction.
+type GetTransactionOptions struct {
 	ReadMask *fieldmaskpb.FieldMask
 }
 
@@ -43,7 +60,7 @@ func (c *Client) GetObject(ctx context.Context, objectID string, options *GetObj
 		}
 	}
 
-	resp, err := c.LedgerClient().GetObject(ctx, req, opts...)
+	resp, err := c.ledgerClient.GetObject(ctx, req, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,11 +69,6 @@ func (c *Client) GetObject(ctx context.Context, objectID string, options *GetObj
 		return nil, fmt.Errorf("object %q not found", objectID)
 	}
 	return obj, nil
-}
-
-// GetTransactionOptions customises the behaviour of GetTransaction.
-type GetTransactionOptions struct {
-	ReadMask *fieldmaskpb.FieldMask
 }
 
 // GetTransaction fetches an executed transaction by digest.
@@ -75,8 +87,7 @@ func (c *Client) GetTransaction(ctx context.Context, digest string, options *Get
 	if options != nil && options.ReadMask != nil {
 		req.ReadMask = cloneFieldMask(options.ReadMask)
 	}
-
-	resp, err := c.LedgerClient().GetTransaction(ctx, req, opts...)
+	resp, err := c.ledgerClient.GetTransaction(ctx, req, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +114,7 @@ func (c *Client) GetCheckpointBySequence(ctx context.Context, sequence uint64, r
 		req.ReadMask = cloneFieldMask(readMask)
 	}
 
-	resp, err := c.LedgerClient().GetCheckpoint(ctx, req, opts...)
+	resp, err := c.ledgerClient.GetCheckpoint(ctx, req, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +144,7 @@ func (c *Client) GetCheckpointByDigest(ctx context.Context, digest string, readM
 		req.ReadMask = cloneFieldMask(readMask)
 	}
 
-	resp, err := c.LedgerClient().GetCheckpoint(ctx, req, opts...)
+	resp, err := c.ledgerClient.GetCheckpoint(ctx, req, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +169,7 @@ func (c *Client) GetCurrentEpoch(ctx context.Context, readMask *fieldmaskpb.Fiel
 		req.ReadMask = cloneFieldMask(readMask)
 	}
 
-	resp, err := c.LedgerClient().GetEpoch(ctx, req, opts...)
+	resp, err := c.ledgerClient.GetEpoch(ctx, req, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -178,18 +189,6 @@ func (c *Client) ReferenceGasPrice(ctx context.Context, opts ...grpc.CallOption)
 	}
 
 	return epoch.GetReferenceGasPrice(), nil
-}
-
-// ObjectRequest describes a single object fetch to include in BatchGetObjects.
-type ObjectRequest struct {
-	ObjectID string
-	Version  *uint64
-}
-
-// ObjectResult contains either an object or an error for an entry returned by BatchGetObjects.
-type ObjectResult struct {
-	Object *v2.Object
-	Err    error
 }
 
 // BatchGetObjects issues a BatchGetObjects RPC and maps the response to the provided requests.
@@ -221,7 +220,7 @@ func (c *Client) BatchGetObjects(ctx context.Context, requests []ObjectRequest, 
 		batch.Requests = append(batch.Requests, objReq)
 	}
 
-	resp, err := c.LedgerClient().BatchGetObjects(ctx, batch, opts...)
+	resp, err := c.ledgerClient.BatchGetObjects(ctx, batch, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -49,7 +49,7 @@ func (c *Client) ListDynamicFields(
 		}
 	}
 
-	return c.StateClient().ListDynamicFields(ctx, req, opts...)
+	return c.stateClient.ListDynamicFields(ctx, req, opts...)
 }
 
 func (c *Client) GetDynamicFieldObject(

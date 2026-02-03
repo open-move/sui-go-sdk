@@ -30,7 +30,7 @@ func (c *Client) OwnedObjectsPager(req *v2.ListOwnedObjectsRequest, opts ...grpc
 		} else {
 			base.PageToken = cloneBytes(token)
 		}
-		resp, err := c.StateClient().ListOwnedObjects(ctx, base, opts...)
+		resp, err := c.stateClient.ListOwnedObjects(ctx, base, opts...)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -92,7 +92,7 @@ func (c *Client) DynamicFieldsPager(req *v2.ListDynamicFieldsRequest, opts ...gr
 		} else {
 			base.PageToken = cloneBytes(token)
 		}
-		resp, err := c.StateClient().ListDynamicFields(ctx, base, opts...)
+		resp, err := c.stateClient.ListDynamicFields(ctx, base, opts...)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -155,7 +155,7 @@ func (c *Client) BalancesPager(req *v2.ListBalancesRequest, opts ...grpc.CallOpt
 		} else {
 			base.PageToken = cloneBytes(token)
 		}
-		resp, err := c.StateClient().ListBalances(ctx, base, opts...)
+		resp, err := c.stateClient.ListBalances(ctx, base, opts...)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -217,7 +217,7 @@ func (c *Client) PackageVersionsPager(req *v2.ListPackageVersionsRequest, opts .
 		} else {
 			base.PageToken = cloneBytes(token)
 		}
-		resp, err := c.MovePackageClient().ListPackageVersions(ctx, base, opts...)
+		resp, err := c.movePackageClient.ListPackageVersions(ctx, base, opts...)
 		if err != nil {
 			return nil, nil, err
 		}

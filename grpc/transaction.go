@@ -139,7 +139,7 @@ func (c *Client) ExecuteTransaction(ctx context.Context, request *v2.ExecuteTran
 	execReq.ReadMask = ensureFieldMaskPaths(execReq.GetReadMask(), "digest", "effects.status", "checkpoint")
 
 	cfg := options.clone()
-	return c.TransactionExecutionClient().ExecuteTransaction(ctx, execReq, cfg.ExecuteCallOptions...)
+	return c.transactionExecutionClient.ExecuteTransaction(ctx, execReq, cfg.ExecuteCallOptions...)
 }
 
 // SimulateTransactionOptions customises behaviour of SimulateTransaction.
@@ -166,7 +166,7 @@ func (c *Client) SimulateTransaction(ctx context.Context, tx *v2.Transaction, op
 		return nil, err
 	}
 
-	return c.TransactionExecutionClient().SimulateTransaction(ctx, req, opts...)
+	return c.transactionExecutionClient.SimulateTransaction(ctx, req, opts...)
 }
 
 func buildExecuteTransactionRequest(req *ExecuteRequest) (*v2.ExecuteTransactionRequest, error) {

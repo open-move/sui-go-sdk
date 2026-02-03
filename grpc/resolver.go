@@ -129,7 +129,7 @@ func (r *Resolver) ResolveMoveFunction(ctx context.Context, packageID, module, f
 	r.mu.Unlock()
 
 	req := &v2.GetFunctionRequest{PackageId: &packageID, ModuleName: &module, Name: &function}
-	resp, err := r.client.MovePackageClient().GetFunction(ctx, req)
+	resp, err := r.client.movePackageClient.GetFunction(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (r *Resolver) ResolvePackage(ctx context.Context, packageID string) (*trans
 	r.mu.Unlock()
 
 	req := &v2.GetPackageRequest{PackageId: &packageID}
-	resp, err := r.client.MovePackageClient().GetPackage(ctx, req)
+	resp, err := r.client.movePackageClient.GetPackage(ctx, req)
 	if err != nil {
 		return nil, err
 	}

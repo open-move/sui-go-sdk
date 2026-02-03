@@ -7,8 +7,8 @@ import (
 
 func TestGetCheckpoint(t *testing.T) {
 	ctx := context.Background()
-	client, err := NewMainnetClient(ctx)
-	requireNoError(t, err, "NewMainnetClient")
+	client, err := NewClient(ctx, MainnetArchiveURL)
+	requireNoError(t, err, "NewClient")
 	t.Cleanup(func() {
 		client.Close()
 	})
